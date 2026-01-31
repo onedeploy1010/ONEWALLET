@@ -1,0 +1,13 @@
+packages:
+  # Backend API & SDK
+  - 'one-engine'
+
+  # Admin Dashboard
+  - 'one-dashboard'
+
+  # Wallet Apps
+  - 'wallet/one-wallet'
+  - 'wallet/one-wallet-web'
+
+  # Shared Packages
+  - 'packages/*'

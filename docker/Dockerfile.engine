@@ -1,0 +1,70 @@
+# ONE Engine Dockerfile
+# Multi-stage build for optimal image size
+
+# ========================================
+# Stage 1: Dependencies
+# ========================================
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+# Copy workspace configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY packages/sdk/package.json ./packages/sdk/
+COPY one-engine/package.json ./one-engine/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# ========================================
+# Stage 2: Builder
+# ========================================
+FROM node:20-alpine AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@9 --activate
+
+# Copy dependencies
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/sdk/node_modules ./packages/sdk/node_modules
+COPY --from=deps /app/one-engine/node_modules ./one-engine/node_modules
+
+# Copy source code
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY packages/sdk ./packages/sdk
+COPY one-engine ./one-engine
+
+# Build SDK first
+RUN pnpm turbo build --filter=@one-ecosystem/sdk
+
+# Build Engine
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN pnpm turbo build --filter=@one-ecosystem/engine
+
+# ========================================
+# Stage 3: Runner
+# ========================================
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=4000
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy built application
+COPY --from=builder /app/one-engine/public ./one-engine/public
+COPY --from=builder /app/one-engine/.next/standalone ./
+COPY --from=builder /app/one-engine/.next/static ./one-engine/.next/static
+
+USER nextjs
+
+EXPOSE 4000
+
+CMD ["node", "one-engine/server.js"]

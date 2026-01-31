@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+.expo/
+.turbo/
+
+# Testing
+coverage/
+
+# Production
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Misc
+.DS_Store
+*.pem
+Thumbs.db
+
+# Local env files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Expo
+*.jks
+*.keystore
+
+# pnpm
+pnpm-lock.yaml
+
+# Claude
+.claude/
