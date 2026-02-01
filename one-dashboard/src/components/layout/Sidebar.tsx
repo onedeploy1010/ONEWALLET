@@ -111,6 +111,31 @@ const Icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
     </svg>
   ),
+  Brain: () => (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+    </svg>
+  ),
+  Currency: () => (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  ClipboardList: () => (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+    </svg>
+  ),
+  Target: () => (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  TrendingUp: () => (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    </svg>
+  ),
 };
 
 export function Sidebar({ user, teamSlug = 'default', projectId }: SidebarProps) {
@@ -123,6 +148,39 @@ export function Sidebar({ user, teamSlug = 'default', projectId }: SidebarProps)
   const teamNavigation: NavItem[] = [
     { name: 'Overview', href: baseUrl, icon: <Icons.Dashboard /> },
     { name: 'Projects', href: `${baseUrl}/projects`, icon: <Icons.Folder /> },
+    {
+      name: 'AI Trading',
+      href: `${baseUrl}/ai`,
+      icon: <Icons.Brain />,
+      children: [
+        { name: 'Overview', href: `${baseUrl}/ai`, icon: <Icons.Dashboard /> },
+        { name: 'Strategies', href: `${baseUrl}/ai/strategies`, icon: <Icons.Target /> },
+        { name: 'Orders', href: `${baseUrl}/ai/orders`, icon: <Icons.Contract /> },
+        { name: 'Positions', href: `${baseUrl}/ai/positions`, icon: <Icons.TrendingUp /> },
+        { name: 'Decision Log', href: `${baseUrl}/ai/decisions`, icon: <Icons.ClipboardList /> },
+      ],
+    },
+    {
+      name: 'Forex',
+      href: `${baseUrl}/forex`,
+      icon: <Icons.Currency />,
+      children: [
+        { name: 'Overview', href: `${baseUrl}/forex`, icon: <Icons.Dashboard /> },
+        { name: 'Investments', href: `${baseUrl}/forex/investments`, icon: <Icons.Wallet /> },
+        { name: 'Trades', href: `${baseUrl}/forex/trades`, icon: <Icons.TrendingUp /> },
+        { name: 'Pools', href: `${baseUrl}/forex/pools`, icon: <Icons.Chart /> },
+      ],
+    },
+    {
+      name: 'Client Records',
+      href: `${baseUrl}/records`,
+      icon: <Icons.ClipboardList />,
+      children: [
+        { name: 'All Records', href: `${baseUrl}/records`, icon: <Icons.Dashboard /> },
+        { name: 'AI Activity', href: `${baseUrl}/records/ai`, icon: <Icons.Brain /> },
+        { name: 'Forex Activity', href: `${baseUrl}/records/forex`, icon: <Icons.Currency /> },
+      ],
+    },
     { name: 'Usage', href: `${baseUrl}/usage`, icon: <Icons.Chart /> },
     { name: 'Settings', href: `${baseUrl}/settings`, icon: <Icons.Settings /> },
   ];

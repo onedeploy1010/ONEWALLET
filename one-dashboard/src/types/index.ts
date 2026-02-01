@@ -201,3 +201,159 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     totalPages: number;
   };
 }
+
+// ============ AI Trading Types ============
+
+export interface AiStrategy {
+  id: string;
+  name: string;
+  category: string;
+  riskLevel: 'low' | 'medium' | 'high';
+  status: 'active' | 'paused' | 'stopped';
+  description?: string;
+  tvl: number;
+  winRate: number;
+  sharpeRatio: number;
+  totalPnl: number;
+  maxDrawdown: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AiOrder {
+  id: string;
+  userId: string;
+  strategyId: string;
+  strategyName?: string;
+  amount: number;
+  shares: number;
+  status: 'pending' | 'active' | 'redeemed' | 'cancelled';
+  pnl: number;
+  pnlPercent: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AiStrategyPool {
+  id: string;
+  strategyId: string;
+  totalDeposits: number;
+  totalShares: number;
+  navPerShare: number;
+  utilizationRate: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AiOpenPosition {
+  id: string;
+  strategyId: string;
+  symbol: string;
+  side: 'long' | 'short';
+  entryPrice: number;
+  currentPrice: number;
+  quantity: number;
+  leverage: number;
+  pnl: number;
+  pnlPercent: number;
+  openedAt: string;
+}
+
+export interface AiDecisionLog {
+  id: string;
+  strategyId: string;
+  strategyName?: string;
+  action: string;
+  symbol: string;
+  confidence: number;
+  executed: boolean;
+  pnl?: number;
+  reasoning?: string;
+  createdAt: string;
+}
+
+export interface AiOrderShare {
+  id: string;
+  orderId: string;
+  shares: number;
+  navAtEntry: number;
+  navAtExit?: number;
+}
+
+export interface AiPerformanceSnapshot {
+  id: string;
+  strategyId: string;
+  nav: number;
+  tvl: number;
+  pnl: number;
+  drawdown: number;
+  snapshotDate: string;
+}
+
+export interface AiOverviewStats {
+  totalAum: number;
+  totalStrategies: number;
+  activeStrategies: number;
+  totalOrders: number;
+  avgWinRate: number;
+  avgSharpe: number;
+  totalProfit: number;
+}
+
+// ============ Forex Types ============
+
+export interface ForexInvestment {
+  id: string;
+  userId: string;
+  amount: number;
+  currentValue: number;
+  profit: number;
+  profitPercent: number;
+  pairs: string;
+  cycleDays: number;
+  status: 'active' | 'matured' | 'withdrawn';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ForexTrade {
+  id: string;
+  pair: string;
+  side: 'buy' | 'sell';
+  lots: number;
+  pips: number;
+  pnl: number;
+  status: 'open' | 'closed' | 'cancelled';
+  openedAt: string;
+  closedAt?: string;
+}
+
+export interface ForexPool {
+  id: string;
+  name: string;
+  type: string;
+  poolSize: number;
+  utilization: number;
+  allocation: Record<string, number>;
+  status: 'active' | 'paused';
+  createdAt: string;
+}
+
+export interface ForexDailySnapshot {
+  id: string;
+  poolId?: string;
+  totalInvested: number;
+  totalValue: number;
+  pnl: number;
+  tradeCount: number;
+  snapshotDate: string;
+}
+
+export interface ForexOverviewStats {
+  totalInvested: number;
+  totalValue: number;
+  totalProfit: number;
+  activeInvestments: number;
+  totalTrades: number;
+  avgCycleDays: number;
+}
