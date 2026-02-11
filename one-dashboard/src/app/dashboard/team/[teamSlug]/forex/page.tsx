@@ -3,40 +3,55 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { Card } from '@/components/ui/Card';
 import { GradientCard } from '@/components/ui/GradientCard';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 async function getForexStats() {
-  const [
-    { data: investments },
-    { count: tradeCount },
-  ] = await Promise.all([
-    supabaseEngine.from('forex_investments').select('*'),
-    supabaseEngine.from('forex_trades').select('*', { count: 'exact', head: true }),
-  ]);
+  try {
+    const [investmentsRes, tradesRes] = await Promise.all([
+      supabaseEngine.from('forex_investments').select('*'),
+      supabaseEngine.from('forex_trades').select('*', { count: 'exact', head: true }),
+    ]);
 
-  const invs = investments || [];
-  const active = invs.filter((i) => i.status === 'active');
-  const totalInvested = invs.reduce((sum: number, i) => sum + Number(i.amount ?? 0), 0);
-  const totalValue = invs.reduce((sum: number, i) => sum + Number(i.current_value ?? 0), 0);
-  const totalProfit = invs.reduce((sum: number, i) => sum + Number(i.profit ?? 0), 0);
-  const avgCycleDays = active.length > 0
-    ? Math.round(active.reduce((sum: number, i) => sum + Number(i.cycle_days ?? 0), 0) / active.length)
-    : 0;
+    const investments = investmentsRes.error?.code === '42P01' ? [] : investmentsRes.data;
+    const tradeCount = tradesRes.error?.code === '42P01' ? 0 : tradesRes.count;
 
-  return { totalInvested, totalValue, totalProfit, activeInvestments: active.length, totalTrades: tradeCount || 0, avgCycleDays };
+    const invs = investments || [];
+    const active = invs.filter((i) => i.status === 'active');
+    const totalInvested = invs.reduce((sum: number, i) => sum + Number(i.amount ?? 0), 0);
+    const totalValue = invs.reduce((sum: number, i) => sum + Number(i.current_value ?? 0), 0);
+    const totalProfit = invs.reduce((sum: number, i) => sum + Number(i.profit ?? 0), 0);
+    const avgCycleDays = active.length > 0
+      ? Math.round(active.reduce((sum: number, i) => sum + Number(i.cycle_days ?? 0), 0) / active.length)
+      : 0;
+
+    return { totalInvested, totalValue, totalProfit, activeInvestments: active.length, totalTrades: tradeCount || 0, avgCycleDays };
+  } catch {
+    return { totalInvested: 0, totalValue: 0, totalProfit: 0, activeInvestments: 0, totalTrades: 0, avgCycleDays: 0 };
+  }
 }
 
 async function getRecentPools() {
-  const { data } = await supabaseEngine.from('forex_pools').select('*').order('created_at', { ascending: false }).limit(3);
-  return data || [];
+  try {
+    const { data, error } = await supabaseEngine.from('forex_pools').select('*').order('created_at', { ascending: false }).limit(3);
+    if (error?.code === '42P01') return [];
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 async function getRecentInvestments() {
-  const { data } = await supabaseEngine
-    .from('forex_investments')
-    .select('id, user_id, amount, current_value, profit, status, pairs, created_at')
-    .order('created_at', { ascending: false })
-    .limit(5);
-  return data || [];
+  try {
+    const { data, error } = await supabaseEngine
+      .from('forex_investments')
+      .select('id, user_id, amount, current_value, profit, status, pairs, created_at')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (error?.code === '42P01') return [];
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 const InvestedIcon = () => (
@@ -77,7 +92,7 @@ const ArrowIcon = () => (
 
 const statusColors: Record<string, string> = {
   active: 'bg-green-500/10 text-green-500 border-green-500/20',
-  matured: 'bg-teal-500/10 text-teal-500 border-teal-500/20',
+  matured: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20',
   withdrawn: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
   paused: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
 };
@@ -88,6 +103,8 @@ export default async function ForexOverviewPage({
   params: Promise<{ teamSlug: string }>;
 }) {
   const { teamSlug } = await params;
+  const t = await getTranslations('forex');
+  const tc = await getTranslations('common');
   const [stats, pools, investments] = await Promise.all([
     getForexStats(),
     getRecentPools(),
@@ -97,42 +114,42 @@ export default async function ForexOverviewPage({
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Forex</h1>
-        <p className="text-muted-foreground mt-1">Monitor forex investments, trades, and pool performance</p>
+        <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
       </div>
 
       <GradientCard variant="purple" showDecorations>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white mb-2">Forex Dashboard</h2>
+            <h2 className="text-xl font-bold text-white mb-2">{t('dashboardTitle')}</h2>
             <p className="text-white/80 text-sm max-w-md">
-              Track forex investments, monitor trade execution, and analyze pool utilization.
+              {t('dashboardDesc')}
             </p>
           </div>
           <Link
             href={`/dashboard/team/${teamSlug}/forex/investments`}
             className="px-4 py-2 bg-white/20 border border-white/30 text-white rounded-xl text-sm font-medium hover:bg-white/30 transition-colors"
           >
-            View Investments
+            {t('viewInvestments')}
           </Link>
         </div>
       </GradientCard>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatsCard title="Total Invested" value={`$${stats.totalInvested.toLocaleString()}`} icon={<InvestedIcon />} trend="up" change="All portfolios" />
-        <StatsCard title="Current Value" value={`$${stats.totalValue.toLocaleString()}`} icon={<ValueIcon />} trend="up" change="Market value" />
-        <StatsCard title="Total Profit" value={`$${stats.totalProfit.toLocaleString()}`} icon={<ProfitIcon />} trend={stats.totalProfit >= 0 ? 'up' : 'down'} change="Net P&L" />
-        <StatsCard title="Active Investments" value={stats.activeInvestments} icon={<ActiveIcon />} trend="up" change="Running" />
-        <StatsCard title="Total Trades" value={stats.totalTrades} icon={<TradeIcon />} trend="up" change="Executed" />
-        <StatsCard title="Avg Cycle" value={`${stats.avgCycleDays} days`} icon={<CycleIcon />} trend="neutral" change="Active avg" />
+        <StatsCard title={t('stats.totalInvested')} value={`$${stats.totalInvested.toLocaleString()}`} icon={<InvestedIcon />} trend="up" change={t('stats.allPortfolios')} />
+        <StatsCard title={t('stats.currentValue')} value={`$${stats.totalValue.toLocaleString()}`} icon={<ValueIcon />} trend="up" change={t('stats.marketValue')} />
+        <StatsCard title={t('stats.totalProfit')} value={`$${stats.totalProfit.toLocaleString()}`} icon={<ProfitIcon />} trend={stats.totalProfit >= 0 ? 'up' : 'down'} change={t('stats.netPnl')} />
+        <StatsCard title={t('stats.activeInvestments')} value={stats.activeInvestments} icon={<ActiveIcon />} trend="up" change={t('stats.running')} />
+        <StatsCard title={t('stats.totalTrades')} value={stats.totalTrades} icon={<TradeIcon />} trend="up" change={t('stats.executed')} />
+        <StatsCard title={t('stats.avgCycle')} value={t('stats.days', { count: stats.avgCycleDays })} icon={<CycleIcon />} trend="neutral" change={t('stats.activeAvg')} />
       </div>
 
       {pools.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">Pool Summary</h2>
+            <h2 className="text-lg font-semibold text-foreground">{t('pools.summary')}</h2>
             <Link href={`/dashboard/team/${teamSlug}/forex/pools`} className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1">
-              View All <ArrowIcon />
+              {tc('actions.viewAll')} <ArrowIcon />
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -147,12 +164,12 @@ export default async function ForexOverviewPage({
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Size</span>
+                    <span className="text-muted-foreground">{t('pools.size')}</span>
                     <span className="font-medium text-foreground">${Number(pool.pool_size ?? 0).toLocaleString()}</span>
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">Utilization</span>
+                      <span className="text-muted-foreground">{t('pools.utilization')}</span>
                       <span className="font-medium text-foreground">{Number(pool.utilization ?? 0).toFixed(1)}%</span>
                     </div>
                     <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -169,30 +186,30 @@ export default async function ForexOverviewPage({
       <Card padding="none">
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Recent Investments</h2>
-            <p className="text-sm text-muted-foreground">Latest forex investments</p>
+            <h2 className="text-lg font-semibold text-foreground">{t('investments.recentTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('investments.recentSubtitle')}</p>
           </div>
           <Link href={`/dashboard/team/${teamSlug}/forex/investments`} className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1">
-            View All <ArrowIcon />
+            {tc('actions.viewAll')} <ArrowIcon />
           </Link>
         </div>
         {investments.length === 0 ? (
           <div className="p-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#8B5CF6]/10 text-[#8B5CF6] mb-4"><InvestedIcon /></div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">No investments yet</h3>
-            <p className="text-muted-foreground">Forex investments will appear here</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('investments.noInvestments')}</h3>
+            <p className="text-muted-foreground">{t('investments.noInvestmentsHint')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">User</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Amount</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Value</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Profit</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Pairs</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.user')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.amount')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.value')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.profit')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.pairs')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Transaction {
   id: string;
@@ -41,15 +42,18 @@ const chainNames: Record<number, { name: string; icon: string; color: string }> 
   8453: { name: 'Base', icon: '🔵', color: 'from-blue-400/20 to-sky-500/10' },
 };
 
-const statusConfig: Record<string, { bg: string; text: string; icon: string; label: string }> = {
-  pending: { bg: 'bg-yellow-500/10', text: 'text-yellow-500', icon: '⏳', label: 'Pending' },
-  submitted: { bg: 'bg-blue-500/10', text: 'text-blue-500', icon: '📤', label: 'Submitted' },
-  mined: { bg: 'bg-green-500/10', text: 'text-green-500', icon: '✅', label: 'Mined' },
-  failed: { bg: 'bg-red-500/10', text: 'text-red-500', icon: '❌', label: 'Failed' },
-  cancelled: { bg: 'bg-gray-500/10', text: 'text-gray-500', icon: '🚫', label: 'Cancelled' },
-};
-
 export default function TransactionsPage() {
+  const t = useTranslations('engine');
+  const tc = useTranslations('common');
+
+  const statusConfig: Record<string, { bg: string; text: string; icon: string; label: string }> = {
+    pending: { bg: 'bg-yellow-500/10', text: 'text-yellow-500', icon: '⏳', label: t('transactionsPage.pending') },
+    submitted: { bg: 'bg-blue-500/10', text: 'text-blue-500', icon: '📤', label: t('transactionsPage.submitted') },
+    mined: { bg: 'bg-green-500/10', text: 'text-green-500', icon: '✅', label: t('transactionsPage.mined') },
+    failed: { bg: 'bg-red-500/10', text: 'text-red-500', icon: '❌', label: t('transactionsPage.failed') },
+    cancelled: { bg: 'bg-gray-500/10', text: 'text-gray-500', icon: '🚫', label: t('transactionsPage.cancelled') },
+  };
+
   const params = useParams();
   const teamSlug = params.teamSlug as string;
   const projectId = params.projectId as string;
@@ -146,28 +150,28 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <Link href={`/dashboard/team/${teamSlug}/${projectId}/engine/overview`} className="hover:text-foreground">
-              Engine
+              {t('transactionsPage.engine')}
             </Link>
             <span>/</span>
-            <span>Transactions</span>
+            <span>{t('transactionsPage.transactionsLabel')}</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Transaction Queue</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('transactionsPage.heading')}</h1>
           <p className="text-muted-foreground">
-            Monitor and manage your transaction queue
+            {t('transactionsPage.description')}
           </p>
         </div>
         <button
           onClick={() => fetchTransactions()}
-          className="px-4 py-2 border border-border rounded-xl text-foreground hover:bg-secondary transition-colors flex items-center gap-2"
+          className="px-4 py-2 border border-border rounded-xl text-foreground hover:bg-secondary transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          Refresh
+          {tc('actions.refresh')}
         </button>
       </div>
 
@@ -175,38 +179,38 @@ export default function TransactionsPage() {
       <div className="bg-card border border-border rounded-2xl p-4">
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-xs text-muted-foreground mb-1.5">Search</label>
+            <label className="block text-xs text-muted-foreground mb-1.5">{t('transactionsPage.search')}</label>
             <input
               type="text"
-              placeholder="Search by address or tx hash..."
+              placeholder={t('transactionsPage.searchPlaceholder')}
               value={filter.search}
               onChange={(e) => setFilter({ ...filter, search: e.target.value })}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
             />
           </div>
-          <div className="w-40">
-            <label className="block text-xs text-muted-foreground mb-1.5">Status</label>
+          <div className="w-full sm:w-40">
+            <label className="block text-xs text-muted-foreground mb-1.5">{t('transactionsPage.statusLabel')}</label>
             <select
               value={filter.status}
               onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
             >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="submitted">Submitted</option>
-              <option value="mined">Mined</option>
-              <option value="failed">Failed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="all">{t('transactionsPage.allStatus')}</option>
+              <option value="pending">{t('transactionsPage.pending')}</option>
+              <option value="submitted">{t('transactionsPage.submitted')}</option>
+              <option value="mined">{t('transactionsPage.mined')}</option>
+              <option value="failed">{t('transactionsPage.failed')}</option>
+              <option value="cancelled">{t('transactionsPage.cancelled')}</option>
             </select>
           </div>
-          <div className="w-40">
-            <label className="block text-xs text-muted-foreground mb-1.5">Chain</label>
+          <div className="w-full sm:w-40">
+            <label className="block text-xs text-muted-foreground mb-1.5">{t('transactionsPage.chain')}</label>
             <select
               value={filter.chainId}
               onChange={(e) => setFilter({ ...filter, chainId: e.target.value })}
-              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
             >
-              <option value="all">All Chains</option>
+              <option value="all">{t('transactionsPage.allChains')}</option>
               {Object.entries(chainNames).map(([id, chain]) => (
                 <option key={id} value={id}>{chain.name}</option>
               ))}
@@ -219,18 +223,18 @@ export default function TransactionsPage() {
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
         {loading ? (
           <div className="p-12 text-center">
-            <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : transactions.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">📋</span>
             </div>
-            <h3 className="font-semibold text-foreground mb-2">No transactions found</h3>
+            <h3 className="font-semibold text-foreground mb-2">{t('transactionsPage.noTransactions')}</h3>
             <p className="text-sm text-muted-foreground">
               {filter.status !== 'all' || filter.chainId !== 'all' || filter.search
-                ? 'Try adjusting your filters'
-                : 'Transactions will appear here when you use the Engine API'}
+                ? t('transactionsPage.adjustFilters')
+                : t('transactionsPage.transactionsWillAppear')}
             </p>
           </div>
         ) : (
@@ -239,14 +243,14 @@ export default function TransactionsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border bg-secondary/30">
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Type</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Status</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Chain</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">From / To</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Value</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Gas</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Created</th>
-                    <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">Actions</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.type')}</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.statusLabel')}</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.chain')}</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.fromTo')}</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.value')}</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.gas')}</th>
+                    <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.created')}</th>
+                    <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">{t('transactionsPage.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -262,7 +266,7 @@ export default function TransactionsPage() {
                         <td className="px-4 py-3">
                           <span className="font-medium text-foreground text-sm">{tx.type}</span>
                           {tx.retries > 0 && (
-                            <span className="ml-2 text-xs text-orange-500">({tx.retries} retries)</span>
+                            <span className="ml-2 text-xs text-orange-500">({tx.retries} {t('transactionsPage.retries')})</span>
                           )}
                         </td>
                         <td className="px-4 py-3">
@@ -280,7 +284,7 @@ export default function TransactionsPage() {
                         <td className="px-4 py-3">
                           <div className="text-xs font-mono text-muted-foreground">
                             <div>{formatAddress(tx.from_address)}</div>
-                            <div className="text-[#188775]">→ {formatAddress(tx.to_address)}</div>
+                            <div className="text-[#2563EB]">→ {formatAddress(tx.to_address)}</div>
                           </div>
                         </td>
                         <td className="px-4 py-3">
@@ -290,7 +294,7 @@ export default function TransactionsPage() {
                           {tx.gas_used ? (
                             <span className="text-sm text-muted-foreground">{tx.gas_used}</span>
                           ) : tx.gas_limit ? (
-                            <span className="text-sm text-muted-foreground">{tx.gas_limit} (est)</span>
+                            <span className="text-sm text-muted-foreground">{tx.gas_limit} ({t('transactionsPage.estimated')})</span>
                           ) : (
                             <span className="text-sm text-muted-foreground">-</span>
                           )}
@@ -309,7 +313,7 @@ export default function TransactionsPage() {
                                 onClick={() => handleRetry(tx.id)}
                                 disabled={actionLoading === tx.id}
                                 className="p-1.5 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-colors"
-                                title="Retry"
+                                title={t('transactionsPage.retry')}
                               >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -321,7 +325,7 @@ export default function TransactionsPage() {
                                 onClick={() => handleCancel(tx.id)}
                                 disabled={actionLoading === tx.id}
                                 className="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                                title="Cancel"
+                                title={tc('actions.cancel')}
                               >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -333,8 +337,8 @@ export default function TransactionsPage() {
                                 href={`https://etherscan.io/tx/${tx.tx_hash}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 text-[#188775] hover:bg-[#188775]/10 rounded-lg transition-colors"
-                                title="View on Explorer"
+                                className="p-1.5 text-[#2563EB] hover:bg-[#2563EB]/10 rounded-lg transition-colors"
+                                title={t('transactionsPage.viewOnExplorer')}
                               >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -352,9 +356,13 @@ export default function TransactionsPage() {
 
             {/* Pagination */}
             {pagination.totalPages > 1 && (
-              <div className="px-4 py-3 border-t border-border flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+              <div className="px-4 py-3 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span className="text-sm text-muted-foreground text-center sm:text-left">
+                  {t('transactionsPage.showingResults', {
+                    from: ((pagination.page - 1) * pagination.limit) + 1,
+                    to: Math.min(pagination.page * pagination.limit, pagination.total),
+                    total: pagination.total
+                  })}
                 </span>
                 <div className="flex items-center gap-2">
                   <button
@@ -362,17 +370,17 @@ export default function TransactionsPage() {
                     disabled={pagination.page === 1}
                     className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Previous
+                    {tc('actions.previous')}
                   </button>
                   <span className="text-sm text-foreground">
-                    Page {pagination.page} of {pagination.totalPages}
+                    {t('transactionsPage.pageOf', { page: pagination.page, totalPages: pagination.totalPages })}
                   </span>
                   <button
                     onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
                     disabled={pagination.page === pagination.totalPages}
                     className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Next
+                    {tc('actions.next')}
                   </button>
                 </div>
               </div>
@@ -386,7 +394,7 @@ export default function TransactionsPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setSelectedTx(null)}>
           <div className="bg-card border border-border rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
             <div className="p-6 border-b border-border flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-foreground">Transaction Details</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('transactionsPage.transactionDetails')}</h3>
               <button onClick={() => setSelectedTx(null)} className="p-2 hover:bg-secondary rounded-lg transition-colors">
                 <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -394,13 +402,13 @@ export default function TransactionsPage() {
               </button>
             </div>
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-muted-foreground">Queue ID</label>
-                  <p className="font-mono text-sm text-foreground">{selectedTx.queue_id}</p>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.queueId')}</label>
+                  <p className="font-mono text-sm text-foreground break-all">{selectedTx.queue_id}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">Status</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.statusLabel')}</label>
                   <p className={`text-sm font-medium ${statusConfig[selectedTx.status]?.text}`}>
                     {statusConfig[selectedTx.status]?.icon} {statusConfig[selectedTx.status]?.label}
                   </p>
@@ -409,57 +417,57 @@ export default function TransactionsPage() {
 
               {selectedTx.tx_hash && (
                 <div>
-                  <label className="text-xs text-muted-foreground">Transaction Hash</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.transactionHash')}</label>
                   <p className="font-mono text-sm text-foreground break-all">{selectedTx.tx_hash}</p>
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-muted-foreground">From</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.from')}</label>
                   <p className="font-mono text-sm text-foreground break-all">{selectedTx.from_address}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">To</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.to')}</label>
                   <p className="font-mono text-sm text-foreground break-all">{selectedTx.to_address}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-xs text-muted-foreground">Chain</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.chain')}</label>
                   <p className="text-sm text-foreground">
                     {chainNames[selectedTx.chain_id]?.icon} {chainNames[selectedTx.chain_id]?.name || `Chain ${selectedTx.chain_id}`}
                   </p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">Value</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.value')}</label>
                   <p className="text-sm text-foreground">{selectedTx.value || '0'}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">Nonce</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.nonce')}</label>
                   <p className="text-sm text-foreground">{selectedTx.nonce ?? '-'}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-xs text-muted-foreground">Gas Limit</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.gasLimit')}</label>
                   <p className="text-sm text-foreground">{selectedTx.gas_limit || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">Gas Price</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.gasPrice')}</label>
                   <p className="text-sm text-foreground">{selectedTx.gas_price || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">Gas Used</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.gasUsed')}</label>
                   <p className="text-sm text-foreground">{selectedTx.gas_used || '-'}</p>
                 </div>
               </div>
 
               {selectedTx.data && (
                 <div>
-                  <label className="text-xs text-muted-foreground">Data</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.data')}</label>
                   <div className="mt-1 p-3 bg-secondary rounded-lg overflow-x-auto">
                     <p className="font-mono text-xs text-muted-foreground break-all">{selectedTx.data}</p>
                   </div>
@@ -468,18 +476,18 @@ export default function TransactionsPage() {
 
               {selectedTx.error_message && (
                 <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                  <label className="text-xs text-red-500">Error</label>
+                  <label className="text-xs text-red-500">{t('transactionsPage.error')}</label>
                   <p className="text-sm text-red-400">{selectedTx.error_message}</p>
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <label className="text-xs text-muted-foreground">Created</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.created')}</label>
                   <p className="text-foreground">{new Date(selectedTx.created_at).toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">Updated</label>
+                  <label className="text-xs text-muted-foreground">{t('transactionsPage.updated')}</label>
                   <p className="text-foreground">{new Date(selectedTx.updated_at).toLocaleString()}</p>
                 </div>
               </div>

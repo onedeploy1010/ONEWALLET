@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { supabaseAuth } from '@/lib/supabase';
+import { useTranslations } from 'next-intl';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations('auth');
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -31,7 +35,8 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/register', {
+      // Create user record with admin role via API
+      const res = await fetch('/api/auth/register-dashboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -40,13 +45,19 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!data.success) {
-        throw new Error(data.error?.message || 'Registration failed');
+        throw new Error(data.error?.message || t('register.registrationFailed'));
       }
 
-      // Auto-fill OTP if returned (dev mode)
-      if (data.data?.otp) {
-        setOtp(data.data.otp);
+      // Send OTP via Supabase Auth
+      const { error: otpError } = await supabaseAuth.auth.signInWithOtp({
+        email: formData.email,
+        options: { shouldCreateUser: true },
+      });
+
+      if (otpError) {
+        throw new Error(otpError.message || t('register.failedVerificationCode'));
       }
+
       setStep('otp');
     } catch (err) {
       setError((err as Error).message);
@@ -61,16 +72,33 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, otp }),
+      // Verify OTP with Supabase Auth
+      const { data, error: verifyError } = await supabaseAuth.auth.verifyOtp({
+        email: formData.email,
+        token: otp,
+        type: 'email',
       });
 
-      const data = await res.json();
+      if (verifyError || !data.user || !data.session) {
+        throw new Error(verifyError?.message || t('register.invalidOtp'));
+      }
 
-      if (!data.success) {
-        throw new Error(data.error?.message || 'Invalid OTP');
+      // Verify admin role and set dashboard cookies
+      const res = await fetch('/api/auth/supabase-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: data.user.id,
+          email: data.user.email,
+          accessToken: data.session.access_token,
+        }),
+      });
+
+      const sessionData = await res.json();
+
+      if (!sessionData.success) {
+        await supabaseAuth.auth.signOut();
+        throw new Error(sessionData.error?.message || t('register.accessDenied'));
       }
 
       router.push('/dashboard');
@@ -83,15 +111,20 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
+
       {/* Background decoration */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #188775 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #2563EB 0%, transparent 70%)' }}
         />
         <div
           className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #188775 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #2563EB 0%, transparent 70%)' }}
         />
       </div>
 
@@ -101,9 +134,9 @@ export default function RegisterPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary shadow-primary mb-4">
             <span className="text-white font-bold text-2xl">O</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Create Account</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('register.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Join the ONE Ecosystem
+            {t('register.subtitle')}
           </p>
         </div>
 
@@ -123,10 +156,10 @@ export default function RegisterPage() {
               <Input
                 type="text"
                 name="name"
-                label="Full Name"
+                label={t('register.fullName')}
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="John Doe"
+                placeholder={t('register.namePlaceholder')}
                 required
                 icon={
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,10 +170,10 @@ export default function RegisterPage() {
               <Input
                 type="email"
                 name="email"
-                label="Email Address"
+                label={t('register.emailLabel')}
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="john@example.com"
+                placeholder={t('register.emailPlaceholder')}
                 required
                 icon={
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -151,10 +184,10 @@ export default function RegisterPage() {
               <Input
                 type="text"
                 name="company"
-                label="Company (Optional)"
+                label={t('register.companyLabel')}
                 value={formData.company}
                 onChange={handleChange}
-                placeholder="Acme Inc"
+                placeholder={t('register.companyPlaceholder')}
                 icon={
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -166,14 +199,14 @@ export default function RegisterPage() {
                 loading={loading}
                 className="w-full py-3"
               >
-                Create Account
+                {t('register.createAccount')}
               </Button>
             </form>
           ) : (
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Verification Code
+                  {t('register.verificationCode')}
                 </label>
                 <input
                   type="text"
@@ -189,7 +222,7 @@ export default function RegisterPage() {
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  Code sent to <span className="text-foreground font-medium">{formData.email}</span>
+                  {t('register.codeSentTo', { email: formData.email })}
                 </p>
               </div>
               <Button
@@ -197,7 +230,7 @@ export default function RegisterPage() {
                 loading={loading}
                 className="w-full py-3"
               >
-                Verify & Continue
+                {t('register.verifyAndContinue')}
               </Button>
               <Button
                 type="button"
@@ -205,16 +238,16 @@ export default function RegisterPage() {
                 onClick={() => setStep('form')}
                 className="w-full"
               >
-                Go back
+                {t('register.goBack')}
               </Button>
             </form>
           )}
 
           <div className="mt-6 pt-6 border-t border-border text-center">
             <p className="text-sm text-muted-foreground">
-              Already have an account?{' '}
+              {t('register.alreadyHaveAccount')}{' '}
               <Link href="/auth/login" className="text-primary font-medium hover:underline">
-                Sign in
+                {t('register.signIn')}
               </Link>
             </p>
           </div>
@@ -222,7 +255,7 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground mt-6">
-          By creating an account, you agree to our Terms of Service and Privacy Policy
+          {t('register.termsFooter')}
         </p>
       </div>
     </div>

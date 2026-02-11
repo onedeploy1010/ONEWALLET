@@ -15,21 +15,21 @@ import {
 interface PerformanceChartProps {
   data: Array<{ date: string; value: number; [key: string]: unknown }>;
   dataKey?: string;
-  color?: 'teal' | 'purple';
+  color?: 'blue' | 'purple';
   height?: number;
   type?: 'line' | 'area';
   showGrid?: boolean;
 }
 
 const colors = {
-  teal: '#188775',
+  blue: '#2563EB',
   purple: '#8B5CF6',
 };
 
 export function PerformanceChart({
   data,
   dataKey = 'value',
-  color = 'teal',
+  color = 'blue',
   height = 300,
   type = 'area',
   showGrid = true,

@@ -1,0 +1,80 @@
+{
+  "forex": {
+    "title": "Forex",
+    "subtitle": "Monitor forex investments, trades, and pool performance",
+    "dashboardTitle": "Forex Dashboard",
+    "dashboardDesc": "Track forex investments, monitor trade execution, and analyze pool utilization.",
+    "viewInvestments": "View Investments",
+    "apiIntegration": "API Integration",
+    "apiTitle": "Forex API",
+    "tabs": {
+      "javascript": "JavaScript",
+      "curl": "cURL"
+    },
+    "stats": {
+      "totalInvested": "Total Invested",
+      "allPortfolios": "All portfolios",
+      "currentValue": "Current Value",
+      "marketValue": "Market value",
+      "totalProfit": "Total Profit",
+      "netPnl": "Net P&L",
+      "activeInvestments": "Active Investments",
+      "running": "Running",
+      "totalTrades": "Total Trades",
+      "executed": "Executed",
+      "avgCycle": "Avg Cycle",
+      "days": "{count} days",
+      "activeAvg": "Active avg"
+    },
+    "pools": {
+      "title": "Forex Pools",
+      "subtitle": "Monitor forex liquidity pools and utilization",
+      "summary": "Pool Summary",
+      "noPools": "No pools found",
+      "noPoolsHint": "Forex pools will appear here when created",
+      "size": "Size",
+      "utilization": "Utilization"
+    },
+    "investments": {
+      "title": "Forex Investments",
+      "subtitle": "View and manage forex investment positions",
+      "recentTitle": "Recent Investments",
+      "recentSubtitle": "Latest forex investments",
+      "noInvestments": "No investments yet",
+      "noInvestmentsHint": "Forex investments will appear here",
+      "noInvestmentsFound": "No investments found",
+      "allStatuses": "All Statuses",
+      "matured": "Matured",
+      "withdrawn": "Withdrawn"
+    },
+    "trades": {
+      "title": "Forex Trades",
+      "subtitle": "View forex trade history and open positions",
+      "noTrades": "No trades found",
+      "allStatuses": "All Statuses",
+      "allPairs": "All Pairs",
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "columns": {
+      "user": "User",
+      "amount": "Amount",
+      "value": "Value",
+      "profit": "Profit",
+      "pairs": "Pairs",
+      "cycle": "Cycle",
+      "status": "Status",
+      "pair": "Pair",
+      "side": "Side",
+      "lots": "Lots",
+      "pips": "Pips",
+      "pnl": "P&L",
+      "date": "Date"
+    },
+    "poolCard": {
+      "poolSize": "Pool Size",
+      "utilization": "Utilization",
+      "allocation": "Allocation"
+    }
+  }
+}

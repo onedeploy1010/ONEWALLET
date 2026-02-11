@@ -4,10 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { GradientCard } from '@/components/ui/GradientCard';
+import { supabaseAuth } from '@/lib/supabase';
+import { useTranslations } from 'next-intl';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations('auth');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,22 +23,15 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      const { error: otpError } = await supabaseAuth.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: false },
       });
 
-      const data = await res.json();
-
-      if (!data.success) {
-        throw new Error(data.error?.message || 'Failed to send OTP');
+      if (otpError) {
+        throw new Error(otpError.message || t('login.failedSendOtp'));
       }
 
-      // Auto-fill OTP if returned (dev mode)
-      if (data.data?.otp) {
-        setOtp(data.data.otp);
-      }
       setOtpSent(true);
     } catch (err) {
       setError((err as Error).message);
@@ -50,16 +46,34 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp }),
+      // Verify OTP with Supabase Auth
+      const { data, error: verifyError } = await supabaseAuth.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'email',
       });
 
-      const data = await res.json();
+      if (verifyError || !data.user || !data.session) {
+        throw new Error(verifyError?.message || t('login.invalidOtp'));
+      }
 
-      if (!data.success) {
-        throw new Error(data.error?.message || 'Invalid OTP');
+      // Verify admin role and set dashboard cookies
+      const res = await fetch('/api/auth/supabase-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: data.user.id,
+          email: data.user.email,
+          accessToken: data.session.access_token,
+        }),
+      });
+
+      const sessionData = await res.json();
+
+      if (!sessionData.success) {
+        // Not an admin — sign out of Supabase and show error
+        await supabaseAuth.auth.signOut();
+        throw new Error(sessionData.error?.message || t('login.accessDenied'));
       }
 
       router.push('/dashboard');
@@ -72,15 +86,20 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      {/* Language Switcher */}
+      <div className="fixed top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
+
       {/* Background decoration */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div
           className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #188775 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #2563EB 0%, transparent 70%)' }}
         />
         <div
           className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #188775 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, #2563EB 0%, transparent 70%)' }}
         />
       </div>
 
@@ -90,16 +109,16 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary shadow-primary mb-4">
             <span className="text-white font-bold text-2xl">O</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">ONE Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('login.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Ecosystem Management Portal
+            {t('login.subtitle')}
           </p>
         </div>
 
         {/* Login Card */}
         <div className="bg-card border border-border rounded-3xl p-8 shadow-card">
           <h2 className="text-xl font-semibold mb-6 text-foreground">
-            {otpSent ? 'Verify Your Email' : 'Welcome Back'}
+            {otpSent ? t('login.verifyEmail') : t('login.welcomeBack')}
           </h2>
 
           {error && (
@@ -115,10 +134,10 @@ export default function LoginPage() {
             <form onSubmit={handleSendOTP} className="space-y-6">
               <Input
                 type="email"
-                label="Email Address"
+                label={t('login.emailLabel')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
+                placeholder={t('login.emailPlaceholder')}
                 required
                 icon={
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -131,21 +150,21 @@ export default function LoginPage() {
                 loading={loading}
                 className="w-full py-3"
               >
-                Continue with Email
+                {t('login.continueWithEmail')}
               </Button>
             </form>
           ) : (
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Verification Code
+                  {t('login.verificationCode')}
                 </label>
                 <input
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   className="input-primary text-center text-2xl tracking-[0.5em] font-mono"
-                  placeholder="000000"
+                  placeholder={t('login.codePlaceholder')}
                   maxLength={6}
                   required
                   autoFocus
@@ -154,7 +173,7 @@ export default function LoginPage() {
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  Code sent to <span className="text-foreground font-medium">{email}</span>
+                  {t('login.codeSentTo', { email })}
                 </p>
               </div>
               <Button
@@ -162,7 +181,7 @@ export default function LoginPage() {
                 loading={loading}
                 className="w-full py-3"
               >
-                Verify & Sign In
+                {t('login.verifySignIn')}
               </Button>
               <Button
                 type="button"
@@ -170,7 +189,7 @@ export default function LoginPage() {
                 onClick={() => setOtpSent(false)}
                 className="w-full"
               >
-                Use different email
+                {t('login.useDifferentEmail')}
               </Button>
             </form>
           )}
@@ -179,16 +198,16 @@ export default function LoginPage() {
         {/* Register Link */}
         <div className="text-center mt-6">
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <a href="/auth/register" className="text-primary font-medium hover:underline">
-              Create one
+              {t('login.createOne')}
             </a>
           </p>
         </div>
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground mt-4">
-          By continuing, you agree to our Terms of Service and Privacy Policy
+          {t('login.termsFooter')}
         </p>
       </div>
     </div>

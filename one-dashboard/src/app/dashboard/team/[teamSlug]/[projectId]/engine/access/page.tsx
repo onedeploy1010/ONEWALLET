@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface AccessToken {
   id: string;
@@ -31,27 +32,29 @@ interface AllowedDomain {
   created_at: string;
 }
 
-const PERMISSIONS = [
-  { id: 'wallet:read', label: 'Read Wallets', description: 'View wallet addresses and balances' },
-  { id: 'wallet:create', label: 'Create Wallets', description: 'Create new backend wallets' },
-  { id: 'wallet:sign', label: 'Sign Transactions', description: 'Sign and submit transactions' },
-  { id: 'transaction:read', label: 'Read Transactions', description: 'View transaction history' },
-  { id: 'transaction:write', label: 'Send Transactions', description: 'Submit new transactions' },
-  { id: 'contract:read', label: 'Read Contracts', description: 'View deployed contracts' },
-  { id: 'contract:deploy', label: 'Deploy Contracts', description: 'Deploy new contracts' },
-  { id: 'webhook:manage', label: 'Manage Webhooks', description: 'Create and manage webhooks' },
-];
-
-const ROLE_PERMISSIONS: Record<string, string[]> = {
-  admin: PERMISSIONS.map((p) => p.id),
-  operator: ['wallet:read', 'wallet:sign', 'transaction:read', 'transaction:write', 'contract:read'],
-  viewer: ['wallet:read', 'transaction:read', 'contract:read'],
-};
-
 export default function AccessControlPage() {
   const params = useParams();
   const teamSlug = params.teamSlug as string;
   const projectId = params.projectId as string;
+  const t = useTranslations('engine');
+  const tc = useTranslations('common');
+
+  const PERMISSIONS = [
+    { id: 'wallet:read', label: t('accessPage.permissions.readWallets'), description: t('accessPage.permissions.readWalletsDesc') },
+    { id: 'wallet:create', label: t('accessPage.permissions.createWallets'), description: t('accessPage.permissions.createWalletsDesc') },
+    { id: 'wallet:sign', label: t('accessPage.permissions.signTransactions'), description: t('accessPage.permissions.signTransactionsDesc') },
+    { id: 'transaction:read', label: t('accessPage.permissions.readTransactions'), description: t('accessPage.permissions.readTransactionsDesc') },
+    { id: 'transaction:write', label: t('accessPage.permissions.sendTransactions'), description: t('accessPage.permissions.sendTransactionsDesc') },
+    { id: 'contract:read', label: t('accessPage.permissions.readContracts'), description: t('accessPage.permissions.readContractsDesc') },
+    { id: 'contract:deploy', label: t('accessPage.permissions.deployContracts'), description: t('accessPage.permissions.deployContractsDesc') },
+    { id: 'webhook:manage', label: t('accessPage.permissions.manageWebhooks'), description: t('accessPage.permissions.manageWebhooksDesc') },
+  ];
+
+  const ROLE_PERMISSIONS: Record<string, string[]> = {
+    admin: PERMISSIONS.map((p) => p.id),
+    operator: ['wallet:read', 'wallet:sign', 'transaction:read', 'transaction:write', 'contract:read'],
+    viewer: ['wallet:read', 'transaction:read', 'contract:read'],
+  };
 
   const [activeTab, setActiveTab] = useState<'tokens' | 'admins' | 'domains'>('tokens');
   const [accessTokens, setAccessTokens] = useState<AccessToken[]>([]);
@@ -289,23 +292,23 @@ export default function AccessControlPage() {
       <div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
           <Link href={`/dashboard/team/${teamSlug}/${projectId}/engine/overview`} className="hover:text-foreground">
-            Engine
+            {t('accessPage.engine')}
           </Link>
           <span>/</span>
-          <span>Access Control</span>
+          <span>{t('accessPage.heading')}</span>
         </div>
-        <h1 className="text-2xl font-bold text-foreground">Access Control</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('accessPage.heading')}</h1>
         <p className="text-muted-foreground">
-          Manage API tokens, admins, and allowed domains
+          {t('accessPage.description')}
         </p>
       </div>
 
       {/* Tabs */}
       <div className="flex items-center gap-1 p-1 bg-secondary/50 rounded-xl w-fit">
         {[
-          { id: 'tokens', label: 'API Tokens', icon: '🔑' },
-          { id: 'admins', label: 'Admins', icon: '👤' },
-          { id: 'domains', label: 'Allowed Domains', icon: '🌐' },
+          { id: 'tokens', label: t('accessPage.tabs.apiTokens'), icon: '🔑' },
+          { id: 'admins', label: t('accessPage.tabs.admins'), icon: '👤' },
+          { id: 'domains', label: t('accessPage.tabs.allowedDomains'), icon: '🌐' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -332,13 +335,13 @@ export default function AccessControlPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Token Created!</h3>
-              <p className="text-sm text-muted-foreground">Save these credentials - they won't be shown again.</p>
+              <h3 className="text-lg font-semibold text-foreground">{t('accessPage.tokenCreated')}</h3>
+              <p className="text-sm text-muted-foreground">{t('accessPage.saveCredentials')}</p>
             </div>
 
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-xs text-muted-foreground mb-2">Access Token</label>
+                <label className="block text-xs text-muted-foreground mb-2">{t('accessPage.accessToken')}</label>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 p-3 bg-secondary rounded-lg font-mono text-sm text-foreground overflow-x-auto">
                     {createdToken.token}
@@ -355,7 +358,7 @@ export default function AccessControlPage() {
               </div>
               {createdToken.secret && (
                 <div>
-                  <label className="block text-xs text-muted-foreground mb-2">Secret Key</label>
+                  <label className="block text-xs text-muted-foreground mb-2">{t('accessPage.secretKey')}</label>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 p-3 bg-secondary rounded-lg font-mono text-sm text-foreground overflow-x-auto">
                       {createdToken.secret}
@@ -378,9 +381,9 @@ export default function AccessControlPage() {
                 setCreatedToken(null);
                 setShowCreateToken(false);
               }}
-              className="w-full px-4 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90"
+              className="w-full px-4 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90"
             >
-              I've saved the credentials
+              {t('accessPage.savedCredentials')}
             </button>
           </div>
         </div>
@@ -392,7 +395,7 @@ export default function AccessControlPage() {
           {showCreateToken ? (
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Create Access Token</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('accessPage.createAccessToken')}</h3>
                 <button onClick={() => setShowCreateToken(false)} className="p-2 hover:bg-secondary rounded-lg">
                   <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -403,35 +406,35 @@ export default function AccessControlPage() {
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Token Name <span className="text-red-500">*</span>
+                    {t('accessPage.tokenName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={tokenForm.name}
                     onChange={(e) => setTokenForm({ ...tokenForm, name: e.target.value })}
                     placeholder="My API Token"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Expiration</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">{t('accessPage.expiration')}</label>
                   <select
                     value={tokenForm.expiresIn}
                     onChange={(e) => setTokenForm({ ...tokenForm, expiresIn: e.target.value })}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   >
-                    <option value="never">Never</option>
-                    <option value="7d">7 days</option>
-                    <option value="30d">30 days</option>
-                    <option value="90d">90 days</option>
-                    <option value="365d">1 year</option>
+                    <option value="never">{t('accessPage.expirationOptions.never')}</option>
+                    <option value="7d">{t('accessPage.expirationOptions.7days')}</option>
+                    <option value="30d">{t('accessPage.expirationOptions.30days')}</option>
+                    <option value="90d">{t('accessPage.expirationOptions.90days')}</option>
+                    <option value="365d">{t('accessPage.expirationOptions.1year')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-3">
-                    Permissions <span className="text-red-500">*</span>
+                    {t('accessPage.permissionsLabel')} <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {PERMISSIONS.map((perm) => (
@@ -441,13 +444,13 @@ export default function AccessControlPage() {
                         onClick={() => togglePermission(perm.id)}
                         className={`p-3 rounded-xl border text-left transition-all ${
                           tokenForm.permissions.includes(perm.id)
-                            ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                            : 'border-border hover:border-[#188775]/50'
+                            ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                            : 'border-border hover:border-[#2563EB]/50'
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                            tokenForm.permissions.includes(perm.id) ? 'border-[#188775] bg-[#188775]' : 'border-border'
+                            tokenForm.permissions.includes(perm.id) ? 'border-[#2563EB] bg-[#2563EB]' : 'border-border'
                           }`}>
                             {tokenForm.permissions.includes(perm.id) && (
                               <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -474,15 +477,15 @@ export default function AccessControlPage() {
                     onClick={() => setShowCreateToken(false)}
                     className="px-5 py-2.5 border border-border rounded-xl text-foreground hover:bg-secondary"
                   >
-                    Cancel
+                    {tc('actions.cancel')}
                   </button>
                   <button
                     onClick={handleCreateToken}
                     disabled={actionLoading}
-                    className="px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
                   >
                     {actionLoading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                    Create Token
+                    {t('accessPage.createToken')}
                   </button>
                 </div>
               </div>
@@ -492,27 +495,27 @@ export default function AccessControlPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setShowCreateToken(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Create Token
+                  {t('accessPage.createToken')}
                 </button>
               </div>
 
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 {loading ? (
                   <div className="p-12 text-center">
-                    <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+                    <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : accessTokens.length === 0 ? (
                   <div className="p-12 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                       <span className="text-3xl">🔑</span>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-2">No API tokens</h3>
-                    <p className="text-sm text-muted-foreground">Create an API token to authenticate requests</p>
+                    <h3 className="font-semibold text-foreground mb-2">{t('accessPage.noTokens')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('accessPage.noTokensDescription')}</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-border">
@@ -520,7 +523,7 @@ export default function AccessControlPage() {
                       <div key={token.id} className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            token.is_active ? 'bg-[#188775]/10' : 'bg-gray-500/10'
+                            token.is_active ? 'bg-[#2563EB]/10' : 'bg-gray-500/10'
                           }`}>
                             <span className="text-lg">🔑</span>
                           </div>
@@ -528,7 +531,7 @@ export default function AccessControlPage() {
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-foreground">{token.name}</span>
                               {!token.is_active && (
-                                <span className="px-2 py-0.5 bg-gray-500/10 text-gray-500 text-xs rounded-full">Revoked</span>
+                                <span className="px-2 py-0.5 bg-gray-500/10 text-gray-500 text-xs rounded-full">{t('accessPage.revoked')}</span>
                               )}
                             </div>
                             <p className="text-xs text-muted-foreground font-mono">{token.key_prefix}...</p>
@@ -537,10 +540,10 @@ export default function AccessControlPage() {
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <p className="text-xs text-muted-foreground">
-                              {token.last_used ? `Last used ${new Date(token.last_used).toLocaleDateString()}` : 'Never used'}
+                              {token.last_used ? `Last used ${new Date(token.last_used).toLocaleDateString()}` : t('accessPage.neverUsed')}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {token.expires_at ? `Expires ${new Date(token.expires_at).toLocaleDateString()}` : 'Never expires'}
+                              {token.expires_at ? `Expires ${new Date(token.expires_at).toLocaleDateString()}` : t('accessPage.neverExpires')}
                             </p>
                           </div>
                           {token.is_active && (
@@ -571,7 +574,7 @@ export default function AccessControlPage() {
           {showAddAdmin ? (
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Add Admin</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('accessPage.addAdmin')}</h3>
                 <button onClick={() => setShowAddAdmin(false)} className="p-2 hover:bg-secondary rounded-lg">
                   <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -581,29 +584,29 @@ export default function AccessControlPage() {
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Email</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">{t('accessPage.email')}</label>
                   <input
                     type="email"
                     value={adminForm.email}
                     onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
                     placeholder="admin@example.com"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Wallet Address (optional)</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">{t('accessPage.walletAddress')}</label>
                   <input
                     type="text"
                     value={adminForm.wallet_address}
                     onChange={(e) => setAdminForm({ ...adminForm, wallet_address: e.target.value })}
                     placeholder="0x..."
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-3">Role</label>
+                  <label className="block text-sm font-medium text-foreground mb-3">{t('accessPage.role')}</label>
                   <div className="grid grid-cols-3 gap-3">
                     {(['admin', 'operator', 'viewer'] as const).map((role) => (
                       <button
@@ -612,16 +615,16 @@ export default function AccessControlPage() {
                         onClick={() => setAdminForm({ ...adminForm, role })}
                         className={`p-4 rounded-xl border text-center transition-all ${
                           adminForm.role === role
-                            ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                            : 'border-border hover:border-[#188775]/50'
+                            ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                            : 'border-border hover:border-[#2563EB]/50'
                         }`}
                       >
                         <div className="text-2xl mb-2">
                           {role === 'admin' ? '👑' : role === 'operator' ? '⚙️' : '👁️'}
                         </div>
-                        <div className="font-medium text-foreground capitalize">{role}</div>
+                        <div className="font-medium text-foreground">{t(`accessPage.roles.${role}`)}</div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {role === 'admin' ? 'Full access' : role === 'operator' ? 'Can execute' : 'Read only'}
+                          {t(`accessPage.roleDescriptions.${role}`)}
                         </div>
                       </button>
                     ))}
@@ -639,15 +642,15 @@ export default function AccessControlPage() {
                     onClick={() => setShowAddAdmin(false)}
                     className="px-5 py-2.5 border border-border rounded-xl text-foreground hover:bg-secondary"
                   >
-                    Cancel
+                    {tc('actions.cancel')}
                   </button>
                   <button
                     onClick={handleAddAdmin}
                     disabled={actionLoading}
-                    className="px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
                   >
                     {actionLoading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                    Add Admin
+                    {t('accessPage.addAdmin')}
                   </button>
                 </div>
               </div>
@@ -657,34 +660,34 @@ export default function AccessControlPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setShowAddAdmin(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Add Admin
+                  {t('accessPage.addAdmin')}
                 </button>
               </div>
 
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 {loading ? (
                   <div className="p-12 text-center">
-                    <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+                    <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : admins.length === 0 ? (
                   <div className="p-12 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                       <span className="text-3xl">👤</span>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-2">No admins</h3>
-                    <p className="text-sm text-muted-foreground">Add admins to manage engine access</p>
+                    <h3 className="font-semibold text-foreground mb-2">{t('accessPage.noAdmins')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('accessPage.noAdminsDescription')}</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-border">
                     {admins.map((admin) => (
                       <div key={admin.id} className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center">
                             <span className="text-lg">
                               {admin.role === 'admin' ? '👑' : admin.role === 'operator' ? '⚙️' : '👁️'}
                             </span>
@@ -699,14 +702,14 @@ export default function AccessControlPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className={`px-2.5 py-1 text-xs rounded-full capitalize ${
+                          <span className={`px-2.5 py-1 text-xs rounded-full ${
                             admin.role === 'admin'
                               ? 'bg-purple-500/10 text-purple-500'
                               : admin.role === 'operator'
                               ? 'bg-blue-500/10 text-blue-500'
                               : 'bg-gray-500/10 text-gray-500'
                           }`}>
-                            {admin.role}
+                            {t(`accessPage.roles.${admin.role}`)}
                           </span>
                           <button
                             onClick={() => handleRemoveAdmin(admin.id)}
@@ -734,7 +737,7 @@ export default function AccessControlPage() {
           {showAddDomain ? (
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Add Allowed Domain</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('accessPage.addDomain')}</h3>
                 <button onClick={() => setShowAddDomain(false)} className="p-2 hover:bg-secondary rounded-lg">
                   <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -745,17 +748,17 @@ export default function AccessControlPage() {
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Domain <span className="text-red-500">*</span>
+                    {t('accessPage.domain')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={domainForm.domain}
                     onChange={(e) => setDomainForm({ domain: e.target.value })}
                     placeholder="example.com or *.example.com"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
-                    Use * as a wildcard for subdomains (e.g., *.example.com)
+                    {t('accessPage.domainHint')}
                   </p>
                 </div>
 
@@ -770,15 +773,15 @@ export default function AccessControlPage() {
                     onClick={() => setShowAddDomain(false)}
                     className="px-5 py-2.5 border border-border rounded-xl text-foreground hover:bg-secondary"
                   >
-                    Cancel
+                    {tc('actions.cancel')}
                   </button>
                   <button
                     onClick={handleAddDomain}
                     disabled={actionLoading}
-                    className="px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
                   >
                     {actionLoading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                    Add Domain
+                    {t('accessPage.addDomain')}
                   </button>
                 </div>
               </div>
@@ -788,28 +791,28 @@ export default function AccessControlPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setShowAddDomain(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 flex items-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Add Domain
+                  {t('accessPage.addDomain')}
                 </button>
               </div>
 
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 {loading ? (
                   <div className="p-12 text-center">
-                    <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+                    <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
                   </div>
                 ) : domains.length === 0 ? (
                   <div className="p-12 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                       <span className="text-3xl">🌐</span>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-2">No allowed domains</h3>
+                    <h3 className="font-semibold text-foreground mb-2">{t('accessPage.noDomains')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Add domains to restrict where API calls can originate from
+                      {t('accessPage.noDomainsDescription')}
                     </p>
                   </div>
                 ) : (
@@ -817,13 +820,13 @@ export default function AccessControlPage() {
                     {domains.map((domain) => (
                       <div key={domain.id} className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center">
                             <span className="text-lg">🌐</span>
                           </div>
                           <div>
                             <span className="font-medium text-foreground font-mono">{domain.domain}</span>
                             <p className="text-xs text-muted-foreground">
-                              Added {new Date(domain.created_at).toLocaleDateString()}
+                              {t('accessPage.added')} {new Date(domain.created_at).toLocaleDateString()}
                             </p>
                           </div>
                         </div>

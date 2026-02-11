@@ -35,14 +35,21 @@ export async function GET(
         .single(),
     ]);
 
-    if (strategyError) throw strategyError;
+    if (strategyError) {
+      if (strategyError.code === '42P01') {
+        return NextResponse.json({ success: true, data: { strategy: null, pool: null } });
+      }
+      throw strategyError;
+    }
+
+    const riskMap = (level: number) => level <= 2 ? 'low' : level <= 3 ? 'medium' : 'high';
 
     const mappedStrategy = strategy ? {
       id: strategy.id,
       name: strategy.name,
       category: strategy.category,
-      riskLevel: strategy.risk_level,
-      status: strategy.status,
+      riskLevel: riskMap(Number(strategy.risk_level) || 1),
+      status: strategy.is_active === false ? 'paused' : 'active',
       description: strategy.description,
       tvl: strategy.tvl,
       winRate: strategy.win_rate,
@@ -56,10 +63,12 @@ export async function GET(
     const mappedPool = pool ? {
       id: pool.id,
       strategyId: pool.strategy_id,
-      totalDeposits: pool.total_deposits,
+      totalDeposits: pool.total_capital,
       totalShares: pool.total_shares,
-      navPerShare: pool.nav_per_share,
-      utilizationRate: pool.utilization_rate,
+      navPerShare: pool.current_nav,
+      utilizationRate: pool.locked_capital && pool.total_capital
+        ? Number(pool.locked_capital) / Number(pool.total_capital) * 100
+        : 0,
       createdAt: pool.created_at,
       updatedAt: pool.updated_at,
     } : null;

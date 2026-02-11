@@ -10,12 +10,13 @@ module.exports = {
   apps: [
     {
       name: 'one-dashboard',
-      cwd: '/root/WebstormProjects/Onewallet/one-dashboard',
+      cwd: '/home/tgtgdeploy/work/One/ONEWALLET/one-dashboard',
       script: 'node_modules/.bin/next',
       args: 'start -p 4001',
       env: {
         NODE_ENV: 'production',
         PORT: 4001,
+        ENGINE_URL: 'http://localhost:4002',
       },
       instances: 1,
       exec_mode: 'fork',
@@ -29,7 +30,7 @@ module.exports = {
     },
     {
       name: 'one-engine',
-      cwd: '/root/WebstormProjects/Onewallet/one-engine',
+      cwd: '/home/tgtgdeploy/work/One/one-engine',
       script: 'node_modules/.bin/next',
       args: 'start -p 4002',
       env: {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { StrategyCard } from '@/components/ai-forex/StrategyCard';
+import { useTranslations } from 'next-intl';
 
 interface Strategy {
   id: string;
@@ -17,6 +18,8 @@ interface Strategy {
 }
 
 export default function AiStrategiesPage() {
+  const t = useTranslations('ai');
+  const tc = useTranslations('common');
   const params = useParams();
   const teamSlug = params.teamSlug as string;
   const [strategies, setStrategies] = useState<Strategy[]>([]);
@@ -51,26 +54,26 @@ export default function AiStrategiesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">AI Strategies</h1>
-        <p className="text-muted-foreground">Browse and monitor AI trading strategies</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('strategies.title')}</h1>
+        <p className="text-muted-foreground">{t('strategies.subtitle')}</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
         <select value={category} onChange={(e) => setCategory(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="">All Categories</option>
+          <option value="">{t('strategies.allCategories')}</option>
           {categories.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
         <select value={risk} onChange={(e) => setRisk(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="">All Risk Levels</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option value="">{t('strategies.allRiskLevels')}</option>
+          <option value="low">{tc('risk.low')}</option>
+          <option value="medium">{tc('risk.medium')}</option>
+          <option value="high">{tc('risk.high')}</option>
         </select>
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="paused">Paused</option>
-          <option value="stopped">Stopped</option>
+          <option value="">{t('strategies.allStatuses')}</option>
+          <option value="active">{tc('status.active')}</option>
+          <option value="paused">{tc('status.paused')}</option>
+          <option value="stopped">{tc('status.stopped')}</option>
         </select>
       </div>
 
@@ -93,8 +96,8 @@ export default function AiStrategiesPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">No strategies found</h3>
-          <p className="text-muted-foreground">Try adjusting your filters</p>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{t('strategies.noStrategiesFound')}</h3>
+          <p className="text-muted-foreground">{t('strategies.adjustFilters')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

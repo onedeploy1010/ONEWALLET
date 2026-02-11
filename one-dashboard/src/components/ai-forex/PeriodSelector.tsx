@@ -1,21 +1,26 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 interface PeriodSelectorProps {
   value: string;
   onChange: (period: string) => void;
   options?: { label: string; value: string }[];
 }
 
-const defaultOptions = [
-  { label: 'Daily', value: 'daily' },
-  { label: 'Weekly', value: 'weekly' },
-  { label: 'Monthly', value: 'monthly' },
-];
+export function PeriodSelector({ value, onChange, options }: PeriodSelectorProps) {
+  const tc = useTranslations('common');
 
-export function PeriodSelector({ value, onChange, options = defaultOptions }: PeriodSelectorProps) {
+  const defaultOptions = [
+    { label: tc('period.daily'), value: 'daily' },
+    { label: tc('period.weekly'), value: 'weekly' },
+    { label: tc('period.monthly'), value: 'monthly' },
+  ];
+
+  const resolvedOptions = options || defaultOptions;
   return (
     <div className="inline-flex bg-secondary/50 rounded-xl p-1">
-      {options.map((opt) => (
+      {resolvedOptions.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}

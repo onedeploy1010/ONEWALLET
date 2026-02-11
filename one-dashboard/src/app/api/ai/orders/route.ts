@@ -32,7 +32,12 @@ export async function GET(req: NextRequest) {
 
     const { data: orders, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
+      throw error;
+    }
 
     const mapped = (orders || []).map((o) => ({
       id: o.id,

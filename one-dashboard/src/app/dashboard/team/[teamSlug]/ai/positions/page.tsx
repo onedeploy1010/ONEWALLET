@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PnlBadge, DataTable } from '@/components/ai-forex';
+import { useTranslations } from 'next-intl';
 
 interface Position {
   id: string; strategyId: string; symbol: string; side: string; entryPrice: number;
@@ -9,6 +10,7 @@ interface Position {
 }
 
 export default function AiPositionsPage() {
+  const t = useTranslations('ai');
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,23 +34,23 @@ export default function AiPositionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Open Positions</h1>
-        <p className="text-muted-foreground">All currently open AI trading positions</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('positions.title')}</h1>
+        <p className="text-muted-foreground">{t('positions.subtitle')}</p>
       </div>
 
       <DataTable
         columns={[
-          { key: 'symbol', header: 'Symbol', render: (r: Position) => <span className="font-medium text-foreground">{r.symbol}</span> },
-          { key: 'side', header: 'Side', render: (r: Position) => <span className={`font-medium ${r.side === 'long' ? 'text-green-500' : 'text-red-500'}`}>{r.side}</span> },
-          { key: 'entryPrice', header: 'Entry Price', render: (r: Position) => <span className="text-foreground">${r.entryPrice.toFixed(2)}</span> },
-          { key: 'currentPrice', header: 'Current Price', render: (r: Position) => <span className="text-foreground">${r.currentPrice.toFixed(2)}</span> },
-          { key: 'pnl', header: 'P&L', render: (r: Position) => <PnlBadge value={r.pnl} percent={r.pnlPercent} /> },
-          { key: 'leverage', header: 'Leverage', render: (r: Position) => <span className="text-foreground">{r.leverage}x</span> },
-          { key: 'strategyId', header: 'Strategy', render: (r: Position) => <span className="text-muted-foreground font-mono text-xs">{r.strategyId.slice(0, 8)}...</span> },
+          { key: 'symbol', header: t('columns.symbol'), render: (r: Position) => <span className="font-medium text-foreground">{r.symbol}</span> },
+          { key: 'side', header: t('columns.side'), render: (r: Position) => <span className={`font-medium ${r.side === 'long' ? 'text-green-500' : 'text-red-500'}`}>{r.side}</span> },
+          { key: 'entryPrice', header: t('columns.entryPrice'), render: (r: Position) => <span className="text-foreground">${(Number(r.entryPrice) || 0).toFixed(2)}</span> },
+          { key: 'currentPrice', header: t('columns.currentPrice'), render: (r: Position) => <span className="text-foreground">${(Number(r.currentPrice) || 0).toFixed(2)}</span> },
+          { key: 'pnl', header: t('columns.pnl'), render: (r: Position) => <PnlBadge value={r.pnl} percent={r.pnlPercent} /> },
+          { key: 'leverage', header: t('columns.leverage'), render: (r: Position) => <span className="text-foreground">{r.leverage}x</span> },
+          { key: 'strategyId', header: t('columns.strategy'), render: (r: Position) => <span className="text-muted-foreground font-mono text-xs">{r.strategyId.slice(0, 8)}...</span> },
         ]}
         data={positions}
         loading={loading}
-        emptyMessage="No open positions"
+        emptyMessage={t('positions.noPositions')}
         emptyIcon="📊"
       />
     </div>

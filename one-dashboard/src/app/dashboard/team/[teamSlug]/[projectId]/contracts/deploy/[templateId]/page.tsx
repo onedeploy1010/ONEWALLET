@@ -304,7 +304,7 @@ export default function DeployTemplatePage() {
             </a>
             <button
               onClick={() => router.push(`/dashboard/team/${teamSlug}/${projectId}/contracts/${deployResult.address}`)}
-              className="px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-lg hover:opacity-90 transition-opacity"
+              className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               Manage Contract
             </button>
@@ -327,7 +327,7 @@ export default function DeployTemplatePage() {
           </svg>
         </button>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center">
             <span className="text-2xl">{template.icon}</span>
           </div>
           <div>
@@ -359,7 +359,7 @@ export default function DeployTemplatePage() {
                     type="checkbox"
                     checked={formData[field.name] || false}
                     onChange={(e) => handleInputChange(field.name, e.target.checked)}
-                    className="w-5 h-5 rounded border-border bg-secondary text-[#188775] focus:ring-[#188775]/20"
+                    className="w-5 h-5 rounded border-border bg-secondary text-[#2563EB] focus:ring-[#2563EB]/20"
                   />
                   <div>
                     <span className="text-foreground font-medium">{field.label}</span>
@@ -377,7 +377,7 @@ export default function DeployTemplatePage() {
                   <select
                     value={formData[field.name] || ''}
                     onChange={(e) => handleInputChange(field.name, e.target.value)}
-                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   >
                     <option value="">Select...</option>
                     {field.options?.map((opt) => (
@@ -401,7 +401,7 @@ export default function DeployTemplatePage() {
                           placeholder="0x..."
                           value={recipient.address}
                           onChange={(e) => updateRecipient(index, 'address', e.target.value)}
-                          className="flex-1 px-4 py-3 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775] font-mono text-sm"
+                          className="flex-1 px-4 py-3 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] font-mono text-sm"
                         />
                         <div className="relative w-24">
                           <input
@@ -409,7 +409,7 @@ export default function DeployTemplatePage() {
                             placeholder="50"
                             value={recipient.share || ''}
                             onChange={(e) => updateRecipient(index, 'share', parseFloat(e.target.value) || 0)}
-                            className="w-full px-4 py-3 pr-8 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                            className="w-full px-4 py-3 pr-8 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                           />
                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
                         </div>
@@ -430,7 +430,7 @@ export default function DeployTemplatePage() {
                       <button
                         type="button"
                         onClick={addRecipient}
-                        className="text-sm text-[#188775] hover:underline"
+                        className="text-sm text-[#2563EB] hover:underline"
                       >
                         + Add Recipient
                       </button>
@@ -453,7 +453,7 @@ export default function DeployTemplatePage() {
                     onChange={(e) => handleInputChange(field.name, e.target.value)}
                     maxLength={field.maxLength}
                     step={field.step}
-                    className={`w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775] ${field.type === 'address' ? 'font-mono text-sm' : ''}`}
+                    className={`w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] ${field.type === 'address' ? 'font-mono text-sm' : ''}`}
                   />
                   {field.description && (
                     <p className="text-xs text-muted-foreground mt-1">{field.description}</p>
@@ -469,7 +469,7 @@ export default function DeployTemplatePage() {
           <button
             onClick={handleDeploy}
             disabled={isDeploying}
-            className="w-full py-4 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isDeploying ? (
               <>

@@ -24,7 +24,12 @@ export async function GET(
       .select('*')
       .eq('strategy_id', strategyId);
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
+      throw error;
+    }
 
     const mapped = (positions || []).map((p) => ({
       id: p.id,
@@ -35,8 +40,8 @@ export async function GET(
       currentPrice: p.current_price,
       quantity: p.quantity,
       leverage: p.leverage,
-      pnl: p.pnl,
-      pnlPercent: p.pnl_percent,
+      pnl: p.unrealized_pnl ?? p.pnl ?? 0,
+      pnlPercent: p.unrealized_pnl_pct ?? p.pnl_percent ?? 0,
       openedAt: p.opened_at,
     }));
 

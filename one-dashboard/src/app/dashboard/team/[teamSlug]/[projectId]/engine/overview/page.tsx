@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface EngineStats {
   backendWallets: number;
@@ -35,6 +36,8 @@ const chainNames: Record<number, string> = {
 };
 
 export default function EngineOverviewPage() {
+  const t = useTranslations('engine');
+  const tc = useTranslations('common');
   const params = useParams();
   const teamSlug = params.teamSlug as string;
   const projectId = params.projectId as string;
@@ -76,29 +79,29 @@ export default function EngineOverviewPage() {
 
   const quickActions = [
     {
-      title: 'Backend Wallets',
-      description: 'Create and manage server-side wallets',
+      title: t('overviewPage.backendWalletsAction'),
+      description: t('overviewPage.backendWalletsDesc'),
       icon: '🔑',
       href: `/dashboard/team/${teamSlug}/${projectId}/engine/backend-wallets`,
-      gradient: 'from-[#188775]/20 to-[#14a085]/10',
+      gradient: 'from-[#2563EB]/20 to-[#3B82F6]/10',
     },
     {
-      title: 'Transaction Queue',
-      description: 'View and manage pending transactions',
+      title: t('overviewPage.transactionQueueAction'),
+      description: t('overviewPage.transactionQueueDesc'),
       icon: '📋',
       href: `/dashboard/team/${teamSlug}/${projectId}/engine/transactions`,
       gradient: 'from-blue-500/20 to-indigo-500/10',
     },
     {
-      title: 'Webhooks',
-      description: 'Configure transaction notifications',
+      title: t('overviewPage.webhooksAction'),
+      description: t('overviewPage.webhooksDesc'),
       icon: '🔔',
       href: `/dashboard/team/${teamSlug}/${projectId}/engine/webhooks`,
       gradient: 'from-purple-500/20 to-violet-500/10',
     },
     {
-      title: 'Access Control',
-      description: 'Manage API permissions and admins',
+      title: t('overviewPage.accessControlAction'),
+      description: t('overviewPage.accessControlDesc'),
       icon: '🛡️',
       href: `/dashboard/team/${teamSlug}/${projectId}/engine/access`,
       gradient: 'from-orange-500/20 to-amber-500/10',
@@ -109,42 +112,42 @@ export default function EngineOverviewPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Engine</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('overviewPage.heading')}</h1>
         <p className="text-muted-foreground">
-          Backend transaction infrastructure and wallet management
+          {t('overviewPage.description')}
         </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#188775]/10 to-[#14a085]/5 border border-[#188775]/20 rounded-2xl p-4">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#188775]/20 to-transparent rounded-full -mr-8 -mt-8" />
-          <p className="text-xs text-muted-foreground mb-1">Backend Wallets</p>
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-4">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-8 -mt-8" />
+          <p className="text-xs text-muted-foreground mb-1">{t('overviewPage.backendWalletsLabel')}</p>
           <p className="text-2xl font-bold text-foreground">{stats?.backendWallets || 0}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20 rounded-2xl p-4">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-yellow-500/20 to-transparent rounded-full -mr-8 -mt-8" />
-          <p className="text-xs text-muted-foreground mb-1">Pending</p>
+          <p className="text-xs text-muted-foreground mb-1">{t('overviewPage.pendingLabel')}</p>
           <p className="text-2xl font-bold text-yellow-500">{stats?.pendingTransactions || 0}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-2xl p-4">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-green-500/20 to-transparent rounded-full -mr-8 -mt-8" />
-          <p className="text-xs text-muted-foreground mb-1">Completed</p>
+          <p className="text-xs text-muted-foreground mb-1">{t('overviewPage.completedLabel')}</p>
           <p className="text-2xl font-bold text-green-500">{stats?.completedTransactions || 0}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 rounded-2xl p-4">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-red-500/20 to-transparent rounded-full -mr-8 -mt-8" />
-          <p className="text-xs text-muted-foreground mb-1">Failed</p>
+          <p className="text-xs text-muted-foreground mb-1">{t('overviewPage.failedLabel')}</p>
           <p className="text-2xl font-bold text-red-500">{stats?.failedTransactions || 0}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-4">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full -mr-8 -mt-8" />
-          <p className="text-xs text-muted-foreground mb-1">Gas Spent</p>
+          <p className="text-xs text-muted-foreground mb-1">{t('overviewPage.gasSpentLabel')}</p>
           <p className="text-2xl font-bold text-blue-500">{stats?.totalGasSpent || '0'}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-4">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full -mr-8 -mt-8" />
-          <p className="text-xs text-muted-foreground mb-1">Avg Response</p>
+          <p className="text-xs text-muted-foreground mb-1">{t('overviewPage.avgResponseLabel')}</p>
           <p className="text-2xl font-bold text-purple-500">{stats?.avgResponseTime || 0}ms</p>
         </div>
       </div>
@@ -155,7 +158,7 @@ export default function EngineOverviewPage() {
           <Link
             key={action.title}
             href={action.href}
-            className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-[#188775]/30 transition-all"
+            className="group bg-card border border-border rounded-2xl p-5 hover:shadow-lg hover:border-[#2563EB]/30 transition-all"
           >
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
               <span className="text-2xl">{action.icon}</span>
@@ -167,12 +170,12 @@ export default function EngineOverviewPage() {
       </div>
 
       {/* Integration Guide */}
-      <div className="bg-gradient-to-r from-[#188775]/10 via-[#14a085]/5 to-transparent border border-[#188775]/20 rounded-2xl p-6">
+      <div className="bg-gradient-to-r from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent border border-[#2563EB]/20 rounded-2xl p-6">
         <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-          <svg className="w-5 h-5 text-[#188775]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-[#2563EB]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
-          Quick Start
+          {t('overviewPage.quickStart')}
         </h3>
         <div className="bg-secondary/50 rounded-xl p-4 font-mono text-sm overflow-x-auto">
           <pre className="text-muted-foreground">
@@ -201,12 +204,12 @@ const tx = await engine.sendTransaction({
       {/* Recent Transactions */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
         <div className="p-4 border-b border-border flex items-center justify-between">
-          <h3 className="font-semibold text-foreground">Recent Transactions</h3>
+          <h3 className="font-semibold text-foreground">{t('overviewPage.recentTransactions')}</h3>
           <Link
             href={`/dashboard/team/${teamSlug}/${projectId}/engine/transactions`}
-            className="text-sm text-[#188775] hover:underline flex items-center gap-1"
+            className="text-sm text-[#2563EB] hover:underline flex items-center gap-1"
           >
-            View All
+            {tc('actions.viewAll')}
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -214,20 +217,20 @@ const tx = await engine.sendTransaction({
         </div>
         {loading ? (
           <div className="p-8 text-center">
-            <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : transactions.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">📋</span>
             </div>
-            <h3 className="font-semibold text-foreground mb-2">No transactions yet</h3>
-            <p className="text-sm text-muted-foreground mb-4">Transactions will appear here when you start using Engine</p>
+            <h3 className="font-semibold text-foreground mb-2">{t('overviewPage.noTransactions')}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{t('overviewPage.noTransactionsHint')}</p>
             <Link
               href={`/dashboard/team/${teamSlug}/${projectId}/engine/backend-wallets`}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-lg text-sm font-medium hover:opacity-90"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-lg text-sm font-medium hover:opacity-90"
             >
-              Create Backend Wallet
+              {t('overviewPage.createBackendWallet')}
             </Link>
           </div>
         ) : (

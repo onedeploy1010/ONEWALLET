@@ -62,11 +62,29 @@ export async function GET(req: NextRequest) {
       })
     );
 
+    // Fetch demo project and prepend it if not already in the list
+    const { data: demoProject } = await supabaseEngine
+      .from('projects')
+      .select('*')
+      .eq('id', '00000000-0000-0000-0000-000000000099')
+      .single();
+
+    let allProjects = projectsWithCounts;
+    if (demoProject && !projectsWithCounts.some((p) => p.id === demoProject.id)) {
+      allProjects = [{ ...demoProject, users_count: 0, is_demo: true }, ...projectsWithCounts];
+    }
+    // Mark demo project if it's in the existing list
+    allProjects = allProjects.map((p) =>
+      p.id === '00000000-0000-0000-0000-000000000099'
+        ? { ...p, is_demo: true }
+        : p
+    );
+
     return NextResponse.json({
       success: true,
-      data: projectsWithCounts,
+      data: allProjects,
       pagination: {
-        total: count || 0,
+        total: (count || 0) + (demoProject && !projectsWithCounts.some((p) => p.id === demoProject.id) ? 1 : 0),
         limit,
         offset,
       },

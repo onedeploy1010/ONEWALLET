@@ -1,0 +1,26 @@
+{
+  "users": {
+    "title": "用户管理",
+    "subtitle": "管理生态系统用户及其权限",
+    "searchPlaceholder": "按邮箱搜索...",
+    "search": "搜索",
+    "allRoles": "所有角色",
+    "roleUser": "用户",
+    "roleAdmin": "管理员",
+    "roleSuperAdmin": "超级管理员",
+    "columns": {
+      "user": "用户",
+      "role": "角色",
+      "wallet": "钱包",
+      "status": "状态",
+      "joined": "注册时间",
+      "lastLogin": "上次登录"
+    },
+    "noUsersFound": "未找到用户",
+    "never": "从未登录",
+    "showing": "显示 {start}-{end}，共 {total} 条",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageInfo": "第 {current} 页，共 {total} 页"
+  }
+}

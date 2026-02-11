@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { StatusBadge, RiskBadge, PnlBadge, ConfidenceBar, PerformanceChart, DataTable } from '@/components/ai-forex';
+import { useTranslations } from 'next-intl';
 
 interface Strategy {
   id: string; name: string; category: string; riskLevel: 'low' | 'medium' | 'high'; status: string;
@@ -14,6 +15,7 @@ interface Decision { id: string; action: string; symbol: string; confidence: num
 interface Snapshot { snapshotDate: string; nav: number; tvl: number; pnl: number; }
 
 export default function StrategyDetailPage() {
+  const t = useTranslations('ai');
   const params = useParams();
   const strategyId = params.strategyId as string;
   const [strategy, setStrategy] = useState<Strategy | null>(null);
@@ -55,7 +57,7 @@ export default function StrategyDetailPage() {
   }
 
   if (!strategy) {
-    return <div className="p-12 text-center"><h3 className="text-lg font-semibold text-foreground">Strategy not found</h3></div>;
+    return <div className="p-12 text-center"><h3 className="text-lg font-semibold text-foreground">{t('strategyDetail.notFound')}</h3></div>;
   }
 
   const chartData = snapshots.map((s) => ({ date: new Date(s.snapshotDate).toLocaleDateString('en', { month: 'short', day: 'numeric' }), value: s.nav }));
@@ -75,15 +77,15 @@ export default function StrategyDetailPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'TVL', value: `$${strategy.tvl.toLocaleString()}` },
-          { label: 'Win Rate', value: `${strategy.winRate.toFixed(1)}%` },
-          { label: 'Sharpe Ratio', value: strategy.sharpeRatio.toFixed(2) },
-          { label: 'Max Drawdown', value: `${strategy.maxDrawdown.toFixed(1)}%` },
+          { label: t('strategyDetail.tvl'), value: `$${(Number(strategy.tvl) || 0).toLocaleString()}` },
+          { label: t('strategyDetail.winRate'), value: `${(Number(strategy.winRate) || 0).toFixed(1)}%` },
+          { label: t('strategyDetail.sharpeRatio'), value: (Number(strategy.sharpeRatio) || 0).toFixed(2) },
+          { label: t('strategyDetail.maxDrawdown'), value: `${(Number(strategy.maxDrawdown) || 0).toFixed(1)}%` },
           ...(pool ? [
-            { label: 'Total Deposits', value: `$${pool.totalDeposits.toLocaleString()}` },
-            { label: 'NAV/Share', value: `$${pool.navPerShare.toFixed(4)}` },
-            { label: 'Total Shares', value: pool.totalShares.toLocaleString() },
-            { label: 'Utilization', value: `${pool.utilizationRate.toFixed(1)}%` },
+            { label: t('strategyDetail.totalDeposits'), value: `$${(Number(pool.totalDeposits) || 0).toLocaleString()}` },
+            { label: t('strategyDetail.navPerShare'), value: `$${(Number(pool.navPerShare) || 0).toFixed(4)}` },
+            { label: t('strategyDetail.totalShares'), value: (Number(pool.totalShares) || 0).toLocaleString() },
+            { label: t('strategyDetail.utilization'), value: `${(Number(pool.utilizationRate) || 0).toFixed(1)}%` },
           ] : []),
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-2xl p-4">
@@ -95,40 +97,40 @@ export default function StrategyDetailPage() {
 
       <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-foreground">Performance</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('strategyDetail.performance')}</h2>
           <PnlBadge value={strategy.totalPnl} />
         </div>
-        <PerformanceChart data={chartData} color="teal" />
+        <PerformanceChart data={chartData} color="blue" />
       </div>
 
       <DataTable
         columns={[
-          { key: 'symbol', header: 'Symbol', render: (r: Position) => <span className="font-medium text-foreground">{r.symbol}</span> },
-          { key: 'side', header: 'Side', render: (r: Position) => <span className={r.side === 'long' ? 'text-green-500' : 'text-red-500'}>{r.side}</span> },
-          { key: 'entryPrice', header: 'Entry', render: (r: Position) => <span className="text-foreground">${r.entryPrice.toFixed(2)}</span> },
-          { key: 'currentPrice', header: 'Current', render: (r: Position) => <span className="text-foreground">${r.currentPrice.toFixed(2)}</span> },
-          { key: 'pnl', header: 'P&L', render: (r: Position) => <PnlBadge value={r.pnl} percent={r.pnlPercent} /> },
-          { key: 'leverage', header: 'Leverage', render: (r: Position) => <span className="text-foreground">{r.leverage}x</span> },
+          { key: 'symbol', header: t('columns.symbol'), render: (r: Position) => <span className="font-medium text-foreground">{r.symbol}</span> },
+          { key: 'side', header: t('columns.side'), render: (r: Position) => <span className={r.side === 'long' ? 'text-green-500' : 'text-red-500'}>{r.side}</span> },
+          { key: 'entryPrice', header: t('strategyDetail.entry'), render: (r: Position) => <span className="text-foreground">${(Number(r.entryPrice) || 0).toFixed(2)}</span> },
+          { key: 'currentPrice', header: t('strategyDetail.current'), render: (r: Position) => <span className="text-foreground">${(Number(r.currentPrice) || 0).toFixed(2)}</span> },
+          { key: 'pnl', header: t('columns.pnl'), render: (r: Position) => <PnlBadge value={r.pnl} percent={r.pnlPercent} /> },
+          { key: 'leverage', header: t('columns.leverage'), render: (r: Position) => <span className="text-foreground">{r.leverage}x</span> },
         ]}
         data={positions}
-        emptyMessage="No open positions"
+        emptyMessage={t('positions.noPositions')}
         emptyIcon="📊"
       />
 
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-border"><h2 className="font-semibold text-foreground">Decision Log</h2></div>
+        <div className="p-4 border-b border-border"><h2 className="font-semibold text-foreground">{t('decisions.title')}</h2></div>
         {decisions.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">No decisions recorded</div>
+          <div className="p-8 text-center text-muted-foreground">{t('strategyDetail.noDecisions')}</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead><tr className="border-b border-border bg-secondary/30">
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Time</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Action</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Symbol</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Confidence</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Executed</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">P&L</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.time')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.action')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.symbol')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.confidence')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('decisions.executed')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.pnl')}</th>
               </tr></thead>
               <tbody className="divide-y divide-border">
                 {decisions.map((d) => (
@@ -137,7 +139,7 @@ export default function StrategyDetailPage() {
                     <td className="px-4 py-3 text-sm font-medium text-foreground">{d.action}</td>
                     <td className="px-4 py-3 text-sm text-foreground">{d.symbol}</td>
                     <td className="px-4 py-3 w-32"><ConfidenceBar value={d.confidence} /></td>
-                    <td className="px-4 py-3"><span className={`text-xs font-medium ${d.executed ? 'text-green-500' : 'text-gray-500'}`}>{d.executed ? 'Yes' : 'No'}</span></td>
+                    <td className="px-4 py-3"><span className={`text-xs font-medium ${d.executed ? 'text-green-500' : 'text-gray-500'}`}>{d.executed ? t('decisions.yes') : t('decisions.no')}</span></td>
                     <td className="px-4 py-3">{d.pnl != null ? <PnlBadge value={d.pnl} showPercent={false} /> : <span className="text-muted-foreground">-</span>}</td>
                   </tr>
                 ))}

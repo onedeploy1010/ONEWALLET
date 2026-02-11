@@ -1,3 +1,8 @@
+/**
+ * @deprecated This route uses a custom OTP verification system. New clients
+ * should use Supabase Auth verifyOtp() on the client side and POST to
+ * /api/auth/supabase-session after verification.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseEngine } from '@/lib/supabase';
 import { generateAccessToken, generateRefreshToken } from '@/lib/auth';

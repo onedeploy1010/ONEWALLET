@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 interface GradientCardProps {
   children: ReactNode;
   className?: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'dark' | 'purple';
+  variant?: 'primary' | 'secondary' | 'success' | 'dark' | 'purple' | 'cyan';
   showDecorations?: boolean;
 }
 
@@ -16,17 +16,18 @@ export function GradientCard({
   showDecorations = true,
 }: GradientCardProps) {
   const gradientClasses = {
-    primary: 'bg-gradient-to-br from-[#188775] via-[#0D6B5C] to-[#0A5A4D]',
-    secondary: 'bg-gradient-to-br from-[#1E9B88] to-[#1AA384]',
+    primary: 'bg-gradient-to-br from-[#1E40AF] via-[#2563EB] to-[#0284C7]',
+    secondary: 'bg-gradient-to-br from-[#2563EB] to-[#3B82F6]',
     success: 'bg-gradient-to-br from-[#10B981] to-[#059669]',
-    dark: 'bg-gradient-to-br from-[#3A4144] to-[#2D3436]',
-    purple: 'bg-gradient-to-br from-[#8B5CF6] to-[#7C3AED]',
+    dark: 'bg-gradient-to-br from-[#1E293B] to-[#0F172A]',
+    purple: 'bg-gradient-to-br from-[#7C3AED] to-[#6D28D9]',
+    cyan: 'bg-gradient-to-br from-[#06B6D4] to-[#0891B2]',
   };
 
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl p-6 text-white shadow-xl ${gradientClasses[variant]} ${className}`}
-      style={{ boxShadow: '0 12px 24px rgba(13, 107, 92, 0.35)' }}
+      className={`relative overflow-hidden rounded-2xl p-6 text-white shadow-lg ${gradientClasses[variant]} ${className}`}
+      style={{ boxShadow: '0 8px 24px rgba(37, 99, 235, 0.2)' }}
     >
       {showDecorations && (
         <>

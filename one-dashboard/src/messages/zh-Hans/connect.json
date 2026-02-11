@@ -1,0 +1,9 @@
+{
+  "connect": {
+    "title": "连接",
+    "subtitle": "认证、钱包和支付集成",
+    "analytics": "分析",
+    "inAppWallets": "应用内钱包",
+    "pay": "支付"
+  }
+}

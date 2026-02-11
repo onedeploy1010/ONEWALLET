@@ -1,0 +1,123 @@
+{
+  "contracts": {
+    "deploy": {
+      "title": "部署合约",
+      "subtitle": "选择预构建的合约模板或部署您自己的合约",
+      "searchPlaceholder": "搜索合约...",
+      "readyToConfigure": "准备配置",
+      "deployTo": "部署到：",
+      "continueToDeploy": "继续部署",
+      "apiTitle": "合约 API",
+      "javascript": "JavaScript",
+      "curl": "cURL",
+      "noContracts": "未找到合约",
+      "noContractsHint": "请尝试调整搜索或筛选条件"
+    },
+    "published": {
+      "title": "已发布合约",
+      "subtitle": "该项目的所有已部署智能合约",
+      "deployNew": "部署新合约",
+      "totalContracts": "合约总数",
+      "totalTransactions": "交易总数",
+      "searchPlaceholder": "按名称或地址搜索...",
+      "filterAll": "全部",
+      "filterActive": "活跃",
+      "filterPaused": "已暂停",
+      "noContracts": "尚未部署合约",
+      "noContractsHint": "部署您的第一个智能合约以开始区块链开发",
+      "noMatching": "没有匹配的合约",
+      "noMatchingHint": "请尝试调整搜索或筛选条件",
+      "deployContract": "部署合约",
+      "viewDetails": "查看详情",
+      "txs": "{count} 笔交易",
+      "explorer": "浏览器",
+      "unknown": "未知"
+    },
+    "categories": {
+      "allTemplates": "全部模板",
+      "tokens": "代币",
+      "nfts": "NFT",
+      "marketplace": "市场",
+      "governance": "治理",
+      "defi": "DeFi",
+      "custom": "自定义"
+    },
+    "chains": {
+      "ethereum": "以太坊",
+      "polygon": "Polygon",
+      "base": "Base",
+      "arbitrum": "Arbitrum",
+      "optimism": "Optimism",
+      "bnbChain": "BNB Chain",
+      "avalanche": "Avalanche"
+    },
+    "templates": {
+      "erc20": {
+        "name": "代币 (ERC-20)",
+        "description": "创建具有可自定义供应量和功能的同质化代币"
+      },
+      "erc721": {
+        "name": "NFT 合集 (ERC-721)",
+        "description": "部署带元数据的唯一 NFT 合集"
+      },
+      "erc1155": {
+        "name": "版本 (ERC-1155)",
+        "description": "适用于游戏和收藏品的多代币标准"
+      },
+      "nftDrop": {
+        "name": "NFT 空投",
+        "description": "可认领的 NFT 空投，支持白名单和阶段"
+      },
+      "marketplace": {
+        "name": "市场",
+        "description": "创建支持拍卖和直接上架的 NFT 市场"
+      },
+      "governor": {
+        "name": "投票 (Governor)",
+        "description": "DAO 的链上投票和治理"
+      },
+      "split": {
+        "name": "收益分配",
+        "description": "多地址之间的收益共享"
+      },
+      "staking": {
+        "name": "质押",
+        "description": "允许用户质押代币并获得奖励"
+      },
+      "airdrop": {
+        "name": "空投",
+        "description": "向多个接收者分发代币或 NFT"
+      }
+    },
+    "features": {
+      "mintable": "可铸造",
+      "burnable": "可销毁",
+      "pausable": "可暂停",
+      "lazyMint": "延迟铸造",
+      "royalties": "版税",
+      "reveal": "揭示",
+      "batchTransfers": "批量转账",
+      "mixedFungibility": "混合可替代性",
+      "gasEfficient": "Gas 优化",
+      "allowlist": "白名单",
+      "claimPhases": "认领阶段",
+      "delayedReveal": "延迟揭示",
+      "auctions": "拍卖",
+      "directSales": "直售",
+      "offers": "报价",
+      "proposals": "提案",
+      "voting": "投票",
+      "execution": "执行",
+      "autoSplit": "自动分配",
+      "withdraw": "提取",
+      "updateRecipients": "更新接收者",
+      "stakeUnstake": "质押/赎回",
+      "rewards": "奖励",
+      "lockPeriod": "锁定期",
+      "batchSend": "批量发送",
+      "merkleProof": "默克尔证明",
+      "claim": "认领"
+    },
+    "popular": "热门"
+  }
+}

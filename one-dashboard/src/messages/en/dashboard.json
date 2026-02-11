@@ -1,0 +1,89 @@
+{
+  "dashboard": {
+    "teamOverview": "Team Overview",
+    "teamSubtitle": "Manage your projects and view ecosystem analytics",
+    "welcome": {
+      "title": "Welcome to ONE Dashboard",
+      "description": "Build, deploy, and manage your Web3 applications with our powerful ecosystem tools.",
+      "newProject": "New Project"
+    },
+    "stats": {
+      "totalProjects": "Total Projects",
+      "totalProjectsChange": "+2 this month",
+      "totalUsers": "Total Users",
+      "totalUsersChange": "+12 this week",
+      "transactions": "Transactions",
+      "transactionsChange": "+156 today"
+    },
+    "demoProject": {
+      "title": "Demo Project",
+      "subtitle": "Explore {name} with real sample data",
+      "fallbackName": "ONE Wallet App",
+      "openProject": "Open Project"
+    },
+    "quickStart": {
+      "title": "Quick Start",
+      "subtitle": "Jump into building with these resources",
+      "createProject": "Create Project",
+      "createProjectDesc": "Start a new project with API keys and configuration",
+      "viewProjects": "View Projects",
+      "viewProjectsDesc": "Manage your existing team projects and API keys",
+      "documentation": "Documentation",
+      "documentationDesc": "Learn how to integrate ONE APIs into your app"
+    },
+    "modules": {
+      "projectOverview": "Project Overview",
+      "projectOverviewDesc": "Project info, API credentials, quick start guide.",
+      "projectTag": "Project",
+      "apiKeysTag": "API Keys",
+      "configTag": "Config",
+      "aiTrading": "AI Trading",
+      "aiTradingDesc": "AI-powered crypto strategies, order management, and performance analytics.",
+      "cryptoTag": "Crypto",
+      "strategiesTag": "Strategies",
+      "aiTag": "AI",
+      "forexTrading": "Forex Trading",
+      "forexTradingDesc": "Forex investment pools, automated trading, and real-time P&L tracking.",
+      "forexTag": "Forex",
+      "investmentsTag": "Investments",
+      "poolsTag": "Pools"
+    },
+    "projectsOverview": {
+      "title": "Projects",
+      "noProjects": "No projects yet",
+      "createProject": "Create Project",
+      "calls": "{count} calls",
+      "users": "{count} users",
+      "idPrefix": "ID: "
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity"
+    },
+    "ecosystem": {
+      "title": "Ecosystem",
+      "subtitle": "Manage connected applications and data synchronization",
+      "addApplication": "Add Application",
+      "totalApps": "Total Apps",
+      "active": "Active",
+      "totalUsers": "Total Users",
+      "pendingSyncs": "Pending Syncs",
+      "noApps": "No applications connected yet",
+      "addFirstApp": "Add First Application",
+      "users": "Users",
+      "lastSync": "Last Sync",
+      "never": "Never",
+      "pendingStatus": "Pending",
+      "modalTitle": "Add Application",
+      "nameLabel": "Name",
+      "namePlaceholder": "My Application",
+      "typeLabel": "Type",
+      "typeWallet": "Wallet",
+      "typeEngine": "Engine",
+      "typeDashboard": "Dashboard",
+      "typeExternal": "External",
+      "apiEndpointLabel": "API Endpoint (optional)",
+      "apiEndpointPlaceholder": "https://api.example.com"
+    }
+  }
+}

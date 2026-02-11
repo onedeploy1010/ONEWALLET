@@ -36,14 +36,19 @@ export async function GET(
 
     const { data: snapshots, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
+      throw error;
+    }
 
     const mapped = (snapshots || []).map((s) => ({
       id: s.id,
       strategyId: s.strategy_id,
       nav: s.nav,
-      tvl: s.tvl,
-      pnl: s.pnl,
+      tvl: s.total_capital ?? s.tvl ?? 0,
+      pnl: s.daily_pnl ?? s.pnl ?? 0,
       drawdown: s.drawdown,
       snapshotDate: s.snapshot_date,
     }));

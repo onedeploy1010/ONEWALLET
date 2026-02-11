@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { StatusBadge } from './StatusBadge';
 
 interface PoolCardProps {
@@ -15,6 +16,7 @@ interface PoolCardProps {
 }
 
 export function PoolCard({ pool }: PoolCardProps) {
+  const t = useTranslations('forex');
   const allocationEntries = Object.entries(pool.allocation || {});
 
   return (
@@ -30,27 +32,27 @@ export function PoolCard({ pool }: PoolCardProps) {
       <div className="space-y-3">
         <div>
           <div className="flex items-center justify-between text-sm mb-1">
-            <span className="text-muted-foreground">Pool Size</span>
-            <span className="font-medium text-foreground">${pool.poolSize.toLocaleString()}</span>
+            <span className="text-muted-foreground">{t('poolCard.poolSize')}</span>
+            <span className="font-medium text-foreground">${(Number(pool.poolSize) || 0).toLocaleString()}</span>
           </div>
         </div>
 
         <div>
           <div className="flex items-center justify-between text-sm mb-1">
-            <span className="text-muted-foreground">Utilization</span>
-            <span className="font-medium text-foreground">{pool.utilization.toFixed(1)}%</span>
+            <span className="text-muted-foreground">{t('poolCard.utilization')}</span>
+            <span className="font-medium text-foreground">{(Number(pool.utilization) || 0).toFixed(1)}%</span>
           </div>
           <div className="h-2 bg-secondary rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED]"
-              style={{ width: `${Math.min(100, pool.utilization)}%` }}
+              style={{ width: `${Math.min(100, Number(pool.utilization) || 0)}%` }}
             />
           </div>
         </div>
 
         {allocationEntries.length > 0 && (
           <div className="pt-3 border-t border-border/50">
-            <p className="text-xs text-muted-foreground mb-2">Allocation</p>
+            <p className="text-xs text-muted-foreground mb-2">{t('poolCard.allocation')}</p>
             <div className="space-y-1">
               {allocationEntries.map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between text-xs">

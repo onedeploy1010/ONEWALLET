@@ -18,10 +18,13 @@ export async function GET(
 
     const { slug } = await params;
 
+    // Support both UUID (projectId) and slug lookup
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
     const { data: project, error } = await supabaseEngine
       .from('projects')
       .select('*')
-      .eq('slug', slug)
+      .eq(isUUID ? 'id' : 'slug', slug)
       .single();
 
     if (error || !project) {
@@ -31,25 +34,18 @@ export async function GET(
       );
     }
 
-    // Get user count
+    // Get user count (project_users table)
     const { count: usersCount } = await supabaseEngine
-      .from('user_projects')
+      .from('project_users')
       .select('*', { count: 'exact', head: true })
       .eq('project_id', project.id);
-
-    // Get API usage today
-    const today = new Date().toISOString().split('T')[0];
-    const { count: apiCallsToday } = await supabaseEngine
-      .from('api_usage')
-      .select('*', { count: 'exact', head: true })
-      .eq('project_id', project.id)
-      .gte('created_at', today);
 
     // Get API keys
     const { data: apiKeys } = await supabaseEngine
       .from('project_api_keys')
-      .select('id, name, prefix, created_at, last_used_at')
+      .select('id, name, key_prefix, key_type, created_at, last_used_at, total_requests')
       .eq('project_id', project.id)
+      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     return NextResponse.json({
@@ -58,9 +54,17 @@ export async function GET(
         project: {
           ...project,
           users_count: usersCount || 0,
-          api_calls_today: apiCallsToday || 0,
+          api_calls_today: 0,
         },
-        apiKeys: apiKeys || [],
+        apiKeys: (apiKeys || []).map((k) => ({
+          id: k.id,
+          name: k.name,
+          type: k.key_type === 'secret' ? 'secret' : 'publishable',
+          prefix: k.key_prefix,
+          last_used_at: k.last_used_at,
+          created_at: k.created_at,
+          requests_count: k.total_requests || 0,
+        })),
       },
     });
   } catch (error) {
@@ -87,6 +91,7 @@ export async function PATCH(
     }
 
     const { slug } = await params;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
     const body = await req.json();
     const { name, description, settings, status } = body;
 
@@ -99,7 +104,7 @@ export async function PATCH(
     const { data: project, error } = await supabaseEngine
       .from('projects')
       .update(updateData)
-      .eq('slug', slug)
+      .eq(isUUID ? 'id' : 'slug', slug)
       .select()
       .single();
 
@@ -135,11 +140,12 @@ export async function DELETE(
     }
 
     const { slug } = await params;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
     const { error } = await supabaseEngine
       .from('projects')
       .delete()
-      .eq('slug', slug);
+      .eq(isUUID ? 'id' : 'slug', slug);
 
     if (error) {
       throw error;

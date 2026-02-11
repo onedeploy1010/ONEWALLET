@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Activity {
   id: string;
@@ -20,6 +21,8 @@ const activityIcons: Record<Activity['type'], string> = {
 };
 
 export function RecentActivity() {
+  const t = useTranslations('dashboard');
+  const tc = useTranslations('common');
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,17 +53,17 @@ export function RecentActivity() {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 1) return tc('time.justNow');
+    if (minutes < 60) return tc('time.minutesAgo', { count: minutes });
+    if (hours < 24) return tc('time.hoursAgo', { count: hours });
+    if (days < 7) return tc('time.daysAgo', { count: days });
     return date.toLocaleDateString();
   };
 
   if (loading) {
     return (
       <div className="bg-card border rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('recentActivity.title')}</h2>
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse flex items-start gap-3">
@@ -79,13 +82,13 @@ export function RecentActivity() {
   return (
     <div className="bg-card border rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Recent Activity</h2>
-        <button className="text-sm text-primary hover:underline">View All</button>
+        <h2 className="text-lg font-semibold">{t('recentActivity.title')}</h2>
+        <button className="text-sm text-primary hover:underline">{tc('actions.viewAll')}</button>
       </div>
 
       {activities.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          <p>No recent activity</p>
+          <p>{t('recentActivity.noActivity')}</p>
         </div>
       ) : (
         <div className="space-y-4">

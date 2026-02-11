@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PoolCard } from '@/components/ai-forex/PoolCard';
+import { useTranslations } from 'next-intl';
 
 interface Pool {
   id: string; name: string; type: string; poolSize: number; utilization: number;
@@ -9,6 +10,7 @@ interface Pool {
 }
 
 export default function ForexPoolsPage() {
+  const t = useTranslations('forex');
   const [pools, setPools] = useState<Pool[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,8 +25,8 @@ export default function ForexPoolsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Forex Pools</h1>
-        <p className="text-muted-foreground">Monitor forex liquidity pools and utilization</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('pools.title')}</h1>
+        <p className="text-muted-foreground">{t('pools.subtitle')}</p>
       </div>
 
       {loading ? (
@@ -45,8 +47,8 @@ export default function ForexPoolsPage() {
           <div className="w-16 h-16 rounded-2xl bg-[#8B5CF6]/10 flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">🏊</span>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">No pools found</h3>
-          <p className="text-muted-foreground">Forex pools will appear here when created</p>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{t('pools.noPools')}</h3>
+          <p className="text-muted-foreground">{t('pools.noPoolsHint')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

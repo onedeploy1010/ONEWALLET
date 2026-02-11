@@ -16,34 +16,17 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get('limit') || '20', 10);
 
-    // Fetch from all four sources in parallel
-    const [
-      { data: aiOrders },
-      { data: aiDecisions },
-      { data: forexTrades },
-      { data: forexInvestments },
-    ] = await Promise.all([
-      supabaseEngine
-        .from('ai_orders')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(limit),
-      supabaseEngine
-        .from('ai_decision_log')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(limit),
-      supabaseEngine
-        .from('forex_trades')
-        .select('*')
-        .order('opened_at', { ascending: false })
-        .limit(limit),
-      supabaseEngine
-        .from('forex_investments')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(limit),
+    // Fetch from all four sources in parallel (gracefully handle missing tables)
+    const [ordersRes, decisionsRes, tradesRes, investmentsRes] = await Promise.all([
+      supabaseEngine.from('ai_orders').select('*').order('created_at', { ascending: false }).limit(limit),
+      supabaseEngine.from('ai_decision_log').select('*').order('created_at', { ascending: false }).limit(limit),
+      supabaseEngine.from('forex_trades').select('*').order('opened_at', { ascending: false }).limit(limit),
+      supabaseEngine.from('forex_investments').select('*').order('created_at', { ascending: false }).limit(limit),
     ]);
+    const aiOrders = ordersRes.error?.code === '42P01' ? [] : ordersRes.data;
+    const aiDecisions = decisionsRes.error?.code === '42P01' ? [] : decisionsRes.data;
+    const forexTrades = tradesRes.error?.code === '42P01' ? [] : tradesRes.data;
+    const forexInvestments = investmentsRes.error?.code === '42P01' ? [] : investmentsRes.data;
 
     // Map each source into the unified feed format
     const aiOrderItems = (aiOrders || []).map((row) => ({

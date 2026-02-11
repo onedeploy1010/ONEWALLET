@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         .select('*', { count: 'exact', head: true }),
     ]);
 
-    if (investmentsError) {
+    if (investmentsError && investmentsError.code !== '42P01') {
       console.error('Forex investments query error:', investmentsError);
       return NextResponse.json(
         { success: false, error: { code: 'E5001', message: 'Failed to query forex investments' } },
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    if (tradesError) {
+    if (tradesError && tradesError.code !== '42P01') {
       console.error('Forex trades count error:', tradesError);
       return NextResponse.json(
         { success: false, error: { code: 'E5002', message: 'Failed to count forex trades' } },

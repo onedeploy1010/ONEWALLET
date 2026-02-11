@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { CodeBlock } from '@/components/ui/CodeBlock';
+import { useTranslations } from 'next-intl';
 
 interface ContractTemplate {
   id: string;
@@ -78,7 +80,7 @@ const templates: ContractTemplate[] = [
     description: 'Revenue sharing between multiple addresses',
     category: 'defi',
     icon: '💰',
-    gradient: 'from-[#188775]/20 to-[#14a085]/10',
+    gradient: 'from-[#2563EB]/20 to-[#3B82F6]/10',
     features: ['Auto Split', 'Withdraw', 'Update Recipients'],
   },
   {
@@ -123,6 +125,7 @@ const chains = [
 export default function DeployContractPage() {
   const params = useParams();
   const router = useRouter();
+  const t = useTranslations('contracts');
   const teamSlug = params.teamSlug as string;
   const projectId = params.projectId as string;
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -148,9 +151,9 @@ export default function DeployContractPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Deploy Contract</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('deploy.title')}</h1>
         <p className="text-muted-foreground">
-          Choose a pre-built contract template or deploy your own
+          {t('deploy.subtitle')}
         </p>
       </div>
 
@@ -162,10 +165,10 @@ export default function DeployContractPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search contracts..."
+            placeholder={t('deploy.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+            className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
           />
         </div>
         <div className="flex gap-2 p-1 bg-secondary/50 rounded-xl overflow-x-auto">
@@ -175,7 +178,7 @@ export default function DeployContractPage() {
               onClick={() => setCategory(cat.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 category === cat.id
-                  ? 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
@@ -189,7 +192,7 @@ export default function DeployContractPage() {
       {/* Popular Badge */}
       {category === 'all' && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="px-2 py-1 bg-[#188775]/10 text-[#188775] rounded-md text-xs font-medium">Popular</span>
+          <span className="px-2 py-1 bg-[#2563EB]/10 text-[#2563EB] rounded-md text-xs font-medium">{t('popular')}</span>
           <span>contracts are marked with a badge</span>
         </div>
       )}
@@ -202,13 +205,13 @@ export default function DeployContractPage() {
             onClick={() => setSelectedTemplate(template.id)}
             className={`relative text-left p-6 border rounded-2xl transition-all group ${
               selectedTemplate === template.id
-                ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                : 'border-border hover:border-[#188775]/50 hover:shadow-lg bg-card'
+                ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                : 'border-border hover:border-[#2563EB]/50 hover:shadow-lg bg-card'
             }`}
           >
             {template.popular && (
-              <span className="absolute top-4 right-4 px-2 py-1 bg-[#188775]/10 text-[#188775] rounded-md text-xs font-medium">
-                Popular
+              <span className="absolute top-4 right-4 px-2 py-1 bg-[#2563EB]/10 text-[#2563EB] rounded-md text-xs font-medium">
+                {t('popular')}
               </span>
             )}
             <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${template.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
@@ -230,8 +233,8 @@ export default function DeployContractPage() {
       {filteredTemplates.length === 0 && (
         <div className="text-center py-12">
           <div className="text-4xl mb-4">🔍</div>
-          <h3 className="font-semibold text-foreground mb-2">No contracts found</h3>
-          <p className="text-sm text-muted-foreground">Try adjusting your search or filter</p>
+          <h3 className="font-semibold text-foreground mb-2">{t('deploy.noContracts')}</h3>
+          <p className="text-sm text-muted-foreground">{t('deploy.noContractsHint')}</p>
         </div>
       )}
 
@@ -245,17 +248,17 @@ export default function DeployContractPage() {
               </div>
               <div>
                 <p className="font-semibold text-foreground">{selectedTemplateData?.name}</p>
-                <p className="text-sm text-muted-foreground">Ready to configure</p>
+                <p className="text-sm text-muted-foreground">{t('deploy.readyToConfigure')}</p>
               </div>
             </div>
 
             {/* Chain Selector */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Deploy to:</span>
+              <span className="text-sm text-muted-foreground">{t('deploy.deployTo')}</span>
               <select
                 value={selectedChain}
                 onChange={(e) => setSelectedChain(Number(e.target.value))}
-                className="px-3 py-2 bg-secondary border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20"
+                className="px-3 py-2 bg-secondary border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
               >
                 {chains.map((chain) => (
                   <option key={chain.id} value={chain.id}>
@@ -267,9 +270,9 @@ export default function DeployContractPage() {
 
             <button
               onClick={handleDeploy}
-              className="px-8 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
+              className="px-8 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
             >
-              Continue to Deploy
+              {t('deploy.continueToDeploy')}
             </button>
           </div>
         </div>
@@ -277,6 +280,60 @@ export default function DeployContractPage() {
 
       {/* Spacer for fixed panel */}
       {selectedTemplate && <div className="h-24" />}
+
+      {/* API Integration */}
+      <div className="mt-8">
+        <CodeBlock
+          title={t('deploy.apiTitle')}
+          tabs={[
+            {
+              label: 'JavaScript',
+              language: 'javascript',
+              code: `// Server-side only — requires Secret Key
+const res = await fetch('https://api.onewallet.com/v1/contracts/deploy', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'YOUR_CLIENT_ID',
+    'X-Secret-Key': 'YOUR_SECRET_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    template: 'erc20',
+    chain: 137,
+    params: {
+      name: 'My Token',
+      symbol: 'MTK',
+      initialSupply: '1000000'
+    }
+  })
+});
+const { contractAddress } = await res.json();`,
+            },
+            {
+              label: 'cURL',
+              language: 'bash',
+              code: `# Deploy contract (Server-side only)
+curl -X POST https://api.onewallet.com/v1/contracts/deploy \\
+  -H "X-API-Key: YOUR_CLIENT_ID" \\
+  -H "X-Secret-Key: YOUR_SECRET_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "template": "erc20",
+    "chain": 137,
+    "params": {
+      "name": "My Token",
+      "symbol": "MTK",
+      "initialSupply": "1000000"
+    }
+  }'
+
+# List deployed contracts
+curl https://api.onewallet.com/v1/contracts \\
+  -H "X-API-Key: YOUR_CLIENT_ID"`,
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }

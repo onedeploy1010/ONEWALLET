@@ -1,0 +1,56 @@
+{
+  "records": {
+    "title": "客户记录",
+    "subtitle": "AI 和外汇操作的统一活动流",
+    "allActivity": "全部活动",
+    "aiOnly": "仅 AI",
+    "forexOnly": "仅外汇",
+    "ai": {
+      "title": "AI 活动",
+      "subtitle": "完整的 AI 交易活动历史",
+      "ordersHistory": "订单历史",
+      "decisionHistory": "决策历史",
+      "noOrderHistory": "暂无订单历史",
+      "noDecisionHistory": "暂无决策历史",
+      "yes": "是",
+      "no": "否",
+      "columns": {
+        "time": "时间",
+        "user": "用户",
+        "strategy": "策略",
+        "action": "操作",
+        "symbol": "标的",
+        "confidence": "置信度",
+        "executed": "已执行",
+        "amount": "金额",
+        "shares": "份额",
+        "status": "状态",
+        "pnl": "损益",
+        "date": "日期"
+      }
+    },
+    "forex": {
+      "title": "外汇活动",
+      "subtitle": "完整的外汇投资和交易历史",
+      "investmentHistory": "投资历史",
+      "tradeHistory": "交易历史",
+      "noInvestmentHistory": "暂无投资历史",
+      "noTradeHistory": "暂无交易历史",
+      "columns": {
+        "user": "用户",
+        "amount": "金额",
+        "value": "价值",
+        "profit": "利润",
+        "pairs": "货币对",
+        "cycle": "周期",
+        "status": "状态",
+        "pair": "货币对",
+        "side": "方向",
+        "lots": "手数",
+        "pips": "点数",
+        "pnl": "损益",
+        "date": "日期"
+      }
+    }
+  }
+}

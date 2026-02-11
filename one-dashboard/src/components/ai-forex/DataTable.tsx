@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Column<T = any> {
@@ -31,6 +32,7 @@ export function DataTable<T extends Record<string, any> = Record<string, any>>({
   pageSize = 10,
   keyField = 'id',
 }: DataTableProps<T>) {
+  const tc = useTranslations('common');
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(data.length / pageSize);
   const paged = data.slice(page * pageSize, (page + 1) * pageSize);
@@ -96,7 +98,7 @@ export function DataTable<T extends Record<string, any> = Record<string, any>>({
       {totalPages > 1 && (
         <div className="px-4 py-3 border-t border-border flex items-center justify-between bg-secondary/20">
           <p className="text-sm text-muted-foreground">
-            Showing {page * pageSize + 1}-{Math.min((page + 1) * pageSize, data.length)} of {data.length}
+            {tc('table.showing', { from: page * pageSize + 1, to: Math.min((page + 1) * pageSize, data.length), total: data.length })}
           </p>
           <div className="flex gap-2">
             <button
@@ -104,14 +106,14 @@ export function DataTable<T extends Record<string, any> = Record<string, any>>({
               disabled={page === 0}
               className="px-3 py-1 text-sm rounded-lg bg-secondary/50 text-foreground disabled:opacity-50 hover:bg-secondary transition-colors"
             >
-              Previous
+              {tc('actions.previous')}
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               className="px-3 py-1 text-sm rounded-lg bg-secondary/50 text-foreground disabled:opacity-50 hover:bg-secondary transition-colors"
             >
-              Next
+              {tc('actions.next')}
             </button>
           </div>
         </div>

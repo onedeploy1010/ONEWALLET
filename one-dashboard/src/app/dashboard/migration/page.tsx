@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface MigrationJob {
   id: string;
@@ -29,6 +30,7 @@ interface ConnectionStatus {
 }
 
 export default function MigrationPage() {
+  const t = useTranslations('migration');
   const [jobs, setJobs] = useState<MigrationJob[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -86,7 +88,7 @@ export default function MigrationPage() {
         setShowNewJobModal(false);
         fetchData();
       } else {
-        alert(data.error?.message || 'Failed to start migration');
+        alert(data.error?.message || t('failedToStart'));
       }
     } catch (error) {
       console.error('Failed to start migration:', error);
@@ -122,18 +124,18 @@ export default function MigrationPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Data Migration</h1>
+          <h1 className="text-2xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Migrate data between One Wallet and One Engine using IPv4 direct connection
+            {t('subtitle')}
           </p>
         </div>
         <button
           onClick={() => setShowNewJobModal(true)}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 w-full sm:w-auto"
         >
-          New Migration
+          {t('newMigration')}
         </button>
       </div>
 
@@ -141,12 +143,12 @@ export default function MigrationPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-card border rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">One Wallet Database</h3>
+            <h3 className="font-semibold">{t('oneWalletDb')}</h3>
             <button
               onClick={() => testConnection('one_wallet')}
               className="text-sm text-primary hover:underline"
             >
-              Test Connection
+              {t('testConnection')}
             </button>
           </div>
           {connectionStatus?.one_wallet ? (
@@ -156,33 +158,33 @@ export default function MigrationPage() {
                   connectionStatus.one_wallet.connected ? 'bg-green-500' : 'bg-red-500'
                 }`} />
                 <span className="text-sm">
-                  {connectionStatus.one_wallet.connected ? 'Connected' : 'Disconnected'}
+                  {connectionStatus.one_wallet.connected ? t('connected') : t('disconnected')}
                 </span>
               </div>
               {connectionStatus.one_wallet.latency && (
                 <p className="text-sm text-muted-foreground">
-                  Latency: {connectionStatus.one_wallet.latency}ms
+                  {t('latency', { ms: connectionStatus.one_wallet.latency })}
                 </p>
               )}
               {connectionStatus.one_wallet.version && (
                 <p className="text-sm text-muted-foreground">
-                  PostgreSQL: {connectionStatus.one_wallet.version}
+                  {t('postgresql', { version: connectionStatus.one_wallet.version })}
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-muted-foreground">Not configured</p>
+            <p className="text-muted-foreground">{t('notConfigured')}</p>
           )}
         </div>
 
         <div className="bg-card border rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">One Engine Database</h3>
+            <h3 className="font-semibold">{t('oneEngineDb')}</h3>
             <button
               onClick={() => testConnection('one_engine')}
               className="text-sm text-primary hover:underline"
             >
-              Test Connection
+              {t('testConnection')}
             </button>
           </div>
           {connectionStatus?.one_engine ? (
@@ -192,22 +194,22 @@ export default function MigrationPage() {
                   connectionStatus.one_engine.connected ? 'bg-green-500' : 'bg-red-500'
                 }`} />
                 <span className="text-sm">
-                  {connectionStatus.one_engine.connected ? 'Connected' : 'Disconnected'}
+                  {connectionStatus.one_engine.connected ? t('connected') : t('disconnected')}
                 </span>
               </div>
               {connectionStatus.one_engine.latency && (
                 <p className="text-sm text-muted-foreground">
-                  Latency: {connectionStatus.one_engine.latency}ms
+                  {t('latency', { ms: connectionStatus.one_engine.latency })}
                 </p>
               )}
               {connectionStatus.one_engine.version && (
                 <p className="text-sm text-muted-foreground">
-                  PostgreSQL: {connectionStatus.one_engine.version}
+                  {t('postgresql', { version: connectionStatus.one_engine.version })}
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-muted-foreground">Not configured</p>
+            <p className="text-muted-foreground">{t('notConfigured')}</p>
           )}
         </div>
       </div>
@@ -215,7 +217,7 @@ export default function MigrationPage() {
       {/* Migration Jobs */}
       <div className="bg-card border rounded-lg">
         <div className="p-4 border-b">
-          <h3 className="font-semibold">Migration History</h3>
+          <h3 className="font-semibold">{t('history')}</h3>
         </div>
         {loading ? (
           <div className="p-8 text-center">
@@ -223,7 +225,7 @@ export default function MigrationPage() {
           </div>
         ) : jobs.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
-            No migration jobs yet
+            {t('noJobs')}
           </div>
         ) : (
           <div className="divide-y">
@@ -232,22 +234,22 @@ export default function MigrationPage() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <span className="font-medium">
-                      {job.source === 'one_wallet' ? 'One Wallet' : 'One Engine'}
+                      {job.source === 'one_wallet' ? t('oneWallet') : t('oneEngine')}
                     </span>
-                    <span className="text-muted-foreground">→</span>
+                    <span className="text-muted-foreground">{'\u2192'}</span>
                     <span className="font-medium">
-                      {job.target === 'one_wallet' ? 'One Wallet' : 'One Engine'}
+                      {job.target === 'one_wallet' ? t('oneWallet') : t('oneEngine')}
                     </span>
                   </div>
                   <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(job.status)}`}>
                     {job.status}
                   </span>
                 </div>
-                <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                  <span>Total: {job.total_records.toLocaleString()}</span>
-                  <span>Migrated: {job.migrated_records.toLocaleString()}</span>
+                <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-muted-foreground">
+                  <span>{t('total', { count: job.total_records.toLocaleString() })}</span>
+                  <span>{t('migrated', { count: job.migrated_records.toLocaleString() })}</span>
                   {job.failed_records > 0 && (
-                    <span className="text-red-500">Failed: {job.failed_records}</span>
+                    <span className="text-red-500">{t('failed', { count: job.failed_records })}</span>
                   )}
                 </div>
                 {job.status === 'running' && (
@@ -273,13 +275,13 @@ export default function MigrationPage() {
 
       {/* New Migration Modal */}
       {showNewJobModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-card border rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Start New Migration</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('startNew')}</h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Direction</label>
+                <label className="block text-sm font-medium mb-2">{t('direction')}</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setNewJob({ ...newJob, source: 'one_wallet', target: 'one_engine' })}
@@ -289,7 +291,7 @@ export default function MigrationPage() {
                         : 'hover:bg-secondary'
                     }`}
                   >
-                    Wallet → Engine
+                    {t('walletToEngine')}
                   </button>
                   <button
                     onClick={() => setNewJob({ ...newJob, source: 'one_engine', target: 'one_wallet' })}
@@ -299,21 +301,21 @@ export default function MigrationPage() {
                         : 'hover:bg-secondary'
                     }`}
                   >
-                    Engine → Wallet
+                    {t('engineToWallet')}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Data Type</label>
+                <label className="block text-sm font-medium mb-2">{t('dataType')}</label>
                 <select
                   value={newJob.type}
                   onChange={(e) => setNewJob({ ...newJob, type: e.target.value as typeof newJob.type })}
                   className="w-full px-3 py-2 border rounded-md bg-background"
                 >
-                  <option value="users">Users Only</option>
-                  <option value="transactions">Transactions Only</option>
-                  <option value="all">All Data</option>
+                  <option value="users">{t('usersOnly')}</option>
+                  <option value="transactions">{t('transactionsOnly')}</option>
+                  <option value="all">{t('allData')}</option>
                 </select>
               </div>
 
@@ -326,7 +328,7 @@ export default function MigrationPage() {
                   className="rounded"
                 />
                 <label htmlFor="dryRun" className="text-sm">
-                  Dry run (preview only, no changes)
+                  {t('dryRun')}
                 </label>
               </div>
             </div>
@@ -336,14 +338,14 @@ export default function MigrationPage() {
                 onClick={() => setShowNewJobModal(false)}
                 className="flex-1 px-4 py-2 border rounded-md hover:bg-secondary"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={startMigration}
                 disabled={migrating}
                 className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 disabled:opacity-50"
               >
-                {migrating ? 'Starting...' : 'Start Migration'}
+                {migrating ? t('starting') : t('startMigration')}
               </button>
             </div>
           </div>

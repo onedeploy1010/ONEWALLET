@@ -25,6 +25,14 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      console.error('Engine webhooks upstream error:', response.status, errText);
+      return NextResponse.json(
+        { success: false, error: { code: 'E5001', message: 'Engine service unavailable' } },
+        { status: response.status }
+      );
+    }
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
@@ -59,6 +67,14 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      console.error('Engine webhook create upstream error:', response.status, errText);
+      return NextResponse.json(
+        { success: false, error: { code: 'E5001', message: 'Failed to create webhook' } },
+        { status: response.status }
+      );
+    }
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {

@@ -81,7 +81,7 @@ export default function ConnectAnalyticsPage() {
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 timeRange === range
-                  ? 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
@@ -106,11 +106,11 @@ export default function ConnectAnalyticsPage() {
         <>
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#188775]/10 to-[#14a085]/5 border border-[#188775]/20 rounded-2xl p-6">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#188775]/20 to-transparent rounded-full -mr-10 -mt-10" />
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-6">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-10 -mt-10" />
               <p className="text-sm text-muted-foreground mb-2">Total Connections</p>
               <p className="text-3xl font-bold text-foreground">{(stats?.totalConnections || 0).toLocaleString()}</p>
-              <p className="text-xs text-[#188775] mt-2 flex items-center gap-1">
+              <p className="text-xs text-[#2563EB] mt-2 flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
@@ -213,7 +213,7 @@ export default function ConnectAnalyticsPage() {
                       return (
                         <div
                           key={i}
-                          className="flex-1 bg-gradient-to-t from-[#188775] to-[#14a085] rounded-t-sm hover:from-[#14a085] hover:to-[#188775] transition-all relative group cursor-pointer"
+                          className="flex-1 bg-gradient-to-t from-[#2563EB] to-[#3B82F6] rounded-t-sm hover:from-[#3B82F6] hover:to-[#2563EB] transition-all relative group cursor-pointer"
                           style={{ height: `${Math.max(height, 4)}%` }}
                         >
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-foreground text-background text-xs rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg transition-opacity z-10">
@@ -234,16 +234,16 @@ export default function ConnectAnalyticsPage() {
           </div>
 
           {/* Quick Tips */}
-          <div className="bg-gradient-to-r from-[#188775]/10 via-[#14a085]/5 to-transparent border border-[#188775]/20 rounded-2xl p-6">
+          <div className="bg-gradient-to-r from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent border border-[#2563EB]/20 rounded-2xl p-6">
             <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-[#188775]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-[#2563EB]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Tips to Improve Connection Rate
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#188775]/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[#2563EB]/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-sm">1</span>
                 </div>
                 <div>
@@ -252,7 +252,7 @@ export default function ConnectAnalyticsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#188775]/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[#2563EB]/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-sm">2</span>
                 </div>
                 <div>
@@ -261,7 +261,7 @@ export default function ConnectAnalyticsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#188775]/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-[#2563EB]/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-sm">3</span>
                 </div>
                 <div>

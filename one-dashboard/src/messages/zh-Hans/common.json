@@ -1,0 +1,172 @@
+{
+  "common": {
+    "nav": {
+      "overview": "概览",
+      "projects": "项目",
+      "aiAgents": "AI 智能体",
+      "apiDocs": "API 文档",
+      "docs": "文档",
+      "configuration": "配置",
+      "aiTrading": "AI 交易",
+      "wallets": "钱包",
+      "contracts": "合约",
+      "payments": "支付",
+      "records": "记录",
+      "usage": "用量",
+      "forex": "外汇",
+      "navigation": "导航",
+      "allProjects": "全部项目",
+      "apiKeys": "API 密钥",
+      "settings": "设置",
+      "strategies": "策略",
+      "orders": "订单",
+      "positions": "持仓",
+      "decisionLog": "决策日志",
+      "inAppWallets": "应用内钱包",
+      "backendWallets": "后端钱包",
+      "deploy": "部署",
+      "published": "已发布",
+      "pay": "支付",
+      "allRecords": "全部记录",
+      "aiActivity": "AI 活动",
+      "forexActivity": "外汇活动",
+      "usageBilling": "用量与账单",
+      "investments": "投资",
+      "trades": "交易",
+      "pools": "资金池"
+    },
+    "brand": {
+      "dashboardTitle": "ONE 控制台",
+      "ecosystemManagement": "生态系统管理",
+      "one": "ONE"
+    },
+    "actions": {
+      "copy": "复制",
+      "copied": "已复制！",
+      "cancel": "取消",
+      "done": "完成",
+      "viewAll": "查看全部",
+      "search": "搜索",
+      "save": "保存",
+      "delete": "删除",
+      "create": "创建",
+      "edit": "编辑",
+      "close": "关闭",
+      "confirm": "确认",
+      "back": "返回",
+      "next": "下一页",
+      "previous": "上一页",
+      "logout": "退出登录",
+      "rotate": "轮换",
+      "revoke": "撤销",
+      "syncNow": "立即同步",
+      "refresh": "刷新"
+    },
+    "status": {
+      "active": "活跃",
+      "paused": "已暂停",
+      "stopped": "已停止",
+      "pending": "待处理",
+      "cancelled": "已取消",
+      "unknown": "未知",
+      "loading": "加载中...",
+      "saving": "保存中...",
+      "creating": "创建中...",
+      "deleting": "删除中...",
+      "rotating": "轮换中..."
+    },
+    "theme": {
+      "lightMode": "浅色模式",
+      "darkMode": "深色模式",
+      "toggleTheme": "切换主题"
+    },
+    "table": {
+      "showing": "显示 {from}-{to}，共 {total} 条",
+      "noDataFound": "暂无数据"
+    },
+    "time": {
+      "justNow": "刚刚",
+      "minutesAgo": "{count}分钟前",
+      "hoursAgo": "{count}小时前",
+      "daysAgo": "{count}天前"
+    },
+    "risk": {
+      "low": "低",
+      "medium": "中",
+      "high": "高"
+    },
+    "period": {
+      "daily": "每日",
+      "weekly": "每周",
+      "monthly": "每月"
+    },
+    "noActivityRecords": "暂无活动记录",
+    "vsLastPeriod": "较上期",
+    "header": {
+      "searchPlaceholder": "搜索项目、用户...",
+      "notifications": "通知",
+      "help": "帮助"
+    },
+    "language": {
+      "switchLanguage": "语言",
+      "en": "English",
+      "zhHans": "中文"
+    },
+    "agents": {
+      "title": "AI 智能体",
+      "subtitle": "智能交易代理，为您的加密货币和外汇投资组合提供动力",
+      "totalStrategies": "策略总数",
+      "activeStrategies": "活跃策略",
+      "totalAum": "资产管理规模",
+      "totalProfit": "总收益",
+      "quantAgent": {
+        "title": "量化交易智能体",
+        "description": "AI驱动的加密货币量化策略。自动信号生成、风险管理和投资组合优化。",
+        "feature1": "多因子阿尔法生成",
+        "feature2": "动态仓位管理",
+        "feature3": "实时风险监控",
+        "feature4": "自动再平衡"
+      },
+      "forexAgent": {
+        "title": "外汇策略智能体",
+        "description": "机器学习驱动的智能外汇交易自动化。跨货币对相关性分析、周期检测和收益优化。",
+        "feature1": "货币对分析",
+        "feature2": "投资周期管理",
+        "feature3": "资金池流动性优化",
+        "feature4": "盈亏追踪"
+      },
+      "operational": "运行中",
+      "quickAccess": "快速访问",
+      "createToStart": "创建项目以开始",
+      "createToStartDesc": "AI 智能体在每个项目中可用。请先创建项目以访问交易策略。",
+      "createProject": "创建项目"
+    },
+    "apiDocs": {
+      "title": "API 文档",
+      "subtitle": "探索 ONE 生态系统 API 端点，并与您的应用程序集成",
+      "fullDocs": "完整文档",
+      "quickStart": "快速开始",
+      "step1Title": "获取 API 密钥",
+      "step1Desc": "在项目配置页面创建密钥",
+      "step2Title": "设置认证头",
+      "step2Desc": "包含",
+      "step3Title": "发送请求",
+      "step3Desc": "使用您的项目 ID 向 API 基础 URL 发送请求",
+      "needMoreDetails": "需要更多详情？",
+      "docsCtaDesc": "访问我们的综合文档，获取详细指南、SDK 参考和代码示例。",
+      "viewFullDocs": "查看完整文档",
+      "groups": {
+        "authentication": "认证",
+        "authDesc": "用户认证、会话管理和 API 密钥验证",
+        "wallets": "钱包",
+        "walletsDesc": "钱包创建、余额查询和交易管理",
+        "aiTrading": "AI 交易",
+        "aiTradingDesc": "AI 策略管理、订单执行和性能分析",
+        "forex": "外汇",
+        "forexDesc": "外汇投资管理、交易执行和资金池操作",
+        "payments": "支付",
+        "paymentsDesc": "支付处理、开票和交易历史"
+      }
+    }
+  }
+}

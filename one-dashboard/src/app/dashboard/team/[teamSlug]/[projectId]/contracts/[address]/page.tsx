@@ -210,7 +210,7 @@ export default function ContractDetailsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-12 h-12 border-3 border-[#188775] border-t-transparent rounded-full animate-spin" />
+        <div className="w-12 h-12 border-3 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -406,7 +406,7 @@ export default function ContractDetailsPage() {
                       href={`${chain.explorer}/tx/${contract.transaction_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#188775] hover:underline flex-shrink-0"
+                      className="text-[#2563EB] hover:underline flex-shrink-0"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -448,10 +448,10 @@ export default function ContractDetailsPage() {
                     <button
                       onClick={() => handleReadFunction(func.name)}
                       disabled={executingFunction === func.name}
-                      className="px-3 py-1.5 bg-[#188775]/10 text-[#188775] rounded-lg text-sm font-medium hover:bg-[#188775]/20 disabled:opacity-50 flex items-center gap-2"
+                      className="px-3 py-1.5 bg-[#2563EB]/10 text-[#2563EB] rounded-lg text-sm font-medium hover:bg-[#2563EB]/20 disabled:opacity-50 flex items-center gap-2"
                     >
                       {executingFunction === func.name && (
-                        <div className="w-3 h-3 border-2 border-[#188775]/30 border-t-[#188775] rounded-full animate-spin" />
+                        <div className="w-3 h-3 border-2 border-[#2563EB]/30 border-t-[#2563EB] rounded-full animate-spin" />
                       )}
                       Query
                     </button>
@@ -468,7 +468,7 @@ export default function ContractDetailsPage() {
                             value={functionInputs[func.name]?.[input.name] || ''}
                             onChange={(e) => updateFunctionInput(func.name, input.name, e.target.value)}
                             placeholder={input.type}
-                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20"
+                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
                           />
                         </div>
                       ))}
@@ -531,7 +531,7 @@ export default function ContractDetailsPage() {
                             value={functionInputs[func.name]?.[input.name] || ''}
                             onChange={(e) => updateFunctionInput(func.name, input.name, e.target.value)}
                             placeholder={input.type}
-                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20"
+                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20"
                           />
                         </div>
                       ))}
@@ -556,7 +556,7 @@ export default function ContractDetailsPage() {
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           {events.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">📢</span>
               </div>
               <h3 className="font-semibold text-foreground mb-2">No events yet</h3>
@@ -578,7 +578,7 @@ export default function ContractDetailsPage() {
                         href={`${chain.explorer}/tx/${event.transaction_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#188775] hover:underline text-sm flex items-center gap-1"
+                        className="text-[#2563EB] hover:underline text-sm flex items-center gap-1"
                       >
                         View Tx
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

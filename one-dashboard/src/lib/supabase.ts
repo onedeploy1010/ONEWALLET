@@ -34,10 +34,19 @@ export const supabaseWallet = env.ONE_WALLET_SUPABASE_URL && env.ONE_WALLET_SUPA
     )
   : null;
 
-// Browser client for auth
+// Browser client for auth (legacy)
 export const createBrowserClient = () => {
   return createClient(
     env.SUPABASE_URL,
     env.SUPABASE_ANON_KEY
   );
 };
+
+// Browser-side Supabase Auth client (for OTP sign-in/verify)
+export const supabaseAuth = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+});

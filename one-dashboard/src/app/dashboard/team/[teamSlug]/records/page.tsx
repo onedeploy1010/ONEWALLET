@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PeriodSelector, ActivityFeed } from '@/components/ai-forex';
+import { useTranslations } from 'next-intl';
 
 interface ActivityItem {
   id: string;
@@ -12,6 +13,7 @@ interface ActivityItem {
 }
 
 export default function ClientRecordsPage() {
+  const t = useTranslations('records');
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('daily');
@@ -38,16 +40,16 @@ export default function ClientRecordsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Client Records</h1>
-        <p className="text-muted-foreground">Unified activity feed for AI and Forex operations</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
         <PeriodSelector value={period} onChange={setPeriod} />
         <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="all">All Activity</option>
-          <option value="ai">AI Only</option>
-          <option value="forex">Forex Only</option>
+          <option value="all">{t('allActivity')}</option>
+          <option value="ai">{t('aiOnly')}</option>
+          <option value="forex">{t('forexOnly')}</option>
         </select>
       </div>
 

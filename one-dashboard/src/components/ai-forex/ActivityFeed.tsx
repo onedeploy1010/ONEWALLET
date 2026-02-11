@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 interface ActivityItem {
   id: string;
   type: 'ai_order' | 'ai_decision' | 'forex_trade' | 'forex_investment';
@@ -14,27 +16,28 @@ interface ActivityFeedProps {
 }
 
 const typeConfig: Record<string, { icon: string; color: string; bg: string }> = {
-  ai_order: { icon: '🤖', color: 'text-[#188775]', bg: 'bg-[#188775]/10' },
-  ai_decision: { icon: '🧠', color: 'text-[#188775]', bg: 'bg-[#188775]/10' },
+  ai_order: { icon: '🤖', color: 'text-[#2563EB]', bg: 'bg-[#2563EB]/10' },
+  ai_decision: { icon: '🧠', color: 'text-[#2563EB]', bg: 'bg-[#2563EB]/10' },
   forex_trade: { icon: '💱', color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10' },
   forex_investment: { icon: '📈', color: 'text-[#8B5CF6]', bg: 'bg-[#8B5CF6]/10' },
 };
 
-function formatTimestamp(ts: string) {
-  const d = new Date(ts);
-  const now = new Date();
-  const diff = now.getTime() - d.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return d.toLocaleDateString();
-}
-
 export function ActivityFeed({ items, loading = false }: ActivityFeedProps) {
+  const tc = useTranslations('common');
+
+  function formatTimestamp(ts: string) {
+    const d = new Date(ts);
+    const now = new Date();
+    const diff = now.getTime() - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return tc('time.justNow');
+    if (mins < 60) return tc('time.minutesAgo', { count: mins });
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return tc('time.hoursAgo', { count: hours });
+    const days = Math.floor(hours / 24);
+    if (days < 7) return tc('time.daysAgo', { count: days });
+    return d.toLocaleDateString();
+  }
   if (loading) {
     return (
       <div className="space-y-3">
@@ -57,7 +60,7 @@ export function ActivityFeed({ items, loading = false }: ActivityFeedProps) {
         <div className="w-16 h-16 rounded-2xl bg-secondary/50 flex items-center justify-center mx-auto mb-4">
           <span className="text-3xl">📋</span>
         </div>
-        <p className="text-muted-foreground">No activity records found</p>
+        <p className="text-muted-foreground">{tc('noActivityRecords')}</p>
       </div>
     );
   }

@@ -1,0 +1,89 @@
+{
+  "dashboard": {
+    "teamOverview": "团队概览",
+    "teamSubtitle": "管理项目并查看生态系统分析数据",
+    "welcome": {
+      "title": "欢迎使用 ONE 控制台",
+      "description": "使用强大的生态系统工具构建、部署和管理您的 Web3 应用。",
+      "newProject": "新建项目"
+    },
+    "stats": {
+      "totalProjects": "项目总数",
+      "totalProjectsChange": "本月 +2",
+      "totalUsers": "用户总数",
+      "totalUsersChange": "本周 +12",
+      "transactions": "交易",
+      "transactionsChange": "今日 +156"
+    },
+    "demoProject": {
+      "title": "演示项目",
+      "subtitle": "使用真实示例数据探索 {name}",
+      "fallbackName": "ONE Wallet App",
+      "openProject": "打开项目"
+    },
+    "quickStart": {
+      "title": "快速开始",
+      "subtitle": "使用这些资源快速上手",
+      "createProject": "创建项目",
+      "createProjectDesc": "使用 API 密钥和配置启动新项目",
+      "viewProjects": "查看项目",
+      "viewProjectsDesc": "管理团队现有项目和 API 密钥",
+      "documentation": "文档",
+      "documentationDesc": "了解如何将 ONE API 集成到您的应用中"
+    },
+    "modules": {
+      "projectOverview": "项目概览",
+      "projectOverviewDesc": "项目信息、API 凭证、快速入门指南。",
+      "projectTag": "项目",
+      "apiKeysTag": "API 密钥",
+      "configTag": "配置",
+      "aiTrading": "AI 交易",
+      "aiTradingDesc": "AI 驱动的加密策略、订单管理和绩效分析。",
+      "cryptoTag": "加密货币",
+      "strategiesTag": "策略",
+      "aiTag": "AI",
+      "forexTrading": "外汇交易",
+      "forexTradingDesc": "外汇投资池、自动交易和实时损益追踪。",
+      "forexTag": "外汇",
+      "investmentsTag": "投资",
+      "poolsTag": "资金池"
+    },
+    "projectsOverview": {
+      "title": "项目",
+      "noProjects": "暂无项目",
+      "createProject": "创建项目",
+      "calls": "{count} 次调用",
+      "users": "{count} 用户",
+      "idPrefix": "ID: "
+    },
+    "recentActivity": {
+      "title": "最近活动",
+      "noActivity": "暂无最近活动"
+    },
+    "ecosystem": {
+      "title": "生态系统",
+      "subtitle": "管理已连接的应用和数据同步",
+      "addApplication": "添加应用",
+      "totalApps": "应用总数",
+      "active": "活跃",
+      "totalUsers": "用户总数",
+      "pendingSyncs": "待同步",
+      "noApps": "暂无已连接的应用",
+      "addFirstApp": "添加第一个应用",
+      "users": "用户",
+      "lastSync": "上次同步",
+      "never": "从未",
+      "pendingStatus": "待处理",
+      "modalTitle": "添加应用",
+      "nameLabel": "名称",
+      "namePlaceholder": "我的应用",
+      "typeLabel": "类型",
+      "typeWallet": "钱包",
+      "typeEngine": "引擎",
+      "typeDashboard": "控制台",
+      "typeExternal": "外部",
+      "apiEndpointLabel": "API 端点（可选）",
+      "apiEndpointPlaceholder": "https://api.example.com"
+    }
+  }
+}

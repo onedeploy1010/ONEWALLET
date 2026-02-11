@@ -1,0 +1,123 @@
+{
+  "contracts": {
+    "deploy": {
+      "title": "Deploy Contract",
+      "subtitle": "Choose a pre-built contract template or deploy your own",
+      "searchPlaceholder": "Search contracts...",
+      "readyToConfigure": "Ready to configure",
+      "deployTo": "Deploy to:",
+      "continueToDeploy": "Continue to Deploy",
+      "apiTitle": "Contracts API",
+      "javascript": "JavaScript",
+      "curl": "cURL",
+      "noContracts": "No contracts found",
+      "noContractsHint": "Try adjusting your search or filter"
+    },
+    "published": {
+      "title": "Published Contracts",
+      "subtitle": "All deployed smart contracts for this project",
+      "deployNew": "Deploy New",
+      "totalContracts": "Total Contracts",
+      "totalTransactions": "Total Transactions",
+      "searchPlaceholder": "Search by name or address...",
+      "filterAll": "all",
+      "filterActive": "active",
+      "filterPaused": "paused",
+      "noContracts": "No contracts deployed",
+      "noContractsHint": "Deploy your first smart contract to get started with blockchain development",
+      "noMatching": "No matching contracts",
+      "noMatchingHint": "Try adjusting your search or filter criteria",
+      "deployContract": "Deploy Contract",
+      "viewDetails": "View Details",
+      "txs": "{count} txs",
+      "explorer": "Explorer",
+      "unknown": "Unknown"
+    },
+    "categories": {
+      "allTemplates": "All Templates",
+      "tokens": "Tokens",
+      "nfts": "NFTs",
+      "marketplace": "Marketplace",
+      "governance": "Governance",
+      "defi": "DeFi",
+      "custom": "Custom"
+    },
+    "chains": {
+      "ethereum": "Ethereum",
+      "polygon": "Polygon",
+      "base": "Base",
+      "arbitrum": "Arbitrum",
+      "optimism": "Optimism",
+      "bnbChain": "BNB Chain",
+      "avalanche": "Avalanche"
+    },
+    "templates": {
+      "erc20": {
+        "name": "Token (ERC-20)",
+        "description": "Create a fungible token with customizable supply and features"
+      },
+      "erc721": {
+        "name": "NFT Collection (ERC-721)",
+        "description": "Deploy a unique NFT collection with metadata"
+      },
+      "erc1155": {
+        "name": "Edition (ERC-1155)",
+        "description": "Multi-token standard for gaming and collectibles"
+      },
+      "nftDrop": {
+        "name": "NFT Drop",
+        "description": "Claimable NFT drop with allowlist and phases"
+      },
+      "marketplace": {
+        "name": "Marketplace",
+        "description": "Create an NFT marketplace with auctions and direct listings"
+      },
+      "governor": {
+        "name": "Vote (Governor)",
+        "description": "On-chain voting and governance for DAOs"
+      },
+      "split": {
+        "name": "Split",
+        "description": "Revenue sharing between multiple addresses"
+      },
+      "staking": {
+        "name": "Staking",
+        "description": "Allow users to stake tokens and earn rewards"
+      },
+      "airdrop": {
+        "name": "Airdrop",
+        "description": "Distribute tokens or NFTs to multiple recipients"
+      }
+    },
+    "features": {
+      "mintable": "Mintable",
+      "burnable": "Burnable",
+      "pausable": "Pausable",
+      "lazyMint": "Lazy Mint",
+      "royalties": "Royalties",
+      "reveal": "Reveal",
+      "batchTransfers": "Batch Transfers",
+      "mixedFungibility": "Mixed Fungibility",
+      "gasEfficient": "Gas Efficient",
+      "allowlist": "Allowlist",
+      "claimPhases": "Claim Phases",
+      "delayedReveal": "Delayed Reveal",
+      "auctions": "Auctions",
+      "directSales": "Direct Sales",
+      "offers": "Offers",
+      "proposals": "Proposals",
+      "voting": "Voting",
+      "execution": "Execution",
+      "autoSplit": "Auto Split",
+      "withdraw": "Withdraw",
+      "updateRecipients": "Update Recipients",
+      "stakeUnstake": "Stake/Unstake",
+      "rewards": "Rewards",
+      "lockPeriod": "Lock Period",
+      "batchSend": "Batch Send",
+      "merkleProof": "Merkle Proof",
+      "claim": "Claim"
+    },
+    "popular": "Popular"
+  }
+}

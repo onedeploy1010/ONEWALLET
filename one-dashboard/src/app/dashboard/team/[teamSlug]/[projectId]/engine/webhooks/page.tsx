@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Webhook {
   id: string;
@@ -28,16 +29,10 @@ interface WebhookLog {
   created_at: string;
 }
 
-const EVENT_TYPES = [
-  { id: 'transaction.submitted', label: 'Transaction Submitted', description: 'When a transaction is submitted to the network' },
-  { id: 'transaction.mined', label: 'Transaction Mined', description: 'When a transaction is confirmed on-chain' },
-  { id: 'transaction.failed', label: 'Transaction Failed', description: 'When a transaction fails or reverts' },
-  { id: 'wallet.created', label: 'Wallet Created', description: 'When a new backend wallet is created' },
-  { id: 'wallet.balance.low', label: 'Low Balance Alert', description: 'When wallet balance drops below threshold' },
-  { id: 'contract.deployed', label: 'Contract Deployed', description: 'When a contract deployment completes' },
-];
-
 export default function WebhooksPage() {
+  const t = useTranslations('engine');
+  const tc = useTranslations('common');
+
   const params = useParams();
   const teamSlug = params.teamSlug as string;
   const projectId = params.projectId as string;
@@ -55,6 +50,15 @@ export default function WebhooksPage() {
   });
   const [formError, setFormError] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+
+  const EVENT_TYPES = [
+    { id: 'transaction.submitted', label: t('webhooksPage.events.transactionSubmitted'), description: t('webhooksPage.events.transactionSubmittedDesc') },
+    { id: 'transaction.mined', label: t('webhooksPage.events.transactionMined'), description: t('webhooksPage.events.transactionMinedDesc') },
+    { id: 'transaction.failed', label: t('webhooksPage.events.transactionFailed'), description: t('webhooksPage.events.transactionFailedDesc') },
+    { id: 'wallet.created', label: t('webhooksPage.events.walletCreated'), description: t('webhooksPage.events.walletCreatedDesc') },
+    { id: 'wallet.balance.low', label: t('webhooksPage.events.lowBalanceAlert'), description: t('webhooksPage.events.lowBalanceAlertDesc') },
+    { id: 'contract.deployed', label: t('webhooksPage.events.contractDeployed'), description: t('webhooksPage.events.contractDeployedDesc') },
+  ];
 
   const fetchWebhooks = useCallback(async () => {
     setLoading(true);
@@ -95,15 +99,15 @@ export default function WebhooksPage() {
 
   const handleCreate = async () => {
     if (!formData.name.trim()) {
-      setFormError('Webhook name is required');
+      setFormError(t('webhooksPage.errors.nameRequired'));
       return;
     }
     if (!formData.url.trim()) {
-      setFormError('Webhook URL is required');
+      setFormError(t('webhooksPage.errors.urlRequired'));
       return;
     }
     if (formData.events.length === 0) {
-      setFormError('Select at least one event');
+      setFormError(t('webhooksPage.errors.selectEvent'));
       return;
     }
 
@@ -131,10 +135,10 @@ export default function WebhooksPage() {
           setShowSecret(data.data.secret);
         }
       } else {
-        setFormError(data.error?.message || 'Failed to create webhook');
+        setFormError(data.error?.message || t('webhooksPage.errors.createFailed'));
       }
     } catch (error) {
-      setFormError('Failed to create webhook');
+      setFormError(t('webhooksPage.errors.createFailed'));
     } finally {
       setActionLoading(false);
     }
@@ -160,7 +164,7 @@ export default function WebhooksPage() {
   };
 
   const handleDelete = async (webhookId: string) => {
-    if (!confirm('Are you sure you want to delete this webhook?')) return;
+    if (!confirm(t('webhooksPage.confirmDelete'))) return;
 
     try {
       const res = await fetch(`/api/engine/webhooks/${webhookId}?project_id=${projectId}`, {
@@ -187,15 +191,15 @@ export default function WebhooksPage() {
       });
       const data = await res.json();
       if (data.success) {
-        alert('Test webhook sent successfully!');
+        alert(t('webhooksPage.testSuccess'));
         if (selectedWebhook?.id === webhook.id) {
           fetchWebhookLogs(webhook.id);
         }
       } else {
-        alert(`Test failed: ${data.error?.message || 'Unknown error'}`);
+        alert(`${t('webhooksPage.testFailed')}: ${data.error?.message || t('webhooksPage.unknownError')}`);
       }
     } catch (error) {
-      alert('Failed to send test webhook');
+      alert(t('webhooksPage.testFailed'));
     }
   };
 
@@ -215,24 +219,24 @@ export default function WebhooksPage() {
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
             <Link href={`/dashboard/team/${teamSlug}/${projectId}/engine/overview`} className="hover:text-foreground">
-              Engine
+              {t('webhooksPage.engine')}
             </Link>
             <span>/</span>
-            <span>Webhooks</span>
+            <span>{t('webhooksPage.heading')}</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Webhooks</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('webhooksPage.heading')}</h1>
           <p className="text-muted-foreground">
-            Configure webhook endpoints for transaction notifications
+            {t('webhooksPage.description')}
           </p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+          className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add Webhook
+          {t('webhooksPage.addWebhook')}
         </button>
       </div>
 
@@ -246,22 +250,22 @@ export default function WebhooksPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">Webhook Created!</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t('webhooksPage.webhookCreated')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Save your webhook secret - it won't be shown again.
+                {t('webhooksPage.saveSecretWarning')}
               </p>
             </div>
             <div className="mb-6">
-              <label className="block text-xs text-muted-foreground mb-2">Webhook Secret</label>
+              <label className="block text-xs text-muted-foreground mb-2">{t('webhooksPage.webhookSecret')}</label>
               <div className="p-3 bg-secondary rounded-lg font-mono text-sm text-foreground break-all">
                 {showSecret}
               </div>
             </div>
             <button
               onClick={() => setShowSecret(null)}
-              className="w-full px-4 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90"
+              className="w-full px-4 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90"
             >
-              I've saved the secret
+              {t('webhooksPage.savedSecret')}
             </button>
           </div>
         </div>
@@ -273,18 +277,18 @@ export default function WebhooksPage() {
         <div className="lg:col-span-1">
           <div className="bg-card border border-border rounded-2xl overflow-hidden">
             <div className="p-4 border-b border-border">
-              <h3 className="font-semibold text-foreground">Your Webhooks</h3>
+              <h3 className="font-semibold text-foreground">{t('webhooksPage.yourWebhooks')}</h3>
             </div>
             {loading ? (
               <div className="p-8 text-center">
-                <div className="w-8 h-8 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+                <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
             ) : webhooks.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 flex items-center justify-center mx-auto mb-3">
                   <span className="text-2xl">🔔</span>
                 </div>
-                <p className="text-sm text-muted-foreground">No webhooks configured</p>
+                <p className="text-sm text-muted-foreground">{t('webhooksPage.noWebhooks')}</p>
               </div>
             ) : (
               <div className="divide-y divide-border">
@@ -293,7 +297,7 @@ export default function WebhooksPage() {
                     key={webhook.id}
                     onClick={() => setSelectedWebhook(webhook)}
                     className={`p-4 cursor-pointer transition-colors ${
-                      selectedWebhook?.id === webhook.id ? 'bg-[#188775]/5' : 'hover:bg-secondary/30'
+                      selectedWebhook?.id === webhook.id ? 'bg-[#2563EB]/5' : 'hover:bg-secondary/30'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -312,13 +316,13 @@ export default function WebhooksPage() {
                             : 'bg-gray-500/10 text-gray-500'
                         }`}
                       >
-                        {webhook.is_active ? 'Active' : 'Inactive'}
+                        {webhook.is_active ? t('webhooksPage.active') : t('webhooksPage.inactive')}
                       </button>
                     </div>
                     <p className="text-xs text-muted-foreground truncate mb-2">{webhook.url}</p>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span className="text-green-500">{webhook.success_count} success</span>
-                      <span className="text-red-500">{webhook.failure_count} failed</span>
+                      <span className="text-green-500">{webhook.success_count} {t('webhooksPage.success')}</span>
+                      <span className="text-red-500">{webhook.failure_count} {t('webhooksPage.failed')}</span>
                     </div>
                   </div>
                 ))}
@@ -332,7 +336,7 @@ export default function WebhooksPage() {
           {showCreate ? (
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Create Webhook</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('webhooksPage.createWebhook')}</h3>
                 <button onClick={() => setShowCreate(false)} className="p-2 hover:bg-secondary rounded-lg">
                   <svg className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -343,33 +347,33 @@ export default function WebhooksPage() {
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Webhook Name <span className="text-red-500">*</span>
+                    {t('webhooksPage.webhookName')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="My Webhook"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    placeholder={t('webhooksPage.webhookNamePlaceholder')}
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Endpoint URL <span className="text-red-500">*</span>
+                    {t('webhooksPage.endpointUrl')} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="url"
                     value={formData.url}
                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                     placeholder="https://your-server.com/webhook"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                    className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-3">
-                    Events <span className="text-red-500">*</span>
+                    {t('webhooksPage.eventsLabel')} <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {EVENT_TYPES.map((event) => (
@@ -379,13 +383,13 @@ export default function WebhooksPage() {
                         onClick={() => toggleEvent(event.id)}
                         className={`p-3 rounded-xl border text-left transition-all ${
                           formData.events.includes(event.id)
-                            ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                            : 'border-border hover:border-[#188775]/50'
+                            ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                            : 'border-border hover:border-[#2563EB]/50'
                         }`}
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                            formData.events.includes(event.id) ? 'border-[#188775] bg-[#188775]' : 'border-border'
+                            formData.events.includes(event.id) ? 'border-[#2563EB] bg-[#2563EB]' : 'border-border'
                           }`}>
                             {formData.events.includes(event.id) && (
                               <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -412,17 +416,17 @@ export default function WebhooksPage() {
                     onClick={() => setShowCreate(false)}
                     className="px-5 py-2.5 border border-border rounded-xl text-foreground hover:bg-secondary transition-colors"
                   >
-                    Cancel
+                    {tc('actions.cancel')}
                   </button>
                   <button
                     onClick={handleCreate}
                     disabled={actionLoading}
-                    className="px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                    className="px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
                   >
                     {actionLoading && (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     )}
-                    Create Webhook
+                    {t('webhooksPage.createWebhook')}
                   </button>
                 </div>
               </div>
@@ -441,45 +445,45 @@ export default function WebhooksPage() {
                       onClick={() => handleTest(selectedWebhook)}
                       className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground hover:bg-secondary transition-colors"
                     >
-                      Send Test
+                      {t('webhooksPage.sendTest')}
                     </button>
                     <button
                       onClick={() => handleDelete(selectedWebhook.id)}
                       className="px-3 py-1.5 border border-red-500/30 rounded-lg text-sm text-red-500 hover:bg-red-500/10 transition-colors"
                     >
-                      Delete
+                      {tc('actions.delete')}
                     </button>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div className="p-3 bg-secondary/30 rounded-xl">
-                    <p className="text-xs text-muted-foreground mb-1">Status</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('webhooksPage.status')}</p>
                     <p className={`font-medium ${selectedWebhook.is_active ? 'text-green-500' : 'text-gray-500'}`}>
-                      {selectedWebhook.is_active ? 'Active' : 'Inactive'}
+                      {selectedWebhook.is_active ? t('webhooksPage.active') : t('webhooksPage.inactive')}
                     </p>
                   </div>
                   <div className="p-3 bg-secondary/30 rounded-xl">
-                    <p className="text-xs text-muted-foreground mb-1">Events</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('webhooksPage.eventsLabel')}</p>
                     <p className="font-medium text-foreground">{selectedWebhook.events.length}</p>
                   </div>
                   <div className="p-3 bg-secondary/30 rounded-xl">
-                    <p className="text-xs text-muted-foreground mb-1">Success</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('webhooksPage.success')}</p>
                     <p className="font-medium text-green-500">{selectedWebhook.success_count}</p>
                   </div>
                   <div className="p-3 bg-secondary/30 rounded-xl">
-                    <p className="text-xs text-muted-foreground mb-1">Failed</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('webhooksPage.failed')}</p>
                     <p className="font-medium text-red-500">{selectedWebhook.failure_count}</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-foreground mb-2">Subscribed Events</p>
+                  <p className="text-sm font-medium text-foreground mb-2">{t('webhooksPage.subscribedEvents')}</p>
                   <div className="flex flex-wrap gap-2">
                     {selectedWebhook.events.map((event) => (
                       <span
                         key={event}
-                        className="px-3 py-1.5 bg-[#188775]/10 text-[#188775] rounded-lg text-xs font-medium"
+                        className="px-3 py-1.5 bg-[#2563EB]/10 text-[#2563EB] rounded-lg text-xs font-medium"
                       >
                         {event}
                       </span>
@@ -491,11 +495,11 @@ export default function WebhooksPage() {
               {/* Delivery Logs */}
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 <div className="p-4 border-b border-border">
-                  <h3 className="font-semibold text-foreground">Recent Deliveries</h3>
+                  <h3 className="font-semibold text-foreground">{t('webhooksPage.recentDeliveries')}</h3>
                 </div>
                 {webhookLogs.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-sm text-muted-foreground">No deliveries yet</p>
+                    <p className="text-sm text-muted-foreground">{t('webhooksPage.noDeliveries')}</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-border">
@@ -541,15 +545,15 @@ export default function WebhooksPage() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">🔔</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Select a Webhook</h3>
+              <h3 className="font-semibold text-foreground mb-2">{t('webhooksPage.selectWebhook')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Choose a webhook from the list or create a new one
+                {t('webhooksPage.selectOrCreate')}
               </p>
               <button
                 onClick={() => setShowCreate(true)}
-                className="px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90"
+                className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90"
               >
-                Create Webhook
+                {t('webhooksPage.createWebhook')}
               </button>
             </div>
           )}

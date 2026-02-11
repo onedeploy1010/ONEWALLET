@@ -1,0 +1,26 @@
+{
+  "users": {
+    "title": "Users",
+    "subtitle": "Manage ecosystem users and their permissions",
+    "searchPlaceholder": "Search by email...",
+    "search": "Search",
+    "allRoles": "All Roles",
+    "roleUser": "Users",
+    "roleAdmin": "Admins",
+    "roleSuperAdmin": "Super Admins",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "wallet": "Wallet",
+      "status": "Status",
+      "joined": "Joined",
+      "lastLogin": "Last Login"
+    },
+    "noUsersFound": "No users found",
+    "never": "Never",
+    "showing": "Showing {start}-{end} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {current} of {total}"
+  }
+}

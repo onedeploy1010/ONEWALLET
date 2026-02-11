@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { StatusBadge, PnlBadge, DataTable } from '@/components/ai-forex';
+import { useTranslations } from 'next-intl';
 
 interface Investment {
   id: string; userId: string; amount: number; currentValue: number; profit: number;
@@ -9,6 +10,8 @@ interface Investment {
 }
 
 export default function ForexInvestmentsPage() {
+  const t = useTranslations('forex');
+  const tc = useTranslations('common');
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
@@ -30,32 +33,32 @@ export default function ForexInvestmentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Forex Investments</h1>
-        <p className="text-muted-foreground">View and manage forex investment positions</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('investments.title')}</h1>
+        <p className="text-muted-foreground">{t('investments.subtitle')}</p>
       </div>
 
       <div className="flex gap-3">
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="matured">Matured</option>
-          <option value="withdrawn">Withdrawn</option>
+          <option value="">{t('investments.allStatuses')}</option>
+          <option value="active">{tc('status.active')}</option>
+          <option value="matured">{t('investments.matured')}</option>
+          <option value="withdrawn">{t('investments.withdrawn')}</option>
         </select>
       </div>
 
       <DataTable
         columns={[
-          { key: 'userId', header: 'User', render: (r: Investment) => <span className="text-muted-foreground font-mono text-xs">{r.userId.slice(0, 8)}...</span> },
-          { key: 'amount', header: 'Amount', render: (r: Investment) => <span className="text-foreground">${r.amount.toLocaleString()}</span> },
-          { key: 'currentValue', header: 'Value', render: (r: Investment) => <span className="font-medium text-foreground">${r.currentValue.toLocaleString()}</span> },
-          { key: 'profit', header: 'Profit', render: (r: Investment) => <PnlBadge value={r.profit} percent={r.profitPercent} /> },
-          { key: 'pairs', header: 'Pairs', render: (r: Investment) => <span className="text-foreground">{r.pairs || '-'}</span> },
-          { key: 'cycleDays', header: 'Cycle', render: (r: Investment) => <span className="text-foreground">{r.cycleDays}d</span> },
-          { key: 'status', header: 'Status', render: (r: Investment) => <StatusBadge status={r.status} /> },
+          { key: 'userId', header: t('columns.user'), render: (r: Investment) => <span className="text-muted-foreground font-mono text-xs">{r.userId.slice(0, 8)}...</span> },
+          { key: 'amount', header: t('columns.amount'), render: (r: Investment) => <span className="text-foreground">${(Number(r.amount) || 0).toLocaleString()}</span> },
+          { key: 'currentValue', header: t('columns.value'), render: (r: Investment) => <span className="font-medium text-foreground">${(Number(r.currentValue) || 0).toLocaleString()}</span> },
+          { key: 'profit', header: t('columns.profit'), render: (r: Investment) => <PnlBadge value={r.profit} percent={r.profitPercent} /> },
+          { key: 'pairs', header: t('columns.pairs'), render: (r: Investment) => <span className="text-foreground">{r.pairs || '-'}</span> },
+          { key: 'cycleDays', header: t('columns.cycle'), render: (r: Investment) => <span className="text-foreground">{r.cycleDays}d</span> },
+          { key: 'status', header: t('columns.status'), render: (r: Investment) => <StatusBadge status={r.status} /> },
         ]}
         data={investments}
         loading={loading}
-        emptyMessage="No investments found"
+        emptyMessage={t('investments.noInvestmentsFound')}
         emptyIcon="📈"
       />
     </div>

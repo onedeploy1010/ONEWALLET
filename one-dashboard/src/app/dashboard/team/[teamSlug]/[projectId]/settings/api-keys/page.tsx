@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface ApiKey {
   id: string;
@@ -16,6 +17,8 @@ interface ApiKey {
 
 export default function ApiKeysPage() {
   const params = useParams();
+  const t = useTranslations('settings');
+  const tc = useTranslations('common');
   const projectId = params.projectId as string;
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +69,7 @@ export default function ApiKeysPage() {
   };
 
   const revokeKey = async (keyId: string) => {
-    if (!confirm('Are you sure you want to revoke this API key? This action cannot be undone.')) return;
+    if (!confirm(t('apiKeys.revokeConfirm'))) return;
 
     try {
       await fetch(`/api/projects/${projectId}/keys/${keyId}`, {
@@ -96,19 +99,19 @@ export default function ApiKeysPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">API Keys</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('apiKeys.title')}</h1>
           <p className="text-muted-foreground">
-            Manage your project's API credentials
+            {t('apiKeys.subtitle')}
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Create Key
+          {t('apiKeys.createKey')}
         </button>
       </div>
 
@@ -124,9 +127,9 @@ export default function ApiKeysPage() {
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Client ID (Publishable)</h3>
+              <h3 className="font-semibold text-foreground mb-1">{t('apiKeys.clientId')}</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Use this key in your frontend code. Safe to expose in browsers.
+                {t('apiKeys.clientIdDesc')}
               </p>
               <code className="inline-block px-3 py-1.5 bg-blue-500/10 rounded-lg text-sm font-mono text-blue-500">
                 one_pk_...
@@ -143,9 +146,9 @@ export default function ApiKeysPage() {
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Secret Key</h3>
+              <h3 className="font-semibold text-foreground mb-1">{t('apiKeys.secretKey')}</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Use this key server-side only. Never expose in client code.
+                {t('apiKeys.secretKeyDesc')}
               </p>
               <code className="inline-block px-3 py-1.5 bg-purple-500/10 rounded-lg text-sm font-mono text-purple-500">
                 one_sk_...
@@ -161,26 +164,26 @@ export default function ApiKeysPage() {
           <svg className="w-5 h-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          Security Best Practices
+          {t('apiKeys.securityTitle')}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="flex items-start gap-2">
             <svg className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span className="text-muted-foreground">Never commit secret keys to git repositories</span>
+            <span className="text-muted-foreground">{t('apiKeys.securityTip1')}</span>
           </div>
           <div className="flex items-start gap-2">
             <svg className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span className="text-muted-foreground">Use environment variables for secret keys</span>
+            <span className="text-muted-foreground">{t('apiKeys.securityTip2')}</span>
           </div>
           <div className="flex items-start gap-2">
             <svg className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span className="text-muted-foreground">Rotate keys regularly and revoke unused ones</span>
+            <span className="text-muted-foreground">{t('apiKeys.securityTip3')}</span>
           </div>
         </div>
       </div>
@@ -188,26 +191,26 @@ export default function ApiKeysPage() {
       {/* Keys List */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
         <div className="p-4 border-b border-border">
-          <h3 className="font-semibold text-foreground">Your API Keys</h3>
+          <h3 className="font-semibold text-foreground">{t('apiKeys.yourKeys')}</h3>
         </div>
         {loading ? (
           <div className="p-12 text-center">
-            <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : keys.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-[#188775]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-[#2563EB]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
               </svg>
             </div>
-            <h3 className="font-semibold text-foreground mb-2">No API keys created yet</h3>
-            <p className="text-sm text-muted-foreground mb-4">Create your first API key to start integrating</p>
+            <h3 className="font-semibold text-foreground mb-2">{t('apiKeys.noKeys')}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{t('apiKeys.noKeysHint')}</p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-lg text-sm font-medium hover:opacity-90"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-lg text-sm font-medium hover:opacity-90"
             >
-              Create API Key
+              {t('apiKeys.createApiKey')}
             </button>
           </div>
         ) : (
@@ -267,18 +270,18 @@ export default function ApiKeysPage() {
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">
                       {key.last_used_at
-                        ? `Last used ${new Date(key.last_used_at).toLocaleDateString()}`
-                        : 'Never used'}
+                        ? t('apiKeys.lastUsed', { time: new Date(key.last_used_at).toLocaleDateString() })
+                        : t('apiKeys.neverUsed')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Created {new Date(key.created_at).toLocaleDateString()}
+                      {t('apiKeys.created', { time: new Date(key.created_at).toLocaleDateString() })}
                     </p>
                   </div>
                   <button
                     onClick={() => revokeKey(key.id)}
                     className="px-3 py-1.5 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                   >
-                    Revoke
+                    {tc('actions.revoke')}
                   </button>
                 </div>
               </div>
@@ -299,7 +302,7 @@ export default function ApiKeysPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-foreground">API Key Created</h3>
+                  <h3 className="text-xl font-semibold text-foreground">{t('apiKeys.keyCreated')}</h3>
                 </div>
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
                   <div className="flex items-start gap-3">
@@ -307,8 +310,8 @@ export default function ApiKeysPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                     <div>
-                      <p className="text-sm font-medium text-yellow-600">Copy this key now</p>
-                      <p className="text-xs text-yellow-600/80">You won't be able to see it again after closing this modal.</p>
+                      <p className="text-sm font-medium text-yellow-600">{t('apiKeys.copyNow')}</p>
+                      <p className="text-xs text-yellow-600/80">{t('apiKeys.copyNowDesc')}</p>
                     </div>
                   </div>
                 </div>
@@ -324,23 +327,23 @@ export default function ApiKeysPage() {
                     className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
                       copiedKey === createdKey
                         ? 'bg-green-500 text-white'
-                        : 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white'
+                        : 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white'
                     }`}
                   >
-                    {copiedKey === createdKey ? 'Copied!' : 'Copy'}
+                    {copiedKey === createdKey ? tc('actions.copied') : tc('actions.copy')}
                   </button>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
                 >
-                  Done
+                  {tc('actions.done')}
                 </button>
               </>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-semibold text-foreground">Create API Key</h3>
+                  <h3 className="text-xl font-semibold text-foreground">{t('apiKeys.createApiKey')}</h3>
                   <button
                     onClick={closeModal}
                     className="text-muted-foreground hover:text-foreground transition-colors"
@@ -353,18 +356,18 @@ export default function ApiKeysPage() {
 
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Key Name</label>
+                    <label className="block text-sm font-medium text-foreground mb-2">{t('apiKeys.keyName')}</label>
                     <input
                       type="text"
                       value={newKeyName}
                       onChange={(e) => setNewKeyName(e.target.value)}
-                      className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
-                      placeholder="e.g., Production Key"
+                      className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
+                      placeholder={t('apiKeys.keyNamePlaceholder')}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Key Type</label>
+                    <label className="block text-sm font-medium text-foreground mb-2">{t('apiKeys.keyType')}</label>
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         type="button"
@@ -379,8 +382,8 @@ export default function ApiKeysPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        <p className="font-medium text-foreground text-sm">Publishable</p>
-                        <p className="text-xs text-muted-foreground">Client-side use</p>
+                        <p className="font-medium text-foreground text-sm">{t('apiKeys.publishable')}</p>
+                        <p className="text-xs text-muted-foreground">{t('apiKeys.publishableDesc')}</p>
                       </button>
                       <button
                         type="button"
@@ -394,8 +397,8 @@ export default function ApiKeysPage() {
                         <svg className="w-6 h-6 text-purple-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
-                        <p className="font-medium text-foreground text-sm">Secret</p>
-                        <p className="text-xs text-muted-foreground">Server-side only</p>
+                        <p className="font-medium text-foreground text-sm">{t('apiKeys.secret')}</p>
+                        <p className="text-xs text-muted-foreground">{t('apiKeys.secretDesc')}</p>
                       </button>
                     </div>
                   </div>
@@ -406,20 +409,20 @@ export default function ApiKeysPage() {
                     onClick={closeModal}
                     className="flex-1 px-4 py-3 border border-border rounded-xl text-foreground hover:bg-secondary transition-colors"
                   >
-                    Cancel
+                    {tc('actions.cancel')}
                   </button>
                   <button
                     onClick={createKey}
                     disabled={!newKeyName || creating}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all"
                   >
                     {creating ? (
                       <span className="flex items-center justify-center gap-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Creating...
+                        {tc('status.creating')}
                       </span>
                     ) : (
-                      'Create Key'
+                      t('apiKeys.createKey')
                     )}
                   </button>
                 </div>

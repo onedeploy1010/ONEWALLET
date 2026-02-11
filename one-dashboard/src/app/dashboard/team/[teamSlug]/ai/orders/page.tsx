@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { StatusBadge, PnlBadge, DataTable } from '@/components/ai-forex';
+import { useTranslations } from 'next-intl';
 
 interface Order {
   id: string; userId: string; strategyId: string; strategyName?: string; amount: number;
@@ -9,6 +10,8 @@ interface Order {
 }
 
 export default function AiOrdersPage() {
+  const t = useTranslations('ai');
+  const tc = useTranslations('common');
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
@@ -30,33 +33,33 @@ export default function AiOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">AI Orders</h1>
-        <p className="text-muted-foreground">View and filter AI trading orders</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('orders.title')}</h1>
+        <p className="text-muted-foreground">{t('orders.subtitle')}</p>
       </div>
 
       <div className="flex gap-3">
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="active">Active</option>
-          <option value="redeemed">Redeemed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="">{t('orders.allStatuses')}</option>
+          <option value="pending">{tc('status.pending')}</option>
+          <option value="active">{tc('status.active')}</option>
+          <option value="redeemed">{t('orders.redeemed')}</option>
+          <option value="cancelled">{tc('status.cancelled')}</option>
         </select>
       </div>
 
       <DataTable
         columns={[
-          { key: 'userId', header: 'User', render: (r: Order) => <span className="text-muted-foreground font-mono text-xs">{r.userId.slice(0, 8)}...</span> },
-          { key: 'strategyName', header: 'Strategy', render: (r: Order) => <span className="font-medium text-foreground">{r.strategyName || '-'}</span> },
-          { key: 'amount', header: 'Amount', render: (r: Order) => <span className="text-foreground">${r.amount.toLocaleString()}</span> },
-          { key: 'shares', header: 'Shares', render: (r: Order) => <span className="text-foreground">{r.shares.toFixed(4)}</span> },
-          { key: 'status', header: 'Status', render: (r: Order) => <StatusBadge status={r.status} /> },
-          { key: 'pnl', header: 'P&L', render: (r: Order) => <PnlBadge value={r.pnl} percent={r.pnlPercent} /> },
-          { key: 'createdAt', header: 'Date', render: (r: Order) => <span className="text-muted-foreground text-sm">{new Date(r.createdAt).toLocaleDateString()}</span> },
+          { key: 'userId', header: t('columns.user'), render: (r: Order) => <span className="text-muted-foreground font-mono text-xs">{r.userId.slice(0, 8)}...</span> },
+          { key: 'strategyName', header: t('columns.strategy'), render: (r: Order) => <span className="font-medium text-foreground">{r.strategyName || '-'}</span> },
+          { key: 'amount', header: t('columns.amount'), render: (r: Order) => <span className="text-foreground">${(Number(r.amount) || 0).toLocaleString()}</span> },
+          { key: 'shares', header: t('columns.shares'), render: (r: Order) => <span className="text-foreground">{(Number(r.shares) || 0).toFixed(4)}</span> },
+          { key: 'status', header: t('columns.status'), render: (r: Order) => <StatusBadge status={r.status} /> },
+          { key: 'pnl', header: t('columns.pnl'), render: (r: Order) => <PnlBadge value={r.pnl} percent={r.pnlPercent} /> },
+          { key: 'createdAt', header: t('columns.date'), render: (r: Order) => <span className="text-muted-foreground text-sm">{new Date(r.createdAt).toLocaleDateString()}</span> },
         ]}
         data={orders}
         loading={loading}
-        emptyMessage="No orders found"
+        emptyMessage={t('orders.noOrdersFound')}
         emptyIcon="📋"
       />
     </div>

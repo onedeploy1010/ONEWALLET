@@ -26,8 +26,10 @@ export async function GET(req: NextRequest) {
         .select('*', { count: 'exact', head: true }),
     ]);
 
-    if (strategiesError) throw strategiesError;
-    if (ordersError) throw ordersError;
+    const strategiesMissing = strategiesError?.code === '42P01';
+    const ordersMissing = ordersError?.code === '42P01';
+    if (strategiesError && !strategiesMissing) throw strategiesError;
+    if (ordersError && !ordersMissing) throw ordersError;
 
     const allStrategies = strategies || [];
 

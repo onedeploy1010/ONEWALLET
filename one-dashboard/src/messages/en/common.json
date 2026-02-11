@@ -1,0 +1,172 @@
+{
+  "common": {
+    "nav": {
+      "overview": "Overview",
+      "projects": "Projects",
+      "aiAgents": "AI Agents",
+      "apiDocs": "API Docs",
+      "docs": "Docs",
+      "configuration": "Configuration",
+      "aiTrading": "AI Trading",
+      "wallets": "Wallets",
+      "contracts": "Contracts",
+      "payments": "Payments",
+      "records": "Records",
+      "usage": "Usage",
+      "forex": "Forex",
+      "navigation": "Navigation",
+      "allProjects": "All Projects",
+      "apiKeys": "API Keys",
+      "settings": "Settings",
+      "strategies": "Strategies",
+      "orders": "Orders",
+      "positions": "Positions",
+      "decisionLog": "Decision Log",
+      "inAppWallets": "In-App Wallets",
+      "backendWallets": "Backend Wallets",
+      "deploy": "Deploy",
+      "published": "Published",
+      "pay": "Pay",
+      "allRecords": "All Records",
+      "aiActivity": "AI Activity",
+      "forexActivity": "Forex Activity",
+      "usageBilling": "Usage & Billing",
+      "investments": "Investments",
+      "trades": "Trades",
+      "pools": "Pools"
+    },
+    "brand": {
+      "dashboardTitle": "ONE Dashboard",
+      "ecosystemManagement": "Ecosystem Management",
+      "one": "ONE"
+    },
+    "actions": {
+      "copy": "Copy",
+      "copied": "Copied!",
+      "cancel": "Cancel",
+      "done": "Done",
+      "viewAll": "View All",
+      "search": "Search",
+      "save": "Save",
+      "delete": "Delete",
+      "create": "Create",
+      "edit": "Edit",
+      "close": "Close",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "logout": "Logout",
+      "rotate": "Rotate",
+      "revoke": "Revoke",
+      "syncNow": "Sync Now",
+      "refresh": "Refresh"
+    },
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "stopped": "Stopped",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "unknown": "unknown",
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "creating": "Creating...",
+      "deleting": "Deleting...",
+      "rotating": "Rotating..."
+    },
+    "theme": {
+      "lightMode": "Light Mode",
+      "darkMode": "Dark Mode",
+      "toggleTheme": "Toggle theme"
+    },
+    "table": {
+      "showing": "Showing {from}-{to} of {total}",
+      "noDataFound": "No data found"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
+    },
+    "risk": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "period": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "noActivityRecords": "No activity records found",
+    "vsLastPeriod": "vs last period",
+    "header": {
+      "searchPlaceholder": "Search projects, users...",
+      "notifications": "Notifications",
+      "help": "Help"
+    },
+    "language": {
+      "switchLanguage": "Language",
+      "en": "English",
+      "zhHans": "中文"
+    },
+    "agents": {
+      "title": "AI Agents",
+      "subtitle": "Intelligent trading agents powering your portfolio across crypto and forex markets",
+      "totalStrategies": "Total Strategies",
+      "activeStrategies": "Active Strategies",
+      "totalAum": "Total AUM",
+      "totalProfit": "Total Profit",
+      "quantAgent": {
+        "title": "Quantitative Trading Agent",
+        "description": "AI-powered quantitative strategies for cryptocurrency markets. Automated signal generation, risk management, and portfolio optimization.",
+        "feature1": "Multi-factor alpha generation",
+        "feature2": "Dynamic position sizing",
+        "feature3": "Real-time risk monitoring",
+        "feature4": "Automated rebalancing"
+      },
+      "forexAgent": {
+        "title": "Forex Strategy Agent",
+        "description": "Intelligent forex trading automation with machine learning-driven analysis. Cross-pair correlation, cycle detection, and yield optimization.",
+        "feature1": "Currency pair analysis",
+        "feature2": "Investment cycle management",
+        "feature3": "Pool liquidity optimization",
+        "feature4": "Profit/loss tracking"
+      },
+      "operational": "operational",
+      "quickAccess": "Quick Access",
+      "createToStart": "Create a project to get started",
+      "createToStartDesc": "AI Agents are available within each project. Create a project first to access trading strategies.",
+      "createProject": "Create Project"
+    },
+    "apiDocs": {
+      "title": "API Documentation",
+      "subtitle": "Explore the ONE Ecosystem API endpoints and integrate with your applications",
+      "fullDocs": "Full Documentation",
+      "quickStart": "Quick Start",
+      "step1Title": "Get API Key",
+      "step1Desc": "Create a secret key in your project's Configuration page",
+      "step2Title": "Set Auth Header",
+      "step2Desc": "Include",
+      "step3Title": "Make Requests",
+      "step3Desc": "Send requests to the API base URL with your project ID",
+      "needMoreDetails": "Need more details?",
+      "docsCtaDesc": "Visit our comprehensive documentation for detailed guides, SDK references, and code examples.",
+      "viewFullDocs": "View Full Documentation",
+      "groups": {
+        "authentication": "Authentication",
+        "authDesc": "User authentication, session management, and API key validation",
+        "wallets": "Wallets",
+        "walletsDesc": "Wallet creation, balance queries, and transaction management",
+        "aiTrading": "AI Trading",
+        "aiTradingDesc": "AI strategy management, order execution, and performance analytics",
+        "forex": "Forex",
+        "forexDesc": "Forex investment management, trade execution, and pool operations",
+        "payments": "Payments",
+        "paymentsDesc": "Payment processing, invoicing, and transaction history"
+      }
+    }
+  }
+}

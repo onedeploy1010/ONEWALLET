@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface UsageData {
   date: string;
@@ -41,6 +42,7 @@ interface QuotaInfo {
 
 export default function UsagePage() {
   const params = useParams();
+  const t = useTranslations('settings');
   const projectId = params.projectId as string;
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<'daily' | 'monthly'>('daily');
@@ -84,7 +86,7 @@ export default function UsagePage() {
   const getQuotaBarColor = (percentage: number) => {
     if (percentage >= 90) return 'bg-red-500';
     if (percentage >= 70) return 'bg-yellow-500';
-    return 'bg-[#188775]';
+    return 'bg-[#2563EB]';
   };
 
   return (
@@ -92,9 +94,9 @@ export default function UsagePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Usage & Billing</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('usage.title')}</h1>
           <p className="text-muted-foreground">
-            Monitor your API usage and resource consumption
+            {t('usage.subtitle')}
           </p>
         </div>
         <div className="flex gap-2 p-1 bg-secondary/50 rounded-xl">
@@ -104,11 +106,11 @@ export default function UsagePage() {
               onClick={() => setPeriod(p)}
               className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
                 period === p
-                  ? 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
-              {p}
+              {t(`usage.${p}`)}
             </button>
           ))}
         </div>
@@ -118,12 +120,12 @@ export default function UsagePage() {
       {quota && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* API Requests Quota */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-[#188775]/10 to-[#14a085]/5 border border-[#188775]/20 rounded-2xl p-6">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#188775]/20 to-transparent rounded-full -mr-16 -mt-16" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-6">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-16 -mt-16" />
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="font-semibold text-foreground">API Requests</h3>
-                <p className="text-sm text-muted-foreground">Monthly limit</p>
+                <h3 className="font-semibold text-foreground">{t('usage.apiRequests')}</h3>
+                <p className="text-sm text-muted-foreground">{t('usage.monthlyLimit')}</p>
               </div>
               <span className={`text-2xl font-bold ${getQuotaColor(quota.apiRequests.percentage)}`}>
                 {quota.apiRequests.percentage}%
@@ -136,7 +138,7 @@ export default function UsagePage() {
               />
             </div>
             <p className="text-sm text-muted-foreground">
-              {formatNumber(quota.apiRequests.used)} / {formatNumber(quota.apiRequests.limit)} requests
+              {t('usage.requests', { count: `${formatNumber(quota.apiRequests.used)} / ${formatNumber(quota.apiRequests.limit)}` })}
             </p>
           </div>
 
@@ -145,8 +147,8 @@ export default function UsagePage() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full -mr-16 -mt-16" />
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="font-semibold text-foreground">Cost Units</h3>
-                <p className="text-sm text-muted-foreground">Monthly limit</p>
+                <h3 className="font-semibold text-foreground">{t('usage.costUnits')}</h3>
+                <p className="text-sm text-muted-foreground">{t('usage.monthlyLimit')}</p>
               </div>
               <span className={`text-2xl font-bold ${getQuotaColor(quota.costUnits.percentage)}`}>
                 {quota.costUnits.percentage}%
@@ -159,7 +161,7 @@ export default function UsagePage() {
               />
             </div>
             <p className="text-sm text-muted-foreground">
-              {formatNumber(quota.costUnits.used)} / {formatNumber(quota.costUnits.limit)} units
+              {t('usage.units', { count: `${formatNumber(quota.costUnits.used)} / ${formatNumber(quota.costUnits.limit)}` })}
             </p>
           </div>
         </div>
@@ -169,21 +171,21 @@ export default function UsagePage() {
       {summary && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-card border border-border rounded-2xl p-5">
-            <p className="text-sm text-muted-foreground mb-1">Total Requests</p>
+            <p className="text-sm text-muted-foreground mb-1">{t('usage.totalRequests')}</p>
             <p className="text-2xl font-bold text-foreground">{formatNumber(summary.totalRequests)}</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-5">
-            <p className="text-sm text-muted-foreground mb-1">Success Rate</p>
+            <p className="text-sm text-muted-foreground mb-1">{t('usage.successRate')}</p>
             <p className={`text-2xl font-bold ${summary.successRate >= 95 ? 'text-green-500' : summary.successRate >= 80 ? 'text-yellow-500' : 'text-red-500'}`}>
               {summary.successRate}%
             </p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-5">
-            <p className="text-sm text-muted-foreground mb-1">Avg Latency</p>
+            <p className="text-sm text-muted-foreground mb-1">{t('usage.avgLatency')}</p>
             <p className="text-2xl font-bold text-foreground">{summary.avgLatency}ms</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-5">
-            <p className="text-sm text-muted-foreground mb-1">Cost Units</p>
+            <p className="text-sm text-muted-foreground mb-1">{t('usage.costUnits')}</p>
             <p className="text-2xl font-bold text-purple-500">{formatNumber(summary.totalCostUnits)}</p>
           </div>
         </div>
@@ -191,14 +193,14 @@ export default function UsagePage() {
 
       {/* Usage Chart */}
       <div className="bg-card border border-border rounded-2xl p-6">
-        <h3 className="font-semibold text-foreground mb-4">Request Volume</h3>
+        <h3 className="font-semibold text-foreground mb-4">{t('usage.requestVolume')}</h3>
         {loading ? (
           <div className="h-64 flex items-center justify-center">
-            <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : usageData.length === 0 ? (
           <div className="h-64 flex items-center justify-center text-muted-foreground">
-            No usage data available
+            {t('usage.noUsageData')}
           </div>
         ) : (
           <div className="h-64 flex items-end gap-1">
@@ -208,15 +210,15 @@ export default function UsagePage() {
               return (
                 <div
                   key={i}
-                  className="flex-1 bg-gradient-to-t from-[#188775] to-[#14a085] rounded-t-sm hover:opacity-80 transition-opacity cursor-pointer group relative"
+                  className="flex-1 bg-gradient-to-t from-[#2563EB] to-[#3B82F6] rounded-t-sm hover:opacity-80 transition-opacity cursor-pointer group relative"
                   style={{ height: `${Math.max(height, 2)}%` }}
                 >
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
                     <div className="bg-popover border border-border rounded-lg p-2 shadow-lg whitespace-nowrap">
                       <p className="text-xs font-medium text-foreground">{day.date}</p>
-                      <p className="text-xs text-muted-foreground">{day.requests} requests</p>
-                      <p className="text-xs text-muted-foreground">{day.successRate}% success</p>
+                      <p className="text-xs text-muted-foreground">{t('usage.requestsTooltip', { count: day.requests })}</p>
+                      <p className="text-xs text-muted-foreground">{t('usage.successTooltip', { percent: day.successRate })}</p>
                     </div>
                   </div>
                 </div>
@@ -235,9 +237,9 @@ export default function UsagePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Top Endpoints */}
           <div className="bg-card border border-border rounded-2xl p-6">
-            <h3 className="font-semibold text-foreground mb-4">Top Endpoints</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t('usage.topEndpoints')}</h3>
             {summary.topEndpoints.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No endpoint data</p>
+              <p className="text-muted-foreground text-sm">{t('usage.noEndpointData')}</p>
             ) : (
               <div className="space-y-3">
                 {summary.topEndpoints.map((ep, i) => (
@@ -256,9 +258,9 @@ export default function UsagePage() {
 
           {/* Provider Usage */}
           <div className="bg-card border border-border rounded-2xl p-6">
-            <h3 className="font-semibold text-foreground mb-4">Provider Usage</h3>
+            <h3 className="font-semibold text-foreground mb-4">{t('usage.providerUsage')}</h3>
             {summary.topProviders.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No provider data</p>
+              <p className="text-muted-foreground text-sm">{t('usage.noProviderData')}</p>
             ) : (
               <div className="space-y-3">
                 {summary.topProviders.map((p, i) => {
@@ -275,7 +277,7 @@ export default function UsagePage() {
                       </div>
                       <div className="h-2 bg-secondary rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-[#188775] to-[#14a085] rounded-full"
+                          className="h-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] rounded-full"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -295,13 +297,13 @@ export default function UsagePage() {
             <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <h3 className="font-semibold text-foreground">Billing Period</h3>
+            <h3 className="font-semibold text-foreground">{t('usage.billingPeriod')}</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Current period: {new Date(quota.periodStart).toLocaleDateString()} - {new Date(quota.periodEnd).toLocaleDateString()}
+            {t('usage.currentPeriod', { period: `${new Date(quota.periodStart).toLocaleDateString()} - ${new Date(quota.periodEnd).toLocaleDateString()}` })}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            Quotas reset at the start of each month. Upgrade your plan for higher limits.
+            {t('usage.quotaInfo')}
           </p>
         </div>
       )}

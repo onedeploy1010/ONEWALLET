@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Contract {
   id: string;
@@ -40,6 +41,8 @@ const typeIcons: Record<string, string> = {
 
 export default function PublishedContractsPage() {
   const params = useParams();
+  const t = useTranslations('contracts');
+  const tc = useTranslations('common');
   const teamSlug = params.teamSlug as string;
   const projectId = params.projectId as string;
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -81,38 +84,38 @@ export default function PublishedContractsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Published Contracts</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('published.title')}</h1>
           <p className="text-muted-foreground">
-            All deployed smart contracts for this project
+            {t('published.subtitle')}
           </p>
         </div>
         <Link
           href={`/dashboard/team/${teamSlug}/${projectId}/contracts/deploy`}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Deploy New
+          {t('published.deployNew')}
         </Link>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#188775]/10 to-[#14a085]/5 border border-[#188775]/20 rounded-2xl p-5">
-          <p className="text-sm text-muted-foreground mb-1">Total Contracts</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-5">
+          <p className="text-sm text-muted-foreground mb-1">{t('published.totalContracts')}</p>
           <p className="text-2xl font-bold text-foreground">{contracts.length}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-2xl p-5">
-          <p className="text-sm text-muted-foreground mb-1">Active</p>
+          <p className="text-sm text-muted-foreground mb-1">{tc('status.active')}</p>
           <p className="text-2xl font-bold text-green-500">{contracts.filter(c => c.status === 'active').length}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20 rounded-2xl p-5">
-          <p className="text-sm text-muted-foreground mb-1">Paused</p>
+          <p className="text-sm text-muted-foreground mb-1">{tc('status.paused')}</p>
           <p className="text-2xl font-bold text-yellow-500">{contracts.filter(c => c.status === 'paused').length}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-5">
-          <p className="text-sm text-muted-foreground mb-1">Total Transactions</p>
+          <p className="text-sm text-muted-foreground mb-1">{t('published.totalTransactions')}</p>
           <p className="text-2xl font-bold text-blue-500">{contracts.reduce((sum, c) => sum + c.transaction_count, 0).toLocaleString()}</p>
         </div>
       </div>
@@ -125,10 +128,10 @@ export default function PublishedContractsPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search by name or address..."
+            placeholder={t('published.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+            className="w-full pl-12 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
           />
         </div>
         <div className="flex gap-2 p-1 bg-secondary/50 rounded-xl">
@@ -138,7 +141,7 @@ export default function PublishedContractsPage() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
                 filter === f
-                  ? 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
@@ -165,26 +168,26 @@ export default function PublishedContractsPage() {
         </div>
       ) : filteredContracts.length === 0 ? (
         <div className="bg-card border border-border rounded-2xl p-12 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">📜</span>
           </div>
           <h3 className="text-xl font-semibold text-foreground mb-2">
-            {contracts.length === 0 ? 'No contracts deployed' : 'No matching contracts'}
+            {contracts.length === 0 ? t('published.noContracts') : t('published.noMatching')}
           </h3>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             {contracts.length === 0
-              ? 'Deploy your first smart contract to get started with blockchain development'
-              : 'Try adjusting your search or filter criteria'}
+              ? t('published.noContractsHint')
+              : t('published.noMatchingHint')}
           </p>
           {contracts.length === 0 && (
             <Link
               href={`/dashboard/team/${teamSlug}/${projectId}/contracts/deploy`}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Deploy Contract
+              {t('published.deployContract')}
             </Link>
           )}
         </div>
@@ -197,7 +200,7 @@ export default function PublishedContractsPage() {
             return (
               <div
                 key={contract.id}
-                className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-[#188775]/30 transition-all group"
+                className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-[#2563EB]/30 transition-all group"
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${chain.color} flex items-center justify-center flex-shrink-0`}>
@@ -234,9 +237,9 @@ export default function PublishedContractsPage() {
                       </div>
                       <Link
                         href={`/dashboard/team/${teamSlug}/${projectId}/contracts/${contract.address}`}
-                        className="px-4 py-2 bg-secondary text-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 transition-colors opacity-0 group-hover:opacity-100"
+                        className="px-4 py-2 bg-secondary text-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 transition-colors sm:opacity-0 sm:group-hover:opacity-100"
                       >
-                        View Details
+                        {t('published.viewDetails')}
                       </Link>
                     </div>
 
@@ -253,7 +256,7 @@ export default function PublishedContractsPage() {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        {contract.transaction_count.toLocaleString()} txs
+                        {t('published.txs', { count: contract.transaction_count.toLocaleString() })}
                       </span>
                       <span className="flex items-center gap-1.5 text-muted-foreground">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -266,12 +269,12 @@ export default function PublishedContractsPage() {
                           href={`${chain.explorer}/address/${contract.address}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-[#188775] hover:underline"
+                          className="flex items-center gap-1.5 text-[#2563EB] hover:underline"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
-                          Explorer
+                          {t('published.explorer')}
                         </a>
                       )}
                     </div>

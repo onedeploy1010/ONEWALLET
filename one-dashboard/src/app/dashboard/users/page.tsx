@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface User {
   id: string;
@@ -19,6 +20,7 @@ interface Pagination {
 }
 
 export default function UsersPage() {
+  const t = useTranslations('users');
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<Pagination>({ total: 0, limit: 20, offset: 0 });
   const [loading, setLoading] = useState(true);
@@ -58,7 +60,7 @@ export default function UsersPage() {
   };
 
   const formatDate = (date: string | null) => {
-    if (!date) return 'Never';
+    if (!date) return t('never');
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -84,9 +86,9 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Users</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Manage ecosystem users and their permissions
+          {t('subtitle')}
         </p>
       </div>
 
@@ -95,7 +97,7 @@ export default function UsersPage() {
         <form onSubmit={handleSearch} className="flex-1 max-w-md flex gap-2">
           <input
             type="search"
-            placeholder="Search by email..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 px-4 py-2 border rounded-md bg-background"
@@ -104,7 +106,7 @@ export default function UsersPage() {
             type="submit"
             className="px-4 py-2 bg-secondary rounded-md hover:bg-secondary/80"
           >
-            Search
+            {t('search')}
           </button>
         </form>
         <select
@@ -112,10 +114,10 @@ export default function UsersPage() {
           onChange={(e) => setRoleFilter(e.target.value)}
           className="px-4 py-2 border rounded-md bg-background"
         >
-          <option value="all">All Roles</option>
-          <option value="user">Users</option>
-          <option value="admin">Admins</option>
-          <option value="super_admin">Super Admins</option>
+          <option value="all">{t('allRoles')}</option>
+          <option value="user">{t('roleUser')}</option>
+          <option value="admin">{t('roleAdmin')}</option>
+          <option value="super_admin">{t('roleSuperAdmin')}</option>
         </select>
       </div>
 
@@ -125,12 +127,12 @@ export default function UsersPage() {
           <table className="w-full">
             <thead className="bg-secondary/50">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium">User</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Role</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Wallet</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Joined</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Last Login</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">{t('columns.user')}</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">{t('columns.role')}</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">{t('columns.wallet')}</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">{t('columns.status')}</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">{t('columns.joined')}</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">{t('columns.lastLogin')}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -145,7 +147,7 @@ export default function UsersPage() {
               ) : users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                    No users found
+                    {t('noUsersFound')}
                   </td>
                 </tr>
               ) : (
@@ -195,7 +197,7 @@ export default function UsersPage() {
         {totalPages > 1 && (
           <div className="px-4 py-3 border-t flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Showing {pagination.offset + 1}-{Math.min(pagination.offset + pagination.limit, pagination.total)} of {pagination.total}
+              {t('showing', { start: pagination.offset + 1, end: Math.min(pagination.offset + pagination.limit, pagination.total), total: pagination.total })}
             </p>
             <div className="flex gap-2">
               <button
@@ -203,17 +205,17 @@ export default function UsersPage() {
                 disabled={currentPage === 1}
                 className="px-3 py-1 border rounded hover:bg-secondary disabled:opacity-50"
               >
-                Previous
+                {t('previous')}
               </button>
               <span className="px-3 py-1 text-sm">
-                Page {currentPage} of {totalPages}
+                {t('pageInfo', { current: currentPage, total: totalPages })}
               </span>
               <button
                 onClick={() => setPagination((prev) => ({ ...prev, offset: prev.offset + prev.limit }))}
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 border rounded hover:bg-secondary disabled:opacity-50"
               >
-                Next
+                {t('next')}
               </button>
             </div>
           </div>

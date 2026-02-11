@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 const SUPPORTED_CHAINS = [
   { id: 1, name: 'Ethereum', icon: '⟠', color: 'from-blue-500/20 to-indigo-500/10' },
@@ -52,6 +53,8 @@ const PROJECT_TEMPLATES = [
 ];
 
 export default function NewTeamProjectPage() {
+  const t = useTranslations('projects');
+  const tc = useTranslations('common');
   const params = useParams();
   const router = useRouter();
   const teamSlug = params.teamSlug as string;
@@ -82,7 +85,7 @@ export default function NewTeamProjectPage() {
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      setError('Project name is required');
+      setError(t('new.projectNameRequired'));
       return;
     }
 
@@ -105,7 +108,7 @@ export default function NewTeamProjectPage() {
       const data = await res.json();
 
       if (!data.success) {
-        throw new Error(data.error?.message || 'Failed to create project');
+        throw new Error(data.error?.message || t('new.failedCreate'));
       }
 
       setCreatedProject({
@@ -139,10 +142,10 @@ export default function NewTeamProjectPage() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Back to Projects
+          {t('new.backToProjects')}
         </Link>
-        <h1 className="text-2xl font-bold text-foreground">Create New Project</h1>
-        <p className="text-muted-foreground">Set up a new project for your team</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('new.title')}</h1>
+        <p className="text-muted-foreground">{t('new.subtitleTeam')}</p>
       </div>
 
       {/* Progress Steps */}
@@ -153,7 +156,7 @@ export default function NewTeamProjectPage() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
                   step >= s
-                    ? 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white'
+                    ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white'
                     : 'bg-secondary text-muted-foreground'
                 }`}
               >
@@ -166,9 +169,9 @@ export default function NewTeamProjectPage() {
                 )}
               </div>
               <span className={`text-sm ${step >= s ? 'text-foreground' : 'text-muted-foreground'}`}>
-                {s === 1 ? 'Details' : 'Chains'}
+                {s === 1 ? t('new.stepDetails') : t('new.stepChains')}
               </span>
-              {s < 2 && <div className={`w-16 h-0.5 ${step > s ? 'bg-[#188775]' : 'bg-secondary'}`} />}
+              {s < 2 && <div className={`w-16 h-0.5 ${step > s ? 'bg-[#2563EB]' : 'bg-secondary'}`} />}
             </div>
           ))}
         </div>
@@ -181,33 +184,33 @@ export default function NewTeamProjectPage() {
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Project Name <span className="text-red-500">*</span>
+                {t('new.nameLabel')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="My Awesome App"
-                className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                placeholder={t('new.namePlaceholder')}
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Description (Optional)
+                {t('new.descriptionLabel')}
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Brief description of your project..."
+                placeholder={t('new.descriptionPlaceholder')}
                 rows={2}
-                className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775] resize-none"
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] resize-none"
               />
             </div>
           </div>
 
           {/* Template Selection */}
           <div>
-            <h3 className="text-sm font-medium text-foreground mb-3">Project Template</h3>
+            <h3 className="text-sm font-medium text-foreground mb-3">{t('new.projectTemplate')}</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {PROJECT_TEMPLATES.map((template) => (
                 <button
@@ -215,8 +218,8 @@ export default function NewTeamProjectPage() {
                   onClick={() => setFormData({ ...formData, template: template.id })}
                   className={`p-4 rounded-xl border text-center transition-all ${
                     formData.template === template.id
-                      ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                      : 'border-border hover:border-[#188775]/50'
+                      ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                      : 'border-border hover:border-[#2563EB]/50'
                   }`}
                 >
                   <div className="text-2xl mb-2">{template.icon}</div>
@@ -236,9 +239,9 @@ export default function NewTeamProjectPage() {
             <button
               onClick={() => setStep(2)}
               disabled={!formData.name.trim()}
-              className="px-6 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all"
+              className="px-6 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all"
             >
-              Continue
+              {t('new.continue')}
             </button>
           </div>
         </div>
@@ -248,8 +251,8 @@ export default function NewTeamProjectPage() {
       {step === 2 && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-semibold text-foreground mb-2">Select Chains</h2>
-            <p className="text-muted-foreground text-sm">Choose which blockchain networks your project will support</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">{t('new.selectChains')}</h2>
+            <p className="text-muted-foreground text-sm">{t('new.selectChainsDesc')}</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -259,8 +262,8 @@ export default function NewTeamProjectPage() {
                 onClick={() => handleChainToggle(chain.id)}
                 className={`p-4 rounded-2xl border text-left transition-all ${
                   formData.chains.includes(chain.id)
-                    ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                    : 'border-border hover:border-[#188775]/50'
+                    ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                    : 'border-border hover:border-[#2563EB]/50'
                 }`}
               >
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${chain.color} flex items-center justify-center mb-3`}>
@@ -283,20 +286,20 @@ export default function NewTeamProjectPage() {
               onClick={() => setStep(1)}
               className="px-6 py-2.5 border border-border rounded-xl text-foreground hover:bg-secondary transition-colors"
             >
-              Back
+              {tc('actions.back')}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="px-6 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
             >
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Creating...
+                  {t('new.creating')}
                 </>
               ) : (
-                'Create Project'
+                t('createProject')
               )}
             </button>
           </div>
@@ -311,9 +314,9 @@ export default function NewTeamProjectPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Project Created!</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('new.success.title')}</h2>
           <p className="text-muted-foreground mb-8">
-            Your project "{formData.name}" has been created successfully
+            {t('new.success.descriptionTeam', { name: formData.name })}
           </p>
 
           {createdProject.secretKey && (
@@ -324,15 +327,15 @@ export default function NewTeamProjectPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-yellow-600">Save your credentials</p>
-                    <p className="text-xs text-yellow-600/80">You won't be able to see the secret key again.</p>
+                    <p className="text-sm font-medium text-yellow-600">{t('new.success.saveCredentials')}</p>
+                    <p className="text-xs text-yellow-600/80">{t('new.success.saveCredentialsHint')}</p>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4 text-left mb-8">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Client ID</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">{t('new.success.clientId')}</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -348,12 +351,12 @@ export default function NewTeamProjectPage() {
                           : 'bg-card border border-border text-foreground hover:bg-secondary'
                       }`}
                     >
-                      {copiedKey === 'clientId' ? 'Copied!' : 'Copy'}
+                      {copiedKey === 'clientId' ? tc('actions.copied') : tc('actions.copy')}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Secret Key</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">{t('new.success.secretKey')}</label>
                   <div className="relative">
                     <input
                       type="text"
@@ -369,7 +372,7 @@ export default function NewTeamProjectPage() {
                           : 'bg-card border border-border text-foreground hover:bg-secondary'
                       }`}
                     >
-                      {copiedKey === 'secretKey' ? 'Copied!' : 'Copy'}
+                      {copiedKey === 'secretKey' ? tc('actions.copied') : tc('actions.copy')}
                     </button>
                   </div>
                 </div>
@@ -379,9 +382,9 @@ export default function NewTeamProjectPage() {
 
           <button
             onClick={() => router.push(`/dashboard/team/${teamSlug}/${createdProject.id}`)}
-            className="w-full px-6 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+            className="w-full px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
           >
-            Go to Project Dashboard
+            {t('new.success.goToProject')}
           </button>
         </div>
       )}

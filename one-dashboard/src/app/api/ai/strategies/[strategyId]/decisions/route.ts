@@ -29,7 +29,12 @@ export async function GET(
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
+      throw error;
+    }
 
     const mapped = (decisions || []).map((d) => ({
       id: d.id,
@@ -37,9 +42,9 @@ export async function GET(
       strategyName: d.strategy_name,
       action: d.action,
       symbol: d.symbol,
-      confidence: d.confidence,
-      executed: d.executed,
-      pnl: d.pnl,
+      confidence: d.confidence_score ?? d.confidence ?? 0,
+      executed: d.was_executed ?? d.executed ?? false,
+      pnl: d.outcome_pnl ?? d.pnl ?? null,
       reasoning: d.reasoning,
       createdAt: d.created_at,
     }));

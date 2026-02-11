@@ -1,0 +1,80 @@
+{
+  "forex": {
+    "title": "外汇",
+    "subtitle": "监控外汇投资、交易和资金池表现",
+    "dashboardTitle": "外汇仪表盘",
+    "dashboardDesc": "追踪外汇投资，监控交易执行，分析资金池利用率。",
+    "viewInvestments": "查看投资",
+    "apiIntegration": "API 集成",
+    "apiTitle": "外汇 API",
+    "tabs": {
+      "javascript": "JavaScript",
+      "curl": "cURL"
+    },
+    "stats": {
+      "totalInvested": "总投资",
+      "allPortfolios": "全部投资组合",
+      "currentValue": "当前价值",
+      "marketValue": "市场价值",
+      "totalProfit": "总利润",
+      "netPnl": "净损益",
+      "activeInvestments": "活跃投资",
+      "running": "运行中",
+      "totalTrades": "交易总数",
+      "executed": "已执行",
+      "avgCycle": "平均周期",
+      "days": "{count} 天",
+      "activeAvg": "活跃平均"
+    },
+    "pools": {
+      "title": "外汇资金池",
+      "subtitle": "监控外汇流动性资金池和利用率",
+      "summary": "资金池概览",
+      "noPools": "未找到资金池",
+      "noPoolsHint": "创建后外汇资金池将在此显示",
+      "size": "规模",
+      "utilization": "利用率"
+    },
+    "investments": {
+      "title": "外汇投资",
+      "subtitle": "查看和管理外汇投资仓位",
+      "recentTitle": "最近投资",
+      "recentSubtitle": "最新外汇投资",
+      "noInvestments": "暂无投资",
+      "noInvestmentsHint": "外汇投资将在此显示",
+      "noInvestmentsFound": "未找到投资",
+      "allStatuses": "全部状态",
+      "matured": "已到期",
+      "withdrawn": "已提取"
+    },
+    "trades": {
+      "title": "外汇交易",
+      "subtitle": "查看外汇交易历史和未平仓位",
+      "noTrades": "未找到交易",
+      "allStatuses": "全部状态",
+      "allPairs": "全部货币对",
+      "open": "开仓",
+      "closed": "已平仓"
+    },
+    "columns": {
+      "user": "用户",
+      "amount": "金额",
+      "value": "价值",
+      "profit": "利润",
+      "pairs": "货币对",
+      "cycle": "周期",
+      "status": "状态",
+      "pair": "货币对",
+      "side": "方向",
+      "lots": "手数",
+      "pips": "点数",
+      "pnl": "损益",
+      "date": "日期"
+    },
+    "poolCard": {
+      "poolSize": "资金池规模",
+      "utilization": "利用率",
+      "allocation": "分配"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Project {
   id: string;
@@ -20,6 +21,8 @@ const statusColors: Record<Project['status'], string> = {
 };
 
 export function ProjectsOverview() {
+  const t = useTranslations('dashboard');
+  const tc = useTranslations('common');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +47,7 @@ export function ProjectsOverview() {
   if (loading) {
     return (
       <div className="bg-card border rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Projects</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('projectsOverview.title')}</h2>
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="animate-pulse">
@@ -60,24 +63,24 @@ export function ProjectsOverview() {
   return (
     <div className="bg-card border rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Projects</h2>
+        <h2 className="text-lg font-semibold">{t('projectsOverview.title')}</h2>
         <Link
           href="/dashboard/projects"
           className="text-sm text-primary hover:underline"
         >
-          View All
+          {tc('actions.viewAll')}
         </Link>
       </div>
 
       {projects.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-muted-foreground mb-4">No projects yet</p>
+          <p className="text-muted-foreground mb-4">{t('projectsOverview.noProjects')}</p>
           <Link
             href="/dashboard/projects/new"
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
           >
             <span>+</span>
-            <span>Create Project</span>
+            <span>{t('projectsOverview.createProject')}</span>
           </Link>
         </div>
       ) : (
@@ -94,12 +97,12 @@ export function ProjectsOverview() {
                   <span className="font-medium">{project.name}</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {project.api_calls_today.toLocaleString()} calls
+                  {t('projectsOverview.calls', { count: project.api_calls_today.toLocaleString() })}
                 </span>
               </div>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span>{project.users_count} users</span>
-                <span>ID: {project.id.slice(0, 8)}</span>
+                <span>{t('projectsOverview.users', { count: project.users_count })}</span>
+                <span>{t('projectsOverview.idPrefix')}{project.id.slice(0, 8)}</span>
               </div>
             </Link>
           ))}

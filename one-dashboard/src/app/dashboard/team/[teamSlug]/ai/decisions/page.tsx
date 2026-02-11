@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ConfidenceBar, PnlBadge } from '@/components/ai-forex';
+import { useTranslations } from 'next-intl';
 
 interface Decision {
   id: string; strategyId: string; strategyName?: string; action: string; symbol: string;
@@ -9,6 +10,7 @@ interface Decision {
 }
 
 export default function AiDecisionsPage() {
+  const t = useTranslations('ai');
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'executed' | 'skipped'>('all');
@@ -36,15 +38,15 @@ export default function AiDecisionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Decision Log</h1>
-        <p className="text-muted-foreground">AI trading decisions across all strategies</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('decisions.title')}</h1>
+        <p className="text-muted-foreground">{t('decisions.subtitle')}</p>
       </div>
 
       <div className="flex gap-3">
         <select value={filter} onChange={(e) => setFilter(e.target.value as typeof filter)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
-          <option value="all">All Decisions</option>
-          <option value="executed">Executed</option>
-          <option value="skipped">Skipped</option>
+          <option value="all">{t('decisions.allDecisions')}</option>
+          <option value="executed">{t('decisions.executed')}</option>
+          <option value="skipped">{t('decisions.skipped')}</option>
         </select>
       </div>
 

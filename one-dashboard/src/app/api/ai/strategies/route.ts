@@ -30,25 +30,40 @@ export async function GET(req: NextRequest) {
     if (riskLevel) {
       query = query.eq('risk_level', riskLevel);
     }
-    if (status) {
-      query = query.eq('status', status);
+    if (status === 'active') {
+      query = query.eq('is_active', true);
+    } else if (status === 'paused') {
+      query = query.eq('is_active', false);
     }
 
     const { data: strategies, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
+      throw error;
+    }
+
+    // Fetch pool P&L data (total_pnl lives in ai_strategy_pools, not ai_strategies)
+    const { data: pools } = await supabaseEngine
+      .from('ai_strategy_pools')
+      .select('strategy_id, total_pnl');
+    const poolPnl = new Map((pools || []).map((p) => [p.strategy_id, Number(p.total_pnl ?? 0)]));
+
+    const riskMap = (level: number) => level <= 2 ? 'low' : level <= 3 ? 'medium' : 'high';
 
     const mapped = (strategies || []).map((s) => ({
       id: s.id,
       name: s.name,
       category: s.category,
-      riskLevel: s.risk_level,
-      status: s.status,
+      riskLevel: riskMap(Number(s.risk_level) || 1),
+      status: s.is_active === false ? 'paused' : 'active',
       description: s.description,
       tvl: s.tvl,
       winRate: s.win_rate,
       sharpeRatio: s.sharpe_ratio,
-      totalPnl: s.total_pnl,
+      totalPnl: poolPnl.get(s.id) ?? 0,
       maxDrawdown: s.max_drawdown,
       createdAt: s.created_at,
       updatedAt: s.updated_at,

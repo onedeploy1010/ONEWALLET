@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const ENGINE_URL = process.env.ENGINE_URL || 'http://localhost:4000';
+const ENGINE_URL = process.env.ENGINE_URL || 'http://localhost:3001';
 
 export async function GET(request: NextRequest) {
   try {
@@ -62,10 +62,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Backend wallets fetch error:', error);
-    return NextResponse.json({
-      success: true,
-      data: [],
-    });
+    return NextResponse.json(
+      { success: false, error: { code: 'E5000', message: 'Failed to fetch wallets' } },
+      { status: 500 }
+    );
   }
 }
 

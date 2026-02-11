@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface EcosystemApp {
   id: string;
@@ -23,6 +24,8 @@ interface SyncStatus {
 }
 
 export default function EcosystemPage() {
+  const t = useTranslations('dashboard');
+  const tc = useTranslations('common');
   const [apps, setApps] = useState<EcosystemApp[]>([]);
   const [syncStatus, setSyncStatus] = useState<Record<string, SyncStatus>>({});
   const [loading, setLoading] = useState(true);
@@ -126,39 +129,39 @@ export default function EcosystemPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Ecosystem</h1>
+          <h1 className="text-2xl font-bold">{t('ecosystem.title')}</h1>
           <p className="text-muted-foreground">
-            Manage connected applications and data synchronization
+            {t('ecosystem.subtitle')}
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 w-full sm:w-auto"
         >
-          Add Application
+          {t('ecosystem.addApplication')}
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-card border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Total Apps</p>
+          <p className="text-sm text-muted-foreground">{t('ecosystem.totalApps')}</p>
           <p className="text-2xl font-bold">{apps.length}</p>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Active</p>
+          <p className="text-sm text-muted-foreground">{t('ecosystem.active')}</p>
           <p className="text-2xl font-bold">{apps.filter((a) => a.status === 'active').length}</p>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Total Users</p>
+          <p className="text-sm text-muted-foreground">{t('ecosystem.totalUsers')}</p>
           <p className="text-2xl font-bold">
             {apps.reduce((sum, a) => sum + a.users_count, 0).toLocaleString()}
           </p>
         </div>
         <div className="bg-card border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Pending Syncs</p>
+          <p className="text-sm text-muted-foreground">{t('ecosystem.pendingSyncs')}</p>
           <p className="text-2xl font-bold">
             {Object.values(syncStatus).filter((s) => s.status === 'pending').length}
           </p>
@@ -177,12 +180,12 @@ export default function EcosystemPage() {
         </div>
       ) : apps.length === 0 ? (
         <div className="bg-card border rounded-lg p-12 text-center">
-          <p className="text-muted-foreground mb-4">No applications connected yet</p>
+          <p className="text-muted-foreground mb-4">{t('ecosystem.noApps')}</p>
           <button
             onClick={() => setShowAddModal(true)}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
           >
-            Add First Application
+            {t('ecosystem.addFirstApp')}
           </button>
         </div>
       ) : (
@@ -207,15 +210,15 @@ export default function EcosystemPage() {
 
               <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Users</p>
+                  <p className="text-muted-foreground">{t('ecosystem.users')}</p>
                   <p className="font-medium">{app.users_count.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Last Sync</p>
+                  <p className="text-muted-foreground">{t('ecosystem.lastSync')}</p>
                   <p className="font-medium">
                     {app.last_sync_at
                       ? new Date(app.last_sync_at).toLocaleDateString()
-                      : 'Never'}
+                      : t('ecosystem.never')}
                   </p>
                 </div>
               </div>
@@ -231,14 +234,14 @@ export default function EcosystemPage() {
                   {syncStatus[app.id]?.status === 'syncing' && (
                     <span className="inline-block animate-spin mr-1">⟳</span>
                   )}
-                  {syncStatus[app.id]?.status || 'Pending'}
+                  {syncStatus[app.id]?.status || t('ecosystem.pendingStatus')}
                 </span>
                 <button
                   onClick={() => syncApp(app.id)}
                   disabled={syncStatus[app.id]?.status === 'syncing'}
                   className="text-sm text-primary hover:underline disabled:opacity-50"
                 >
-                  Sync Now
+                  {tc('actions.syncNow')}
                 </button>
               </div>
             </div>
@@ -248,44 +251,44 @@ export default function EcosystemPage() {
 
       {/* Add App Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-card border rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Add Application</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('ecosystem.modalTitle')}</h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
+                <label className="block text-sm font-medium mb-2">{t('ecosystem.nameLabel')}</label>
                 <input
                   type="text"
                   value={newApp.name}
                   onChange={(e) => setNewApp({ ...newApp, name: e.target.value })}
                   className="w-full px-3 py-2 border rounded-md bg-background"
-                  placeholder="My Application"
+                  placeholder={t('ecosystem.namePlaceholder')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Type</label>
+                <label className="block text-sm font-medium mb-2">{t('ecosystem.typeLabel')}</label>
                 <select
                   value={newApp.type}
                   onChange={(e) => setNewApp({ ...newApp, type: e.target.value as typeof newApp.type })}
                   className="w-full px-3 py-2 border rounded-md bg-background"
                 >
-                  <option value="wallet">Wallet</option>
-                  <option value="engine">Engine</option>
-                  <option value="dashboard">Dashboard</option>
-                  <option value="external">External</option>
+                  <option value="wallet">{t('ecosystem.typeWallet')}</option>
+                  <option value="engine">{t('ecosystem.typeEngine')}</option>
+                  <option value="dashboard">{t('ecosystem.typeDashboard')}</option>
+                  <option value="external">{t('ecosystem.typeExternal')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">API Endpoint (optional)</label>
+                <label className="block text-sm font-medium mb-2">{t('ecosystem.apiEndpointLabel')}</label>
                 <input
                   type="url"
                   value={newApp.api_endpoint}
                   onChange={(e) => setNewApp({ ...newApp, api_endpoint: e.target.value })}
                   className="w-full px-3 py-2 border rounded-md bg-background"
-                  placeholder="https://api.example.com"
+                  placeholder={t('ecosystem.apiEndpointPlaceholder')}
                 />
               </div>
             </div>
@@ -295,14 +298,14 @@ export default function EcosystemPage() {
                 onClick={() => setShowAddModal(false)}
                 className="flex-1 px-4 py-2 border rounded-md hover:bg-secondary"
               >
-                Cancel
+                {tc('actions.cancel')}
               </button>
               <button
                 onClick={addApp}
                 disabled={!newApp.name}
                 className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 disabled:opacity-50"
               >
-                Add Application
+                {t('ecosystem.addApplication')}
               </button>
             </div>
           </div>

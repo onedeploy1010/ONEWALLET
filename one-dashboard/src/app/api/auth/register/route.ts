@@ -1,3 +1,8 @@
+/**
+ * @deprecated This route uses a custom OTP system for registration. New clients
+ * should use /api/auth/register-dashboard to create the user record, then
+ * Supabase Auth signInWithOtp() on the client side for email verification.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseEngine } from '@/lib/supabase';
 

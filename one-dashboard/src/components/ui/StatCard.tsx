@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface StatCardProps {
   title: string;
@@ -20,6 +21,7 @@ export function StatCard({
   icon,
   variant = 'default',
 }: StatCardProps) {
+  const tc = useTranslations('common');
   const variantClasses = {
     default: 'stat-card',
     primary: 'gradient-primary text-white',
@@ -56,7 +58,7 @@ export function StatCard({
                 {change.type === 'increase' ? '+' : '-'}{Math.abs(change.value)}%
               </span>
               <span className={`text-xs ${variant === 'default' ? 'text-muted-foreground' : 'opacity-60'}`}>
-                vs last period
+                {tc('vsLastPeriod')}
               </span>
             </div>
           )}

@@ -19,6 +19,9 @@ export async function GET(req: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
       console.error('Forex pools query error:', error);
       return NextResponse.json(
         { success: false, error: { code: 'E5001', message: 'Failed to fetch forex pools' } },

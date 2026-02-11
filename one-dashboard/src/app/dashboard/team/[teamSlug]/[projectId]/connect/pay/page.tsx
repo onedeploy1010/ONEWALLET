@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { CodeBlock } from '@/components/ui/CodeBlock';
 
 interface PaymentStats {
   totalVolume: number;
@@ -130,7 +131,7 @@ export default function PayPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
                 activeTab === tab
-                  ? 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
@@ -168,33 +169,33 @@ export default function PayPage() {
               </p>
               <p className="text-xs text-purple-500 mt-2">Per transaction</p>
             </div>
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#188775]/10 to-[#14a085]/5 border border-[#188775]/20 rounded-2xl p-6">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#188775]/20 to-transparent rounded-full -mr-10 -mt-10" />
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-6">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-10 -mt-10" />
               <p className="text-sm text-muted-foreground mb-2">Success Rate</p>
               <p className="text-3xl font-bold text-foreground">
                 {(stats?.successRate || 0).toFixed(1)}%
               </p>
-              <p className="text-xs text-[#188775] mt-2">Completion rate</p>
+              <p className="text-xs text-[#2563EB] mt-2">Completion rate</p>
             </div>
           </div>
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#188775]/50 hover:shadow-lg transition-all">
+            <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#2563EB]/50 hover:shadow-lg transition-all">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">💳</span>
               </div>
               <h3 className="font-semibold text-foreground mb-1">Enable On-Ramp</h3>
               <p className="text-sm text-muted-foreground">Let users buy crypto with fiat</p>
             </button>
-            <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#188775]/50 hover:shadow-lg transition-all">
+            <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#2563EB]/50 hover:shadow-lg transition-all">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🔄</span>
               </div>
               <h3 className="font-semibold text-foreground mb-1">Enable Off-Ramp</h3>
               <p className="text-sm text-muted-foreground">Let users cash out to fiat</p>
             </button>
-            <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#188775]/50 hover:shadow-lg transition-all">
+            <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#2563EB]/50 hover:shadow-lg transition-all">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🖼️</span>
               </div>
@@ -203,23 +204,57 @@ export default function PayPage() {
             </button>
           </div>
 
-          {/* Integration Code */}
-          <div className="bg-card border border-border rounded-2xl p-6">
-            <h3 className="font-semibold text-foreground mb-4">Quick Integration</h3>
-            <div className="bg-secondary/50 rounded-xl p-4 font-mono text-sm overflow-x-auto">
-              <pre className="text-muted-foreground">
-{`import { PayEmbed } from "@one/react";
+          {/* API Integration */}
+          <CodeBlock
+            title="Pay Integration"
+            tabs={[
+              {
+                label: 'JavaScript',
+                language: 'javascript',
+                code: `import { OneWallet } from '@onewallet/sdk';
+
+const client = new OneWallet({ clientId: 'YOUR_CLIENT_ID' });
+
+// Embed pay widget
+import { PayEmbed } from "@onewallet/react";
 
 <PayEmbed
-  client={oneClient}
+  client={client}
   payOptions={{
     mode: "fund_wallet",
     prefillBuy: { token: "USDC", amount: "10" }
   }}
-/>`}
-              </pre>
-            </div>
-          </div>
+/>
+
+// Or use the API directly
+const tx = await client.pay.createTransaction({
+  type: 'onramp',
+  amount: 100,
+  currency: 'USD',
+  token: 'USDC'
+});`,
+              },
+              {
+                label: 'cURL',
+                language: 'bash',
+                code: `# Create payment transaction
+curl -X POST https://api.onewallet.com/v1/pay/transactions \\
+  -H "X-API-Key: YOUR_CLIENT_ID" \\
+  -H "X-Secret-Key: YOUR_SECRET_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "type": "onramp",
+    "amount": 100,
+    "currency": "USD",
+    "token": "USDC"
+  }'
+
+# Get transaction status
+curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
+  -H "X-API-Key: YOUR_CLIENT_ID"`,
+              },
+            ]}
+          />
         </>
       )}
 
@@ -227,15 +262,15 @@ export default function PayPage() {
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           <div className="p-4 border-b border-border flex items-center justify-between">
             <h3 className="font-semibold text-foreground">Recent Transactions</h3>
-            <button className="text-sm text-[#188775] hover:underline">Export CSV</button>
+            <button className="text-sm text-[#2563EB] hover:underline">Export CSV</button>
           </div>
           {loading ? (
             <div className="p-12 text-center">
-              <div className="w-10 h-10 border-2 border-[#188775] border-t-transparent rounded-full animate-spin mx-auto" />
+              <div className="w-10 h-10 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto" />
             </div>
           ) : transactions.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">💳</span>
               </div>
               <h3 className="font-semibold text-foreground mb-2">No transactions yet</h3>
@@ -283,7 +318,7 @@ export default function PayPage() {
 
       {activeTab === 'providers' && (
         <div className="space-y-4">
-          <div className="bg-gradient-to-r from-[#188775]/10 via-[#14a085]/5 to-transparent border border-[#188775]/20 rounded-2xl p-6">
+          <div className="bg-gradient-to-r from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent border border-[#2563EB]/20 rounded-2xl p-6">
             <h3 className="font-semibold text-foreground mb-2">Payment Providers</h3>
             <p className="text-sm text-muted-foreground">Configure payment providers to enable fiat-to-crypto and crypto-to-fiat transactions for your users.</p>
           </div>
@@ -319,7 +354,7 @@ export default function PayPage() {
                 <button className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all ${
                   provider.status === 'active'
                     ? 'bg-secondary text-foreground hover:bg-secondary/80'
-                    : 'bg-gradient-to-r from-[#188775] to-[#14a085] text-white hover:opacity-90'
+                    : 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white hover:opacity-90'
                 }`}>
                   {provider.status === 'active' ? 'Manage Settings' : 'Enable Provider'}
                 </button>

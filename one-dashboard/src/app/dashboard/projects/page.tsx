@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface Project {
   id: string;
@@ -16,6 +17,7 @@ interface Project {
 }
 
 export default function ProjectsPage() {
+  const t = useTranslations('projects');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -54,9 +56,9 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Projects</h1>
+          <h1 className="text-2xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Manage your ecosystem projects and API access
+            {t('subtitle')}
           </p>
         </div>
         <Link
@@ -64,7 +66,7 @@ export default function ProjectsPage() {
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
         >
           <span>+</span>
-          <span>Create Project</span>
+          <span>{t('createProject')}</span>
         </Link>
       </div>
 
@@ -72,7 +74,7 @@ export default function ProjectsPage() {
       <div className="flex items-center gap-4">
         <input
           type="search"
-          placeholder="Search projects..."
+          placeholder={t('searchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 max-w-md px-4 py-2 border rounded-md bg-background"
@@ -93,7 +95,7 @@ export default function ProjectsPage() {
       ) : filteredProjects.length === 0 ? (
         <div className="bg-card border rounded-lg p-12 text-center">
           <p className="text-muted-foreground mb-4">
-            {search ? 'No projects match your search' : 'No projects yet'}
+            {search ? t('noProjectsSearch') : t('noProjects')}
           </p>
           {!search && (
             <Link
@@ -101,7 +103,7 @@ export default function ProjectsPage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
             >
               <span>+</span>
-              <span>Create Your First Project</span>
+              <span>{t('createFirstProject')}</span>
             </Link>
           )}
         </div>
@@ -131,18 +133,18 @@ export default function ProjectsPage() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Users</p>
+                  <p className="text-muted-foreground">{t('users')}</p>
                   <p className="font-medium">{project.users_count.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">API Calls</p>
+                  <p className="text-muted-foreground">{t('apiCalls')}</p>
                   <p className="font-medium">{project.api_calls_today.toLocaleString()}</p>
                 </div>
               </div>
 
               <div className="mt-4 pt-4 border-t">
                 <p className="text-xs text-muted-foreground">
-                  API Key: {project.api_key_prefix}...
+                  {t('apiKeyPrefix')}{project.api_key_prefix}...
                 </p>
               </div>
             </Link>

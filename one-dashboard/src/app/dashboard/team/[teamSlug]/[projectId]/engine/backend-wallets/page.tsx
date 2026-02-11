@@ -108,7 +108,7 @@ export default function BackendWalletsPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -119,8 +119,8 @@ export default function BackendWalletsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#188775]/10 to-[#14a085]/5 border border-[#188775]/20 rounded-2xl p-5">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#188775]/20 to-transparent rounded-full -mr-10 -mt-10" />
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-5">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-10 -mt-10" />
           <p className="text-sm text-muted-foreground mb-1">Total Wallets</p>
           <p className="text-3xl font-bold text-foreground">{wallets.length}</p>
         </div>
@@ -169,7 +169,7 @@ export default function BackendWalletsPage() {
         </div>
       ) : wallets.length === 0 ? (
         <div className="bg-card border border-border rounded-2xl p-12 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#188775]/20 to-[#14a085]/10 flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">🔑</span>
           </div>
           <h3 className="text-xl font-semibold text-foreground mb-2">No backend wallets</h3>
@@ -178,7 +178,7 @@ export default function BackendWalletsPage() {
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -195,7 +195,7 @@ export default function BackendWalletsPage() {
             return (
               <div
                 key={wallet.id}
-                className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-[#188775]/30 transition-all"
+                className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg hover:border-[#2563EB]/30 transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${typeConfig.gradient} flex items-center justify-center flex-shrink-0`}>
@@ -245,8 +245,8 @@ export default function BackendWalletsPage() {
                         Created {new Date(wallet.created_at).toLocaleDateString()}
                       </span>
                       <div className="flex-1" />
-                      <button className="text-sm text-[#188775] hover:underline">Send Funds</button>
-                      <button className="text-sm text-[#188775] hover:underline">View Transactions</button>
+                      <button className="text-sm text-[#2563EB] hover:underline">Send Funds</button>
+                      <button className="text-sm text-[#2563EB] hover:underline">View Transactions</button>
                       <button className="text-sm text-muted-foreground hover:text-red-500">Delete</button>
                     </div>
                   </div>
@@ -280,7 +280,7 @@ export default function BackendWalletsPage() {
                   type="text"
                   value={newWallet.label}
                   onChange={(e) => setNewWallet({ ...newWallet, label: e.target.value })}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   placeholder="e.g., Treasury Wallet"
                 />
               </div>
@@ -295,8 +295,8 @@ export default function BackendWalletsPage() {
                       onClick={() => setNewWallet({ ...newWallet, type: type as typeof newWallet.type })}
                       className={`p-4 rounded-xl border text-left transition-all ${
                         newWallet.type === type
-                          ? 'border-[#188775] bg-[#188775]/5 ring-2 ring-[#188775]/20'
-                          : 'border-border hover:border-[#188775]/50'
+                          ? 'border-[#2563EB] bg-[#2563EB]/5 ring-2 ring-[#2563EB]/20'
+                          : 'border-border hover:border-[#2563EB]/50'
                       }`}
                     >
                       <span className="text-2xl mb-2 block">{config.icon}</span>
@@ -312,7 +312,7 @@ export default function BackendWalletsPage() {
                 <select
                   value={newWallet.chain_id}
                   onChange={(e) => setNewWallet({ ...newWallet, chain_id: Number(e.target.value) })}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#188775]/20 focus:border-[#188775]"
+                  className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                 >
                   {Object.entries(chainConfig).map(([id, chain]) => (
                     <option key={id} value={id}>
@@ -333,7 +333,7 @@ export default function BackendWalletsPage() {
               <button
                 onClick={createWallet}
                 disabled={!newWallet.label || creating}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-[#188775] to-[#14a085] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all"
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-all"
               >
                 {creating ? (
                   <span className="flex items-center justify-center gap-2">

@@ -12,10 +12,11 @@ const statusColors: Record<string, { bg: string; text: string; border: string }>
   pending: { bg: 'bg-blue-500/10', text: 'text-blue-500', border: 'border-blue-500/20' },
   redeemed: { bg: 'bg-purple-500/10', text: 'text-purple-500', border: 'border-purple-500/20' },
   cancelled: { bg: 'bg-gray-500/10', text: 'text-gray-500', border: 'border-gray-500/20' },
-  matured: { bg: 'bg-teal-500/10', text: 'text-teal-500', border: 'border-teal-500/20' },
+  matured: { bg: 'bg-cyan-500/10', text: 'text-cyan-500', border: 'border-cyan-500/20' },
   withdrawn: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/20' },
   open: { bg: 'bg-green-500/10', text: 'text-green-500', border: 'border-green-500/20' },
   closed: { bg: 'bg-gray-500/10', text: 'text-gray-500', border: 'border-gray-500/20' },
+  pending_redemption: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/20' },
 };
 
 const fallback = { bg: 'bg-gray-500/10', text: 'text-gray-500', border: 'border-gray-500/20' };

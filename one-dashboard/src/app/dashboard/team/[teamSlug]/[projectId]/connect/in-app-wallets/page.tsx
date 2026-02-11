@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { CodeBlock } from '@/components/ui/CodeBlock';
 
 interface WalletUser {
   id: string;
@@ -67,38 +68,38 @@ export default function InAppWalletsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">In-App Wallets</h1>
+        <h1 className="text-2xl font-bold text-foreground">In-App Wallets</h1>
         <p className="text-muted-foreground">
           Users who connected via email, phone, social login, or passkey
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card border rounded-lg p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-card border border-border rounded-2xl p-4">
           <p className="text-sm text-muted-foreground">Total Users</p>
-          <p className="text-2xl font-bold">{stats.total.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-foreground">{stats.total.toLocaleString()}</p>
         </div>
-        <div className="bg-card border rounded-lg p-4">
+        <div className="bg-card border border-border rounded-2xl p-4">
           <p className="text-sm text-muted-foreground">Active (7d)</p>
-          <p className="text-2xl font-bold">{stats.active.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-foreground">{stats.active.toLocaleString()}</p>
         </div>
-        <div className="bg-card border rounded-lg p-4">
+        <div className="bg-card border border-border rounded-2xl p-4">
           <p className="text-sm text-muted-foreground">New Today</p>
-          <p className="text-2xl font-bold">{stats.newToday.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-foreground">{stats.newToday.toLocaleString()}</p>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-2">
+      {/* Filters — horizontally scrollable on mobile */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
         {['all', 'email', 'phone', 'social', 'passkey'].map((method) => (
           <button
             key={method}
             onClick={() => setFilter(method)}
-            className={`px-4 py-2 rounded-md text-sm transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
               filter === method
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary hover:bg-secondary/80'
+                ? 'bg-primary text-white'
+                : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
             }`}
           >
             {method === 'all' ? 'All' : `${authMethodIcons[method]} ${method.charAt(0).toUpperCase() + method.slice(1)}`}
@@ -106,21 +107,23 @@ export default function InAppWalletsPage() {
         ))}
       </div>
 
-      {/* Users Table */}
-      <div className="bg-card border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Users — Desktop table, Mobile cards */}
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+
+        {/* ── Desktop table (hidden on small screens) ── */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-secondary/50">
+            <thead className="bg-secondary/30">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium">User</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Wallet Address</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Auth Method</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Last Active</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Joined</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">User</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Wallet Address</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Auth Method</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Last Active</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Joined</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i}>
@@ -133,7 +136,7 @@ export default function InAppWalletsPage() {
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center">
                     <div className="text-4xl mb-4">👛</div>
-                    <p className="text-muted-foreground mb-2">No users yet</p>
+                    <p className="text-foreground font-medium mb-2">No users yet</p>
                     <p className="text-sm text-muted-foreground">
                       Users will appear here when they connect to your app
                     </p>
@@ -141,24 +144,24 @@ export default function InAppWalletsPage() {
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="hover:bg-secondary/30">
+                  <tr key={user.id} className="hover:bg-secondary/20 transition-colors">
                     <td className="px-4 py-3">
                       <div>
-                        <p className="font-medium">{user.email || 'Anonymous'}</p>
+                        <p className="font-medium text-foreground">{user.email || 'Anonymous'}</p>
                         <p className="text-xs text-muted-foreground">{user.id.slice(0, 8)}...</p>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm">
+                    <td className="px-4 py-3 font-mono text-sm text-foreground">
                       {user.wallet_address.slice(0, 6)}...{user.wallet_address.slice(-4)}
                     </td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center gap-1">
                         <span>{authMethodIcons[user.auth_method]}</span>
-                        <span className="text-sm capitalize">{user.auth_method}</span>
+                        <span className="text-sm capitalize text-foreground">{user.auth_method}</span>
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
                         user.status === 'active'
                           ? 'bg-green-500/10 text-green-500'
                           : 'bg-gray-500/10 text-gray-500'
@@ -166,12 +169,12 @@ export default function InAppWalletsPage() {
                         {user.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm text-muted-foreground">
                       {user.last_login_at
                         ? new Date(user.last_login_at).toLocaleDateString()
                         : '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm">
+                    <td className="px-4 py-3 text-sm text-muted-foreground">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
                   </tr>
@@ -180,7 +183,114 @@ export default function InAppWalletsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* ── Mobile card list (hidden on md+) ── */}
+        <div className="md:hidden">
+          {loading ? (
+            <div className="divide-y divide-border">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="p-4">
+                  <div className="animate-pulse space-y-3">
+                    <div className="h-4 bg-secondary rounded w-2/3" />
+                    <div className="h-3 bg-secondary rounded w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : users.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="text-4xl mb-4">👛</div>
+              <p className="text-foreground font-medium mb-2">No users yet</p>
+              <p className="text-sm text-muted-foreground">
+                Users will appear here when they connect to your app
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {users.map((user) => (
+                <div key={user.id} className="p-4 space-y-3">
+                  {/* Row 1: User + Status */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground truncate">{user.email || 'Anonymous'}</p>
+                      <p className="text-xs text-muted-foreground font-mono">{user.id.slice(0, 8)}...</p>
+                    </div>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium shrink-0 ${
+                      user.status === 'active'
+                        ? 'bg-green-500/10 text-green-500'
+                        : 'bg-gray-500/10 text-gray-500'
+                    }`}>
+                      {user.status}
+                    </span>
+                  </div>
+
+                  {/* Row 2: Details grid */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Wallet</p>
+                      <p className="font-mono text-foreground">{user.wallet_address.slice(0, 6)}...{user.wallet_address.slice(-4)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Auth</p>
+                      <p className="text-foreground">
+                        {authMethodIcons[user.auth_method]} <span className="capitalize">{user.auth_method}</span>
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Last Active</p>
+                      <p className="text-foreground">{user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Joined</p>
+                      <p className="text-foreground">{new Date(user.created_at).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* API Integration */}
+      <CodeBlock
+        title="Wallets API"
+        tabs={[
+          {
+            label: 'JavaScript',
+            language: 'javascript',
+            code: `import { OneWallet } from '@onewallet/sdk';
+
+const client = new OneWallet({ clientId: 'YOUR_CLIENT_ID' });
+
+// List in-app wallets
+const wallets = await client.wallets.list();
+
+// Create wallet for user
+const wallet = await client.wallets.create({
+  authMethod: 'email',
+  email: 'user@example.com'
+});
+
+// Get wallet balance
+const balance = await client.wallets.getBalance(wallet.address);`,
+          },
+          {
+            label: 'cURL',
+            language: 'bash',
+            code: `# List wallets
+curl https://api.onewallet.com/v1/wallets \\
+  -H "X-API-Key: YOUR_CLIENT_ID"
+
+# Create wallet (Server-side)
+curl -X POST https://api.onewallet.com/v1/wallets \\
+  -H "X-API-Key: YOUR_CLIENT_ID" \\
+  -H "X-Secret-Key: YOUR_SECRET_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"auth_method":"email","email":"user@example.com"}'`,
+          },
+        ]}
+      />
     </div>
   );
 }

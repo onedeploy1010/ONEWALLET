@@ -33,6 +33,9 @@ export async function GET(req: NextRequest) {
     const { data: snapshots, error } = await query;
 
     if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
       console.error('Forex performance query error:', error);
       return NextResponse.json(
         { success: false, error: { code: 'E5001', message: 'Failed to fetch forex performance' } },

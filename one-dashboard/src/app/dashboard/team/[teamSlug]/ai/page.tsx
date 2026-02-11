@@ -3,46 +3,74 @@ import { StatsCard } from '@/components/dashboard/StatsCard';
 import { Card } from '@/components/ui/Card';
 import { GradientCard } from '@/components/ui/GradientCard';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 async function getAiStats() {
-  const [
-    { data: strategies },
-    { count: orderCount },
-  ] = await Promise.all([
-    supabaseEngine.from('ai_strategies').select('*'),
-    supabaseEngine.from('ai_orders').select('*', { count: 'exact', head: true }),
-  ]);
+  try {
+    const [strategiesRes, ordersRes, poolsRes] = await Promise.all([
+      supabaseEngine.from('ai_strategies').select('*'),
+      supabaseEngine.from('ai_orders').select('*', { count: 'exact', head: true }),
+      supabaseEngine.from('ai_strategy_pools').select('strategy_id, total_pnl'),
+    ]);
 
-  const strats = strategies || [];
-  const active = strats.filter((s) => s.status === 'active');
-  const totalAum = strats.reduce((sum: number, s) => sum + Number(s.tvl ?? 0), 0);
-  const avgWinRate = active.length > 0
-    ? active.reduce((sum: number, s) => sum + Number(s.win_rate ?? 0), 0) / active.length
-    : 0;
-  const avgSharpe = active.length > 0
-    ? active.reduce((sum: number, s) => sum + Number(s.sharpe_ratio ?? 0), 0) / active.length
-    : 0;
-  const totalProfit = strats.reduce((sum: number, s) => sum + Number(s.total_pnl ?? 0), 0);
+    const strategies = strategiesRes.error?.code === '42P01' ? [] : strategiesRes.data;
+    const orderCount = ordersRes.error?.code === '42P01' ? 0 : ordersRes.count;
+    const pools = poolsRes.error?.code === '42P01' ? [] : poolsRes.data;
 
-  return { totalAum, totalStrategies: strats.length, activeStrategies: active.length, totalOrders: orderCount || 0, avgWinRate, avgSharpe, totalProfit };
+    const strats = strategies || [];
+    const active = strats.filter((s) => s.is_active !== false);
+    const totalAum = strats.reduce((sum: number, s) => sum + Number(s.tvl ?? 0), 0);
+    const avgWinRate = active.length > 0
+      ? active.reduce((sum: number, s) => sum + Number(s.win_rate ?? 0), 0) / active.length
+      : 0;
+    const avgSharpe = active.length > 0
+      ? active.reduce((sum: number, s) => sum + Number(s.sharpe_ratio ?? 0), 0) / active.length
+      : 0;
+    const totalProfit = (pools || []).reduce((sum: number, p) => sum + Number(p.total_pnl ?? 0), 0);
+
+    return { totalAum, totalStrategies: strats.length, activeStrategies: active.length, totalOrders: orderCount || 0, avgWinRate, avgSharpe, totalProfit };
+  } catch {
+    return { totalAum: 0, totalStrategies: 0, activeStrategies: 0, totalOrders: 0, avgWinRate: 0, avgSharpe: 0, totalProfit: 0 };
+  }
 }
 
 async function getRecentStrategies() {
-  const { data } = await supabaseEngine
-    .from('ai_strategies')
-    .select('id, name, category, risk_level, status, tvl, win_rate, sharpe_ratio, total_pnl')
-    .order('created_at', { ascending: false })
-    .limit(5);
-  return data || [];
+  try {
+    const { data, error } = await supabaseEngine
+      .from('ai_strategies')
+      .select('id, name, category, risk_level, is_active, tvl, win_rate, sharpe_ratio')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (error?.code === '42P01') return [];
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 async function getRecentOrders() {
-  const { data } = await supabaseEngine
-    .from('ai_orders')
-    .select('id, user_id, strategy_name, amount, shares, status, pnl, created_at')
-    .order('created_at', { ascending: false })
-    .limit(5);
-  return data || [];
+  try {
+    const { data, error } = await supabaseEngine
+      .from('ai_orders')
+      .select('id, user_id, strategy_id, amount, status, realized_profit, unrealized_profit, created_at')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (error?.code === '42P01') return [];
+    const orders = data || [];
+    const stratIds = Array.from(new Set(orders.map((o) => o.strategy_id).filter(Boolean)));
+    let nameMap = new Map<string, string>();
+    if (stratIds.length > 0) {
+      const { data: strats } = await supabaseEngine.from('ai_strategies').select('id, name').in('id', stratIds);
+      nameMap = new Map((strats || []).map((s) => [s.id, s.name]));
+    }
+    return orders.map((o) => ({
+      ...o,
+      strategy_name: nameMap.get(o.strategy_id) || o.strategy_id,
+      pnl: Number(o.realized_profit ?? 0) + Number(o.unrealized_profit ?? 0),
+    }));
+  } catch {
+    return [];
+  }
 }
 
 const AumIcon = () => (
@@ -102,6 +130,8 @@ export default async function AiOverviewPage({
   params: Promise<{ teamSlug: string }>;
 }) {
   const { teamSlug } = await params;
+  const t = await getTranslations('ai');
+  const tc = await getTranslations('common');
   const [stats, strategies, orders] = await Promise.all([
     getAiStats(),
     getRecentStrategies(),
@@ -111,63 +141,63 @@ export default async function AiOverviewPage({
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">AI Trading</h1>
-        <p className="text-muted-foreground mt-1">Monitor AI-powered trading strategies and performance</p>
+        <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
       </div>
 
       <GradientCard showDecorations>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white mb-2">AI Trading Dashboard</h2>
+            <h2 className="text-xl font-bold text-white mb-2">{t('dashboardTitle')}</h2>
             <p className="text-white/80 text-sm max-w-md">
-              Manage automated trading strategies, monitor orders, and track real-time performance metrics.
+              {t('dashboardDescFull')}
             </p>
           </div>
           <Link
             href={`/dashboard/team/${teamSlug}/ai/strategies`}
             className="px-4 py-2 bg-white/20 border border-white/30 text-white rounded-xl text-sm font-medium hover:bg-white/30 transition-colors"
           >
-            View Strategies
+            {t('viewStrategies')}
           </Link>
         </div>
       </GradientCard>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatsCard title="Total AUM" value={`$${stats.totalAum.toLocaleString()}`} icon={<AumIcon />} trend="up" change={`${stats.activeStrategies} active`} />
-        <StatsCard title="Strategies" value={stats.totalStrategies} icon={<StrategyIcon />} trend="up" change={`${stats.activeStrategies} active`} />
-        <StatsCard title="Total Orders" value={stats.totalOrders} icon={<OrderIcon />} trend="up" change="All time" />
-        <StatsCard title="Avg Win Rate" value={`${stats.avgWinRate.toFixed(1)}%`} icon={<WinRateIcon />} trend="up" change="Active strategies" />
-        <StatsCard title="Avg Sharpe" value={stats.avgSharpe.toFixed(2)} icon={<SharpeIcon />} trend="up" change="Risk-adjusted" />
-        <StatsCard title="Total Profit" value={`$${stats.totalProfit.toLocaleString()}`} icon={<ProfitIcon />} trend={stats.totalProfit >= 0 ? 'up' : 'down'} change="Cumulative" />
+        <StatsCard title={t('stats.totalAum')} value={`$${stats.totalAum.toLocaleString()}`} icon={<AumIcon />} trend="up" change={t('stats.activeCount', { count: stats.activeStrategies })} />
+        <StatsCard title={t('stats.strategies')} value={stats.totalStrategies} icon={<StrategyIcon />} trend="up" change={t('stats.activeCount', { count: stats.activeStrategies })} />
+        <StatsCard title={t('stats.totalOrders')} value={stats.totalOrders} icon={<OrderIcon />} trend="up" change={t('stats.allTime')} />
+        <StatsCard title={t('stats.avgWinRate')} value={`${stats.avgWinRate.toFixed(1)}%`} icon={<WinRateIcon />} trend="up" change={t('stats.activeStrategies')} />
+        <StatsCard title={t('stats.avgSharpe')} value={stats.avgSharpe.toFixed(2)} icon={<SharpeIcon />} trend="up" change={t('stats.riskAdjusted')} />
+        <StatsCard title={t('stats.totalProfit')} value={`$${stats.totalProfit.toLocaleString()}`} icon={<ProfitIcon />} trend={stats.totalProfit >= 0 ? 'up' : 'down'} change={t('stats.cumulative')} />
       </div>
 
       <Card padding="none">
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Recent Strategies</h2>
-            <p className="text-sm text-muted-foreground">Latest AI trading strategies</p>
+            <h2 className="text-lg font-semibold text-foreground">{t('strategies.recentTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('latestStrategies')}</p>
           </div>
           <Link href={`/dashboard/team/${teamSlug}/ai/strategies`} className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1">
-            View All <ArrowIcon />
+            {tc('actions.viewAll')} <ArrowIcon />
           </Link>
         </div>
         {strategies.length === 0 ? (
           <div className="p-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4"><StrategyIcon /></div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">No strategies yet</h3>
-            <p className="text-muted-foreground">AI strategies will appear here when created</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('strategies.noStrategies')}</h3>
+            <p className="text-muted-foreground">{t('strategies.noStrategiesHint')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Risk</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">TVL</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Win Rate</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.name')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.category')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.risk')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.tvl')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.winRate')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -177,10 +207,10 @@ export default async function AiOverviewPage({
                       <Link href={`/dashboard/team/${teamSlug}/ai/strategies/${s.id}`} className="text-sm font-medium text-foreground hover:text-primary">{s.name}</Link>
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground">{s.category}</td>
-                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${riskColors[s.risk_level] || riskColors.medium}`}>{s.risk_level}</span></td>
+                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${riskColors[Number(s.risk_level) <= 2 ? 'low' : Number(s.risk_level) <= 3 ? 'medium' : 'high'] || riskColors.medium}`}>{Number(s.risk_level) <= 2 ? 'low' : Number(s.risk_level) <= 3 ? 'medium' : 'high'}</span></td>
                     <td className="px-4 py-3 text-sm font-medium text-foreground">${Number(s.tvl ?? 0).toLocaleString()}</td>
                     <td className="px-4 py-3 text-sm font-medium text-foreground">{Number(s.win_rate ?? 0).toFixed(1)}%</td>
-                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColors[s.status] || statusColors.active}`}>{s.status}</span></td>
+                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusColors[s.is_active === false ? 'paused' : 'active']}`}>{s.is_active === false ? 'paused' : 'active'}</span></td>
                   </tr>
                 ))}
               </tbody>
@@ -192,30 +222,30 @@ export default async function AiOverviewPage({
       <Card padding="none">
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
-            <p className="text-sm text-muted-foreground">Latest AI trading orders</p>
+            <h2 className="text-lg font-semibold text-foreground">{t('orders.recentTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('orders.recentSubtitle')}</p>
           </div>
           <Link href={`/dashboard/team/${teamSlug}/ai/orders`} className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1">
-            View All <ArrowIcon />
+            {tc('actions.viewAll')} <ArrowIcon />
           </Link>
         </div>
         {orders.length === 0 ? (
           <div className="p-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-4"><OrderIcon /></div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">No orders yet</h3>
-            <p className="text-muted-foreground">Orders will appear here when placed</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('orders.noOrders')}</h3>
+            <p className="text-muted-foreground">{t('orders.noOrdersHint')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">User</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Strategy</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Amount</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">P&L</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.user')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.strategy')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.amount')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.pnl')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.status')}</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('columns.date')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
