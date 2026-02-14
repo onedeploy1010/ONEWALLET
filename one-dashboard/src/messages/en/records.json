@@ -1,54 +1,56 @@
 {
-  "title": "Client Records",
-  "subtitle": "Unified activity feed for AI and Forex operations",
-  "allActivity": "All Activity",
-  "aiOnly": "AI Only",
-  "forexOnly": "Forex Only",
-  "ai": {
-    "title": "AI Activity",
-    "subtitle": "Complete AI trading activity history",
-    "ordersHistory": "Orders History",
-    "decisionHistory": "Decision History",
-    "noOrderHistory": "No order history",
-    "noDecisionHistory": "No decision history",
-    "yes": "Yes",
-    "no": "No",
-    "columns": {
-      "time": "Time",
-      "user": "User",
-      "strategy": "Strategy",
-      "action": "Action",
-      "symbol": "Symbol",
-      "confidence": "Confidence",
-      "executed": "Executed",
-      "amount": "Amount",
-      "shares": "Shares",
-      "status": "Status",
-      "pnl": "P&L",
-      "date": "Date"
-    }
-  },
-  "forex": {
-    "title": "Forex Activity",
-    "subtitle": "Complete forex investment and trade history",
-    "investmentHistory": "Investment History",
-    "tradeHistory": "Trade History",
-    "noInvestmentHistory": "No investment history",
-    "noTradeHistory": "No trade history",
-    "columns": {
-      "user": "User",
-      "amount": "Amount",
-      "value": "Value",
-      "profit": "Profit",
-      "pairs": "Pairs",
-      "cycle": "Cycle",
-      "status": "Status",
-      "pair": "Pair",
-      "side": "Side",
-      "lots": "Lots",
-      "pips": "Pips",
-      "pnl": "P&L",
-      "date": "Date"
+  "records": {
+    "title": "Client Records",
+    "subtitle": "Unified activity feed for AI and Forex operations",
+    "allActivity": "All Activity",
+    "aiOnly": "AI Only",
+    "forexOnly": "Forex Only",
+    "ai": {
+      "title": "AI Activity",
+      "subtitle": "Complete AI trading activity history",
+      "ordersHistory": "Orders History",
+      "decisionHistory": "Decision History",
+      "noOrderHistory": "No order history",
+      "noDecisionHistory": "No decision history",
+      "yes": "Yes",
+      "no": "No",
+      "columns": {
+        "time": "Time",
+        "user": "User",
+        "strategy": "Strategy",
+        "action": "Action",
+        "symbol": "Symbol",
+        "confidence": "Confidence",
+        "executed": "Executed",
+        "amount": "Amount",
+        "shares": "Shares",
+        "status": "Status",
+        "pnl": "P&L",
+        "date": "Date"
+      }
+    },
+    "forex": {
+      "title": "Forex Activity",
+      "subtitle": "Complete forex investment and trade history",
+      "investmentHistory": "Investment History",
+      "tradeHistory": "Trade History",
+      "noInvestmentHistory": "No investment history",
+      "noTradeHistory": "No trade history",
+      "columns": {
+        "user": "User",
+        "amount": "Amount",
+        "value": "Value",
+        "profit": "Profit",
+        "pairs": "Pairs",
+        "cycle": "Cycle",
+        "status": "Status",
+        "pair": "Pair",
+        "side": "Side",
+        "lots": "Lots",
+        "pips": "Pips",
+        "pnl": "P&L",
+        "date": "Date"
+      }
     }
   }
 }
