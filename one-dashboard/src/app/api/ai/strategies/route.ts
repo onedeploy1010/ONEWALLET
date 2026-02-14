@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, getUserProjectIds, verifyProjectAccess } from '@/lib/auth';
+import { getSession, verifyProjectAccess } from '@/lib/auth';
 import { supabaseEngine } from '@/lib/supabase';
 
 // GET /api/ai/strategies - List strategies with project scoping
@@ -31,25 +31,13 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Get user's accessible project IDs for filtering
-    const userProjectIds = await getUserProjectIds(session.user.id);
+    // Strategies are global - no project filtering needed
+    // The project_id parameter is only used for access verification above
 
     let query = supabaseEngine
       .from('ai_strategies')
       .select('*')
       .order('created_at', { ascending: false });
-
-    // Filter by specific project or user's accessible projects
-    if (projectId) {
-      query = query.eq('project_id', projectId);
-    } else if (userProjectIds.length > 0) {
-      // Filter to only show strategies from user's projects
-      // Also include global strategies (project_id is null) if any
-      query = query.or(`project_id.in.(${userProjectIds.join(',')}),project_id.is.null`);
-    } else {
-      // User has no projects, only show global strategies
-      query = query.is('project_id', null);
-    }
 
     if (category) {
       query = query.eq('category', category);
