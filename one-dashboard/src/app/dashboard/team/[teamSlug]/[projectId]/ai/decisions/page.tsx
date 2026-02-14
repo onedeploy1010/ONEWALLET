@@ -28,7 +28,9 @@ export default function AiDecisionsPage() {
         if (!data.success) return;
         const all: Decision[] = [];
         for (const s of data.data || []) {
-          const res = await fetch(`/api/ai/strategies/${s.id}/decisions?limit=50`);
+          const decParams = new URLSearchParams({ limit: '50' });
+          if (projectId) decParams.set('project_id', projectId);
+          const res = await fetch(`/api/ai/strategies/${s.id}/decisions?${decParams}`);
           const decData = await res.json();
           if (decData.success) all.push(...(decData.data || []).map((d: Decision) => ({ ...d, strategyName: d.strategyName || s.name })));
         }

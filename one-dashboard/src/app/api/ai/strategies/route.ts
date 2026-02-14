@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, getUserProjectIds, verifyProjectAccess } from '@/lib/auth';
 import { supabaseEngine } from '@/lib/supabase';
 
-// GET /api/ai/strategies - List strategies with optional filters
+// GET /api/ai/strategies - List strategies with project scoping
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
@@ -15,14 +15,41 @@ export async function GET(req: NextRequest) {
     }
 
     const url = new URL(req.url);
+    const projectId = url.searchParams.get('project_id');
     const category = url.searchParams.get('category');
     const riskLevel = url.searchParams.get('risk_level');
     const status = url.searchParams.get('status');
+
+    // If project_id is provided, verify access
+    if (projectId) {
+      const access = await verifyProjectAccess(session.user.id, projectId);
+      if (!access) {
+        return NextResponse.json(
+          { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Get user's accessible project IDs for filtering
+    const userProjectIds = await getUserProjectIds(session.user.id);
 
     let query = supabaseEngine
       .from('ai_strategies')
       .select('*')
       .order('created_at', { ascending: false });
+
+    // Filter by specific project or user's accessible projects
+    if (projectId) {
+      query = query.eq('project_id', projectId);
+    } else if (userProjectIds.length > 0) {
+      // Filter to only show strategies from user's projects
+      // Also include global strategies (project_id is null) if any
+      query = query.or(`project_id.in.(${userProjectIds.join(',')}),project_id.is.null`);
+    } else {
+      // User has no projects, only show global strategies
+      query = query.is('project_id', null);
+    }
 
     if (category) {
       query = query.eq('category', category);
@@ -46,10 +73,16 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch pool P&L data (total_pnl lives in ai_strategy_pools, not ai_strategies)
-    const { data: pools } = await supabaseEngine
-      .from('ai_strategy_pools')
-      .select('strategy_id, total_pnl');
-    const poolPnl = new Map((pools || []).map((p) => [p.strategy_id, Number(p.total_pnl ?? 0)]));
+    const strategyIds = (strategies || []).map((s) => s.id);
+    let poolPnl = new Map<string, number>();
+
+    if (strategyIds.length > 0) {
+      const { data: pools } = await supabaseEngine
+        .from('ai_strategy_pools')
+        .select('strategy_id, total_pnl')
+        .in('strategy_id', strategyIds);
+      poolPnl = new Map((pools || []).map((p) => [p.strategy_id, Number(p.total_pnl ?? 0)]));
+    }
 
     const riskMap = (level: number) => level <= 2 ? 'low' : level <= 3 ? 'medium' : 'high';
 

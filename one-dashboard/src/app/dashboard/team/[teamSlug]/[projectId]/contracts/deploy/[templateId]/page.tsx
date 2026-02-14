@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 // Template configurations
 const templateConfigs: Record<string, {
@@ -149,6 +150,7 @@ const chains: Record<number, { name: string; icon: string; explorer: string }> =
 };
 
 export default function DeployTemplatePage() {
+  const t = useTranslations('contracts.deployTemplate');
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -186,13 +188,13 @@ export default function DeployTemplatePage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <div className="text-6xl mb-4">❓</div>
-        <h2 className="text-xl font-semibold text-foreground mb-2">Template not found</h2>
-        <p className="text-muted-foreground mb-4">The contract template "{templateId}" does not exist.</p>
+        <h2 className="text-xl font-semibold text-foreground mb-2">{t('templateNotFound')}</h2>
+        <p className="text-muted-foreground mb-4">{t('templateNotFoundHint', { templateId })}</p>
         <button
           onClick={() => router.back()}
           className="px-4 py-2 bg-secondary text-foreground rounded-lg hover:bg-secondary/80"
         >
-          Go Back
+          {t('goBack')}
         </button>
       </div>
     );
@@ -279,16 +281,16 @@ export default function DeployTemplatePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Contract Deployed!</h2>
-          <p className="text-muted-foreground mb-6">Your {template.name} has been deployed successfully.</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('deploymentSuccess')}</h2>
+          <p className="text-muted-foreground mb-6">{t('deployedSuccessfully', { name: template.name })}</p>
 
           <div className="bg-secondary/50 rounded-xl p-4 mb-6 text-left">
             <div className="mb-4">
-              <p className="text-xs text-muted-foreground mb-1">Contract Address</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('contractAddress')}</p>
               <p className="font-mono text-sm text-foreground break-all">{deployResult.address}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Transaction Hash</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('transactionHash')}</p>
               <p className="font-mono text-sm text-foreground break-all">{deployResult.txHash}</p>
             </div>
           </div>
@@ -300,13 +302,13 @@ export default function DeployTemplatePage() {
               rel="noopener noreferrer"
               className="px-4 py-2 bg-secondary text-foreground rounded-lg hover:bg-secondary/80 transition-colors"
             >
-              View on Explorer
+              {t('viewOnExplorer')}
             </a>
             <button
               onClick={() => router.push(`/dashboard/team/${teamSlug}/${projectId}/contracts/${deployResult.address}`)}
               className="px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-lg hover:opacity-90 transition-opacity"
             >
-              Manage Contract
+              {t('manageContract')}
             </button>
           </div>
         </div>
@@ -331,7 +333,7 @@ export default function DeployTemplatePage() {
             <span className="text-2xl">{template.icon}</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-foreground">Deploy {template.name}</h1>
+            <h1 className="text-xl font-bold text-foreground">{t('deploy', { name: template.name })}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
               <span>{chain.icon}</span>
               <span>{chain.name}</span>
@@ -379,7 +381,7 @@ export default function DeployTemplatePage() {
                     onChange={(e) => handleInputChange(field.name, e.target.value)}
                     className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
                   >
-                    <option value="">Select...</option>
+                    <option value="">{t('select')}</option>
                     {field.options?.map((opt) => (
                       <option key={opt} value={opt}>{opt}</option>
                     ))}
@@ -432,10 +434,10 @@ export default function DeployTemplatePage() {
                         onClick={addRecipient}
                         className="text-sm text-[#2563EB] hover:underline"
                       >
-                        + Add Recipient
+                        {t('addRecipient')}
                       </button>
                       <span className={`text-sm ${totalShares === 100 ? 'text-green-500' : 'text-red-500'}`}>
-                        Total: {totalShares}%
+                        {t('total', { percent: totalShares })}
                       </span>
                     </div>
                   </div>
@@ -477,11 +479,11 @@ export default function DeployTemplatePage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Deploying...
+                {t('deploying')}
               </>
             ) : (
               <>
-                Deploy Contract
+                {t('deployContract')}
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
@@ -489,7 +491,7 @@ export default function DeployTemplatePage() {
             )}
           </button>
           <p className="text-xs text-muted-foreground text-center mt-3">
-            Deployment will require gas fees on {chain.name}
+            {t('gasFeesNotice', { chain: chain.name })}
           </p>
         </div>
       </div>

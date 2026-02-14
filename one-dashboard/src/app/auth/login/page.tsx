@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -16,16 +16,24 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
 
-  const handleSendOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Countdown timer for resend cooldown
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
+
+  const sendOTP = useCallback(async () => {
     setLoading(true);
     setError('');
 
     try {
       const { error: otpError } = await supabaseAuth.auth.signInWithOtp({
         email,
-        options: { shouldCreateUser: false },
+        options: { shouldCreateUser: true },
       });
 
       if (otpError) {
@@ -33,11 +41,23 @@ export default function LoginPage() {
       }
 
       setOtpSent(true);
+      setResendCooldown(60); // 60 seconds cooldown
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
     }
+  }, [email, t]);
+
+  const handleSendOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await sendOTP();
+  };
+
+  const handleResendOTP = async () => {
+    if (resendCooldown > 0) return;
+    setOtp('');
+    await sendOTP();
   };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
@@ -183,14 +203,25 @@ export default function LoginPage() {
               >
                 {t('login.verifySignIn')}
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setOtpSent(false)}
-                className="w-full"
-              >
-                {t('login.useDifferentEmail')}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleResendOTP}
+                  disabled={resendCooldown > 0 || loading}
+                  className="flex-1"
+                >
+                  {resendCooldown > 0 ? `${resendCooldown}s` : t('login.resendCode')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => { setOtpSent(false); setOtp(''); setResendCooldown(0); }}
+                  className="flex-1"
+                >
+                  {t('login.useDifferentEmail')}
+                </Button>
+              </div>
             </form>
           )}
         </div>

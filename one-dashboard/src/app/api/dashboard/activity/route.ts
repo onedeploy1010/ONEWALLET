@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, getUserProjectIds, verifyProjectAccess } from '@/lib/auth';
 import { supabaseEngine } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
@@ -15,28 +15,59 @@ export async function GET(req: NextRequest) {
 
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '10');
+    const projectId = url.searchParams.get('project_id');
 
-    // Fetch recent activity from multiple sources
+    // If project_id is provided, verify access
+    if (projectId) {
+      const access = await verifyProjectAccess(session.user.id, projectId);
+      if (!access) {
+        return NextResponse.json(
+          { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Get user's accessible project IDs
+    const userProjectIds = projectId ? [projectId] : await getUserProjectIds(session.user.id);
+
+    if (userProjectIds.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+      });
+    }
+
+    // Build scoped queries
+    let transactionsQuery = supabaseEngine
+      .from('transactions')
+      .select('id, type, amount, currency, status, created_at, user_id')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    let activityLogsQuery = supabaseEngine
+      .from('activity_logs')
+      .select('id, action, metadata, created_at, user_id')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    // Filter by project
+    if (projectId) {
+      transactionsQuery = transactionsQuery.eq('project_id', projectId);
+      activityLogsQuery = activityLogsQuery.contains('metadata', { project_id: projectId });
+    } else {
+      transactionsQuery = transactionsQuery.in('project_id', userProjectIds);
+      // For activity_logs, filter by user's own logs or logs with their projects
+      activityLogsQuery = activityLogsQuery.eq('user_id', session.user.id);
+    }
+
+    // Fetch recent activity from scoped sources
     const [
       { data: transactions },
-      { data: users },
       { data: activityLogs },
     ] = await Promise.all([
-      supabaseEngine
-        .from('transactions')
-        .select('id, type, amount, currency, status, created_at, user_id')
-        .order('created_at', { ascending: false })
-        .limit(limit),
-      supabaseEngine
-        .from('users')
-        .select('id, email, created_at')
-        .order('created_at', { ascending: false })
-        .limit(limit),
-      supabaseEngine
-        .from('activity_logs')
-        .select('id, action, metadata, created_at, user_id')
-        .order('created_at', { ascending: false })
-        .limit(limit),
+      transactionsQuery,
+      activityLogsQuery,
     ]);
 
     // Combine and format activities
@@ -48,14 +79,6 @@ export async function GET(req: NextRequest) {
         description: `${t.amount} ${t.currency} - ${t.status}`,
         timestamp: t.created_at,
         metadata: { user_id: t.user_id },
-      })),
-      ...(users || []).map((u) => ({
-        id: `user-${u.id}`,
-        type: 'user_created' as const,
-        title: 'New User Registered',
-        description: u.email,
-        timestamp: u.created_at,
-        metadata: {},
       })),
       ...(activityLogs || []).map((a) => ({
         id: `log-${a.id}`,

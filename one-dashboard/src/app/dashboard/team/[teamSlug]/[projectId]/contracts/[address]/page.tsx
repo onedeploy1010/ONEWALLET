@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface ContractDetails {
   id: string;
@@ -63,6 +64,7 @@ const chainConfig: Record<number, { name: string; icon: string; color: string; e
 };
 
 export default function ContractDetailsPage() {
+  const t = useTranslations('contracts.details');
   const params = useParams();
   const router = useRouter();
   const teamSlug = params.teamSlug as string;
@@ -221,15 +223,15 @@ export default function ContractDetailsPage() {
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-600/10 flex items-center justify-center mx-auto mb-4">
           <span className="text-3xl">⚠️</span>
         </div>
-        <h3 className="font-semibold text-foreground mb-2">Contract Not Found</h3>
+        <h3 className="font-semibold text-foreground mb-2">{t('contractNotFound')}</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          The contract at address {address.slice(0, 10)}... was not found
+          {t('contractNotFoundHint', { address: `${address.slice(0, 10)}...` })}
         </p>
         <button
           onClick={() => router.back()}
           className="px-4 py-2 bg-secondary text-foreground rounded-xl hover:bg-secondary/80"
         >
-          Go Back
+          {t('goBack')}
         </button>
       </div>
     );
@@ -243,7 +245,7 @@ export default function ContractDetailsPage() {
       <div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
           <Link href={`/dashboard/team/${teamSlug}/${projectId}/contracts/published`} className="hover:text-foreground">
-            Contracts
+            {t('contracts')}
           </Link>
           <span>/</span>
           <span className="font-mono">{address.slice(0, 10)}...</span>
@@ -266,7 +268,7 @@ export default function ContractDetailsPage() {
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Verified
+                  {t('verified')}
                 </span>
               )}
             </div>
@@ -296,7 +298,7 @@ export default function ContractDetailsPage() {
               className="px-4 py-2 border border-border rounded-xl text-foreground hover:bg-secondary flex items-center gap-2"
             >
               <span>{chain.icon}</span>
-              View on {chain.name}
+              {t('viewOnExplorer', { chain: chain.name })}
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
@@ -309,23 +311,23 @@ export default function ContractDetailsPage() {
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-card border border-border rounded-2xl p-4">
-            <p className="text-xs text-muted-foreground mb-1">Total Transactions</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('totalTransactions')}</p>
             <p className="text-xl font-bold text-foreground">{stats.total_transactions.toLocaleString()}</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-4">
-            <p className="text-xs text-muted-foreground mb-1">Unique Users</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('uniqueUsers')}</p>
             <p className="text-xl font-bold text-foreground">{stats.unique_users.toLocaleString()}</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-4">
-            <p className="text-xs text-muted-foreground mb-1">Total Value</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('totalValue')}</p>
             <p className="text-xl font-bold text-foreground">{stats.total_value}</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-4">
-            <p className="text-xs text-muted-foreground mb-1">Gas Used</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('gasUsed')}</p>
             <p className="text-xl font-bold text-foreground">{stats.gas_used}</p>
           </div>
           <div className="bg-card border border-border rounded-2xl p-4">
-            <p className="text-xs text-muted-foreground mb-1">Last Activity</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('lastActivity')}</p>
             <p className="text-lg font-bold text-foreground">{stats.last_activity ? new Date(stats.last_activity).toLocaleDateString() : '-'}</p>
           </div>
         </div>
@@ -334,11 +336,11 @@ export default function ContractDetailsPage() {
       {/* Tabs */}
       <div className="flex items-center gap-1 p-1 bg-secondary/50 rounded-xl overflow-x-auto">
         {[
-          { id: 'overview', label: 'Overview', icon: '📋' },
-          { id: 'read', label: 'Read Contract', icon: '👁️' },
-          { id: 'write', label: 'Write Contract', icon: '✏️' },
-          { id: 'events', label: 'Events', icon: '📢' },
-          { id: 'source', label: 'Source Code', icon: '💻' },
+          { id: 'overview', label: t('tabs.overview'), icon: '📋' },
+          { id: 'read', label: t('tabs.read'), icon: '👁️' },
+          { id: 'write', label: t('tabs.write'), icon: '✏️' },
+          { id: 'events', label: t('tabs.events'), icon: '📢' },
+          { id: 'source', label: t('tabs.source'), icon: '💻' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -359,31 +361,31 @@ export default function ContractDetailsPage() {
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
-            <h3 className="font-semibold text-foreground">Contract Information</h3>
+            <h3 className="font-semibold text-foreground">{t('contractInfo')}</h3>
             <div className="space-y-3">
               <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Type</span>
+                <span className="text-muted-foreground">{t('type')}</span>
                 <span className="text-foreground">{contract.type}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Chain</span>
+                <span className="text-muted-foreground">{t('chain')}</span>
                 <span className="text-foreground flex items-center gap-1.5">
                   {chain.icon} {chain.name}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Deployed</span>
+                <span className="text-muted-foreground">{t('deployed')}</span>
                 <span className="text-foreground">{new Date(contract.deployed_at).toLocaleString()}</span>
               </div>
               {contract.version && (
                 <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Version</span>
+                  <span className="text-muted-foreground">{t('version')}</span>
                   <span className="text-foreground">{contract.version}</span>
                 </div>
               )}
               {contract.proxy_type && (
                 <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Proxy Type</span>
+                  <span className="text-muted-foreground">{t('proxyType')}</span>
                   <span className="text-foreground">{contract.proxy_type}</span>
                 </div>
               )}
@@ -391,14 +393,14 @@ export default function ContractDetailsPage() {
           </div>
 
           <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
-            <h3 className="font-semibold text-foreground">Deployment Details</h3>
+            <h3 className="font-semibold text-foreground">{t('deploymentDetails')}</h3>
             <div className="space-y-3">
               <div className="py-2 border-b border-border">
-                <span className="text-muted-foreground block text-sm mb-1">Deployer</span>
+                <span className="text-muted-foreground block text-sm mb-1">{t('deployer')}</span>
                 <code className="text-foreground text-sm font-mono">{contract.deployer_address}</code>
               </div>
               <div className="py-2 border-b border-border">
-                <span className="text-muted-foreground block text-sm mb-1">Transaction Hash</span>
+                <span className="text-muted-foreground block text-sm mb-1">{t('transactionHash')}</span>
                 <div className="flex items-center gap-2">
                   <code className="text-foreground text-sm font-mono truncate">{contract.transaction_hash}</code>
                   {chain.explorer && (
@@ -417,7 +419,7 @@ export default function ContractDetailsPage() {
               </div>
               {contract.implementation_address && (
                 <div className="py-2 border-b border-border">
-                  <span className="text-muted-foreground block text-sm mb-1">Implementation</span>
+                  <span className="text-muted-foreground block text-sm mb-1">{t('implementation')}</span>
                   <code className="text-foreground text-sm font-mono">{contract.implementation_address}</code>
                 </div>
               )}
@@ -430,7 +432,7 @@ export default function ContractDetailsPage() {
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           {readFunctions.length === 0 ? (
             <div className="p-12 text-center">
-              <p className="text-muted-foreground">No read functions available</p>
+              <p className="text-muted-foreground">{t('noReadFunctions')}</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -441,7 +443,7 @@ export default function ContractDetailsPage() {
                       <h4 className="font-medium text-foreground">{func.name}</h4>
                       {func.outputs.length > 0 && (
                         <p className="text-xs text-muted-foreground">
-                          Returns: {func.outputs.map((o) => `${o.type}`).join(', ')}
+                          {t('returns', { types: func.outputs.map((o) => `${o.type}`).join(', ') })}
                         </p>
                       )}
                     </div>
@@ -453,7 +455,7 @@ export default function ContractDetailsPage() {
                       {executingFunction === func.name && (
                         <div className="w-3 h-3 border-2 border-[#2563EB]/30 border-t-[#2563EB] rounded-full animate-spin" />
                       )}
-                      Query
+                      {t('query')}
                     </button>
                   </div>
                   {func.inputs.length > 0 && (
@@ -476,7 +478,7 @@ export default function ContractDetailsPage() {
                   )}
                   {functionResults[func.name] && (
                     <div className="mt-3 p-3 bg-secondary rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-1">Result:</p>
+                      <p className="text-xs text-muted-foreground mb-1">{t('result')}</p>
                       <pre className="text-sm text-foreground whitespace-pre-wrap font-mono">
                         {functionResults[func.name]}
                       </pre>
@@ -493,7 +495,7 @@ export default function ContractDetailsPage() {
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           {writeFunctions.length === 0 ? (
             <div className="p-12 text-center">
-              <p className="text-muted-foreground">No write functions available</p>
+              <p className="text-muted-foreground">{t('noWriteFunctions')}</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -504,7 +506,7 @@ export default function ContractDetailsPage() {
                       <h4 className="font-medium text-foreground flex items-center gap-2">
                         {func.name}
                         {func.payable && (
-                          <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-500 text-xs rounded-full">payable</span>
+                          <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-500 text-xs rounded-full">{t('payable')}</span>
                         )}
                       </h4>
                     </div>
@@ -516,7 +518,7 @@ export default function ContractDetailsPage() {
                       {executingFunction === func.name && (
                         <div className="w-3 h-3 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
                       )}
-                      Write
+                      {t('write')}
                     </button>
                   </div>
                   {func.inputs.length > 0 && (
@@ -539,7 +541,7 @@ export default function ContractDetailsPage() {
                   )}
                   {functionResults[func.name] && (
                     <div className="mt-3 p-3 bg-secondary rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-1">Result:</p>
+                      <p className="text-xs text-muted-foreground mb-1">{t('result')}</p>
                       <pre className="text-sm text-foreground whitespace-pre-wrap font-mono">
                         {functionResults[func.name]}
                       </pre>
@@ -559,8 +561,8 @@ export default function ContractDetailsPage() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">📢</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">No events yet</h3>
-              <p className="text-sm text-muted-foreground">Contract events will appear here</p>
+              <h3 className="font-semibold text-foreground mb-2">{t('noEventsYet')}</h3>
+              <p className="text-sm text-muted-foreground">{t('eventsWillAppear')}</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -570,7 +572,7 @@ export default function ContractDetailsPage() {
                     <div>
                       <h4 className="font-medium text-foreground">{event.event_name}</h4>
                       <p className="text-xs text-muted-foreground">
-                        Block #{event.block_number} · {new Date(event.timestamp).toLocaleString()}
+                        {t('block', { number: event.block_number })} · {new Date(event.timestamp).toLocaleString()}
                       </p>
                     </div>
                     {chain.explorer && (
@@ -580,7 +582,7 @@ export default function ContractDetailsPage() {
                         rel="noopener noreferrer"
                         className="text-[#2563EB] hover:underline text-sm flex items-center gap-1"
                       >
-                        View Tx
+                        {t('viewTx')}
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>
@@ -611,12 +613,12 @@ export default function ContractDetailsPage() {
           {contract.source_code ? (
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-foreground">Source Code</h3>
+                <h3 className="font-semibold text-foreground">{t('sourceCode')}</h3>
                 <button
                   onClick={() => copyToClipboard(contract.source_code!, 'source')}
                   className="px-3 py-1.5 border border-border rounded-lg text-sm text-foreground hover:bg-secondary flex items-center gap-2"
                 >
-                  {copiedField === 'source' ? 'Copied!' : 'Copy'}
+                  {copiedField === 'source' ? t('copied') : t('copy')}
                 </button>
               </div>
               <div className="bg-secondary rounded-xl p-4 overflow-x-auto">
@@ -630,9 +632,9 @@ export default function ContractDetailsPage() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">⚠️</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Source Not Available</h3>
+              <h3 className="font-semibold text-foreground mb-2">{t('sourceNotAvailable')}</h3>
               <p className="text-sm text-muted-foreground">
-                Contract source code has not been verified or uploaded
+                {t('sourceNotAvailableHint')}
               </p>
             </div>
           )}

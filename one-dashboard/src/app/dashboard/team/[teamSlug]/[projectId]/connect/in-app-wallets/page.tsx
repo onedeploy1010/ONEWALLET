@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 
 interface WalletUser {
@@ -21,6 +22,7 @@ interface WalletUser {
 export default function InAppWalletsPage() {
   const params = useParams();
   const projectId = params.projectId as string;
+  const t = useTranslations('connect');
   const [users, setUsers] = useState<WalletUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -68,24 +70,24 @@ export default function InAppWalletsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">In-App Wallets</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('inAppWallets.title')}</h1>
         <p className="text-muted-foreground">
-          Users who connected via email, phone, social login, or passkey
+          {t('inAppWallets.subtitle')}
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-card border border-border rounded-2xl p-4">
-          <p className="text-sm text-muted-foreground">Total Users</p>
+          <p className="text-sm text-muted-foreground">{t('inAppWallets.totalUsers')}</p>
           <p className="text-2xl font-bold text-foreground">{stats.total.toLocaleString()}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-4">
-          <p className="text-sm text-muted-foreground">Active (7d)</p>
+          <p className="text-sm text-muted-foreground">{t('inAppWallets.active7d')}</p>
           <p className="text-2xl font-bold text-foreground">{stats.active.toLocaleString()}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-4">
-          <p className="text-sm text-muted-foreground">New Today</p>
+          <p className="text-sm text-muted-foreground">{t('inAppWallets.newToday')}</p>
           <p className="text-2xl font-bold text-foreground">{stats.newToday.toLocaleString()}</p>
         </div>
       </div>
@@ -102,7 +104,7 @@ export default function InAppWalletsPage() {
                 : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80'
             }`}
           >
-            {method === 'all' ? 'All' : `${authMethodIcons[method]} ${method.charAt(0).toUpperCase() + method.slice(1)}`}
+            {method === 'all' ? t('inAppWallets.all') : `${authMethodIcons[method]} ${method.charAt(0).toUpperCase() + method.slice(1)}`}
           </button>
         ))}
       </div>
@@ -115,12 +117,12 @@ export default function InAppWalletsPage() {
           <table className="w-full">
             <thead className="bg-secondary/30">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">User</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Wallet Address</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Auth Method</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Last Active</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Joined</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('inAppWallets.columns.user')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('inAppWallets.columns.walletAddress')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('inAppWallets.columns.authMethod')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('inAppWallets.columns.status')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('inAppWallets.columns.lastActive')}</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">{t('inAppWallets.columns.joined')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -136,9 +138,9 @@ export default function InAppWalletsPage() {
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center">
                     <div className="text-4xl mb-4">👛</div>
-                    <p className="text-foreground font-medium mb-2">No users yet</p>
+                    <p className="text-foreground font-medium mb-2">{t('inAppWallets.noUsers')}</p>
                     <p className="text-sm text-muted-foreground">
-                      Users will appear here when they connect to your app
+                      {t('inAppWallets.noUsersHint')}
                     </p>
                   </td>
                 </tr>
@@ -147,7 +149,7 @@ export default function InAppWalletsPage() {
                   <tr key={user.id} className="hover:bg-secondary/20 transition-colors">
                     <td className="px-4 py-3">
                       <div>
-                        <p className="font-medium text-foreground">{user.email || 'Anonymous'}</p>
+                        <p className="font-medium text-foreground">{user.email || t('inAppWallets.anonymous')}</p>
                         <p className="text-xs text-muted-foreground">{user.id.slice(0, 8)}...</p>
                       </div>
                     </td>
@@ -200,9 +202,9 @@ export default function InAppWalletsPage() {
           ) : users.length === 0 ? (
             <div className="p-12 text-center">
               <div className="text-4xl mb-4">👛</div>
-              <p className="text-foreground font-medium mb-2">No users yet</p>
+              <p className="text-foreground font-medium mb-2">{t('inAppWallets.noUsers')}</p>
               <p className="text-sm text-muted-foreground">
-                Users will appear here when they connect to your app
+                {t('inAppWallets.noUsersHint')}
               </p>
             </div>
           ) : (
@@ -212,7 +214,7 @@ export default function InAppWalletsPage() {
                   {/* Row 1: User + Status */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-medium text-foreground truncate">{user.email || 'Anonymous'}</p>
+                      <p className="font-medium text-foreground truncate">{user.email || t('inAppWallets.anonymous')}</p>
                       <p className="text-xs text-muted-foreground font-mono">{user.id.slice(0, 8)}...</p>
                     </div>
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium shrink-0 ${
@@ -227,21 +229,21 @@ export default function InAppWalletsPage() {
                   {/* Row 2: Details grid */}
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                     <div>
-                      <p className="text-xs text-muted-foreground">Wallet</p>
+                      <p className="text-xs text-muted-foreground">{t('inAppWallets.columns.wallet')}</p>
                       <p className="font-mono text-foreground">{user.wallet_address.slice(0, 6)}...{user.wallet_address.slice(-4)}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Auth</p>
+                      <p className="text-xs text-muted-foreground">{t('inAppWallets.columns.auth')}</p>
                       <p className="text-foreground">
                         {authMethodIcons[user.auth_method]} <span className="capitalize">{user.auth_method}</span>
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Last Active</p>
+                      <p className="text-xs text-muted-foreground">{t('inAppWallets.columns.lastActive')}</p>
                       <p className="text-foreground">{user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : '-'}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Joined</p>
+                      <p className="text-xs text-muted-foreground">{t('inAppWallets.columns.joined')}</p>
                       <p className="text-foreground">{new Date(user.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>

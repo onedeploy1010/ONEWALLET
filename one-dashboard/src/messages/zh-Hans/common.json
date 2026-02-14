@@ -167,6 +167,27 @@
         "payments": "支付",
         "paymentsDesc": "支付处理、开票和交易历史"
       }
+    },
+    "playground": {
+      "demoNotFound": "演示未找到",
+      "demoNotFoundHint": "您要查找的演示不存在。",
+      "backToOverview": "返回概览",
+      "underConstruction": "建设中",
+      "underConstructionHint": "此演示面板正在建设中。请稍后回来探索 {name} 的示例数据和模拟账户。",
+      "demos": {
+        "payments": {
+          "name": "支付演示",
+          "description": "法币入金/出金以及使用多个服务商的加密货币支付处理。"
+        },
+        "wallets": {
+          "name": "钱包演示",
+          "description": "应用内钱包创建、社交登录和嵌入式钱包管理。"
+        },
+        "forex": {
+          "name": "外汇交易演示",
+          "description": "外汇投资池、自动交易和实时盈亏跟踪。"
+        }
+      }
     }
   }
 }

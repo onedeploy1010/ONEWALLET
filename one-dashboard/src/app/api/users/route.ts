@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, getUserProjectIds, verifyProjectAccess } from '@/lib/auth';
 import { supabaseEngine } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
@@ -17,10 +17,66 @@ export async function GET(req: NextRequest) {
     const offset = parseInt(url.searchParams.get('offset') || '0');
     const role = url.searchParams.get('role');
     const search = url.searchParams.get('search');
+    const projectId = url.searchParams.get('project_id');
 
+    // If project_id is provided, verify access
+    if (projectId) {
+      const access = await verifyProjectAccess(session.user.id, projectId);
+      if (!access) {
+        return NextResponse.json(
+          { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Get user's accessible project IDs
+    const userProjectIds = projectId ? [projectId] : await getUserProjectIds(session.user.id);
+
+    if (userProjectIds.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+        pagination: {
+          total: 0,
+          limit,
+          offset,
+        },
+      });
+    }
+
+    // First get users from wallets table (users associated with projects)
+    let walletsQuery = supabaseEngine
+      .from('wallets')
+      .select('user_id');
+
+    if (projectId) {
+      walletsQuery = walletsQuery.eq('project_id', projectId);
+    } else {
+      walletsQuery = walletsQuery.in('project_id', userProjectIds);
+    }
+
+    const { data: wallets } = await walletsQuery;
+    const userIdsSet = new Set((wallets || []).map((w) => w.user_id).filter(Boolean));
+    const userIds = Array.from(userIdsSet);
+
+    if (userIds.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: [],
+        pagination: {
+          total: 0,
+          limit,
+          offset,
+        },
+      });
+    }
+
+    // Now get user details filtered to those in the user's projects
     let query = supabaseEngine
       .from('users')
-      .select('id, email, role, wallet_address, created_at, last_login_at, status', { count: 'exact' });
+      .select('id, email, role, wallet_address, created_at, last_login_at, status', { count: 'exact' })
+      .in('id', userIds);
 
     if (role && role !== 'all') {
       query = query.eq('role', role);

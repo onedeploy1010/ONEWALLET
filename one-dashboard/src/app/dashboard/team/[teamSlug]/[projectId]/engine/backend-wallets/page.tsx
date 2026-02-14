@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface BackendWallet {
   id: string;
@@ -24,17 +25,25 @@ const chainConfig: Record<number, { name: string; icon: string; symbol: string }
   8453: { name: 'Base', icon: '🔵', symbol: 'ETH' },
 };
 
-const walletTypeConfig: Record<string, { label: string; icon: string; description: string; gradient: string }> = {
-  local: { label: 'Local', icon: '🔐', description: 'Encrypted key storage', gradient: 'from-blue-500/20 to-indigo-500/10' },
-  'aws-kms': { label: 'AWS KMS', icon: '☁️', description: 'AWS Key Management', gradient: 'from-orange-500/20 to-amber-500/10' },
-  'gcp-kms': { label: 'GCP KMS', icon: '🌩️', description: 'Google Cloud KMS', gradient: 'from-blue-400/20 to-cyan-500/10' },
-  smart: { label: 'Smart Wallet', icon: '🧠', description: 'Account abstraction', gradient: 'from-purple-500/20 to-violet-500/10' },
+const walletTypeIcons: Record<string, { icon: string; gradient: string }> = {
+  local: { icon: '🔐', gradient: 'from-blue-500/20 to-indigo-500/10' },
+  'aws-kms': { icon: '☁️', gradient: 'from-orange-500/20 to-amber-500/10' },
+  'gcp-kms': { icon: '🌩️', gradient: 'from-blue-400/20 to-cyan-500/10' },
+  smart: { icon: '🧠', gradient: 'from-purple-500/20 to-violet-500/10' },
 };
 
 export default function BackendWalletsPage() {
+  const t = useTranslations('engine.backendWalletsPage');
   const params = useParams();
   const projectId = params.projectId as string;
   const [wallets, setWallets] = useState<BackendWallet[]>([]);
+
+  const walletTypeConfig: Record<string, { label: string; description: string; icon: string; gradient: string }> = {
+    local: { label: t('walletTypeLocal'), description: t('walletTypeLocalDesc'), ...walletTypeIcons.local },
+    'aws-kms': { label: t('walletTypeAwsKms'), description: t('walletTypeAwsKmsDesc'), ...walletTypeIcons['aws-kms'] },
+    'gcp-kms': { label: t('walletTypeGcpKms'), description: t('walletTypeGcpKmsDesc'), ...walletTypeIcons['gcp-kms'] },
+    smart: { label: t('walletTypeSmart'), description: t('walletTypeSmartDesc'), ...walletTypeIcons.smart },
+  };
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -101,9 +110,9 @@ export default function BackendWalletsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Backend Wallets</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('heading')}</h1>
           <p className="text-muted-foreground">
-            Server-side wallets for signing and sending transactions
+            {t('description')}
           </p>
         </div>
         <button
@@ -113,7 +122,7 @@ export default function BackendWalletsPage() {
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Create Wallet
+          {t('createWallet')}
         </button>
       </div>
 
@@ -121,24 +130,24 @@ export default function BackendWalletsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-5">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-10 -mt-10" />
-          <p className="text-sm text-muted-foreground mb-1">Total Wallets</p>
+          <p className="text-sm text-muted-foreground mb-1">{t('totalWallets')}</p>
           <p className="text-3xl font-bold text-foreground">{wallets.length}</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-5">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-          <p className="text-sm text-muted-foreground mb-1">Combined Balance</p>
+          <p className="text-sm text-muted-foreground mb-1">{t('combinedBalance')}</p>
           <p className="text-3xl font-bold text-foreground">{totalBalance.toFixed(4)} ETH</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-5">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-          <p className="text-sm text-muted-foreground mb-1">Total Transactions</p>
+          <p className="text-sm text-muted-foreground mb-1">{t('totalTransactions')}</p>
           <p className="text-3xl font-bold text-foreground">{wallets.reduce((sum, w) => sum + (w.transaction_count || 0), 0)}</p>
         </div>
       </div>
 
       {/* Wallet Types Info */}
       <div className="bg-card border border-border rounded-2xl p-6">
-        <h3 className="font-semibold text-foreground mb-4">Wallet Types</h3>
+        <h3 className="font-semibold text-foreground mb-4">{t('walletTypes')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {Object.entries(walletTypeConfig).map(([type, config]) => (
             <div key={type} className={`p-4 rounded-xl bg-gradient-to-br ${config.gradient} border border-border/50`}>
@@ -172,9 +181,9 @@ export default function BackendWalletsPage() {
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">🔑</span>
           </div>
-          <h3 className="text-xl font-semibold text-foreground mb-2">No backend wallets</h3>
+          <h3 className="text-xl font-semibold text-foreground mb-2">{t('noWallets')}</h3>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Create a wallet to start sending transactions from your backend
+            {t('noWalletsHint')}
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
@@ -183,7 +192,7 @@ export default function BackendWalletsPage() {
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Create Wallet
+            {t('createWallet')}
           </button>
         </div>
       ) : (
@@ -232,7 +241,7 @@ export default function BackendWalletsPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-bold text-foreground">{wallet.balance} {chain.symbol}</p>
-                        <p className="text-xs text-muted-foreground">Nonce: {wallet.nonce}</p>
+                        <p className="text-xs text-muted-foreground">{t('nonce', { nonce: wallet.nonce })}</p>
                       </div>
                     </div>
 
@@ -242,12 +251,12 @@ export default function BackendWalletsPage() {
                         {chain.name}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        Created {new Date(wallet.created_at).toLocaleDateString()}
+                        {t('created', { date: new Date(wallet.created_at).toLocaleDateString() })}
                       </span>
                       <div className="flex-1" />
-                      <button className="text-sm text-[#2563EB] hover:underline">Send Funds</button>
-                      <button className="text-sm text-[#2563EB] hover:underline">View Transactions</button>
-                      <button className="text-sm text-muted-foreground hover:text-red-500">Delete</button>
+                      <button className="text-sm text-[#2563EB] hover:underline">{t('sendFunds')}</button>
+                      <button className="text-sm text-[#2563EB] hover:underline">{t('viewTransactions')}</button>
+                      <button className="text-sm text-muted-foreground hover:text-red-500">{t('delete')}</button>
                     </div>
                   </div>
                 </div>
@@ -262,7 +271,7 @@ export default function BackendWalletsPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold text-foreground">Create Backend Wallet</h3>
+              <h3 className="text-xl font-semibold text-foreground">{t('createBackendWallet')}</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -275,18 +284,18 @@ export default function BackendWalletsPage() {
 
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Wallet Label</label>
+                <label className="block text-sm font-medium text-foreground mb-2">{t('walletLabel')}</label>
                 <input
                   type="text"
                   value={newWallet.label}
                   onChange={(e) => setNewWallet({ ...newWallet, label: e.target.value })}
                   className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB]"
-                  placeholder="e.g., Treasury Wallet"
+                  placeholder={t('walletLabelPlaceholder')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Wallet Type</label>
+                <label className="block text-sm font-medium text-foreground mb-2">{t('walletType')}</label>
                 <div className="grid grid-cols-2 gap-3">
                   {Object.entries(walletTypeConfig).map(([type, config]) => (
                     <button
@@ -308,7 +317,7 @@ export default function BackendWalletsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Network</label>
+                <label className="block text-sm font-medium text-foreground mb-2">{t('network')}</label>
                 <select
                   value={newWallet.chain_id}
                   onChange={(e) => setNewWallet({ ...newWallet, chain_id: Number(e.target.value) })}
@@ -328,7 +337,7 @@ export default function BackendWalletsPage() {
                 onClick={() => setShowCreateModal(false)}
                 className="flex-1 px-4 py-3 border border-border rounded-xl text-foreground hover:bg-secondary transition-colors"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={createWallet}
@@ -338,10 +347,10 @@ export default function BackendWalletsPage() {
                 {creating ? (
                   <span className="flex items-center justify-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Creating...
+                    {t('creating')}
                   </span>
                 ) : (
-                  'Create Wallet'
+                  t('createWallet')
                 )}
               </button>
             </div>

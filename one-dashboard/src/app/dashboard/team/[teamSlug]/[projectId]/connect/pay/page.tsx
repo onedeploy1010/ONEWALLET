@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 
 interface PaymentStats {
@@ -71,6 +72,7 @@ const providers: Provider[] = [
 export default function PayPage() {
   const params = useParams();
   const projectId = params.projectId as string;
+  const t = useTranslations('connect');
   const [stats, setStats] = useState<PaymentStats | null>(null);
   const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,11 +103,11 @@ export default function PayPage() {
     }
   };
 
-  const typeConfig: Record<string, { icon: string; label: string; color: string }> = {
-    buy: { icon: '💰', label: 'Buy Crypto', color: 'text-green-500' },
-    sell: { icon: '💸', label: 'Sell Crypto', color: 'text-orange-500' },
-    onramp: { icon: '⬆️', label: 'On-Ramp', color: 'text-blue-500' },
-    offramp: { icon: '⬇️', label: 'Off-Ramp', color: 'text-purple-500' },
+  const typeConfig: Record<string, { icon: string; labelKey: string; color: string }> = {
+    buy: { icon: '💰', labelKey: 'pay.types.buy', color: 'text-green-500' },
+    sell: { icon: '💸', labelKey: 'pay.types.sell', color: 'text-orange-500' },
+    onramp: { icon: '⬆️', labelKey: 'pay.types.onramp', color: 'text-blue-500' },
+    offramp: { icon: '⬇️', labelKey: 'pay.types.offramp', color: 'text-purple-500' },
   };
 
   const statusConfig: Record<string, { bg: string; text: string }> = {
@@ -119,9 +121,9 @@ export default function PayPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Pay</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('pay.title')}</h1>
           <p className="text-muted-foreground">
-            Fiat on-ramp, off-ramp, and crypto payment solutions
+            {t('pay.subtitle')}
           </p>
         </div>
         <div className="flex gap-2 p-1 bg-secondary/50 rounded-xl">
@@ -135,7 +137,7 @@ export default function PayPage() {
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
-              {tab}
+              {tab === 'overview' ? t('pay.overview') : tab === 'transactions' ? t('pay.transactions') : t('pay.providers')}
             </button>
           ))}
         </div>
@@ -147,35 +149,35 @@ export default function PayPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Total Volume</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('pay.totalVolume')}</p>
               <p className="text-3xl font-bold text-foreground">
                 ${(stats?.totalVolume || 0).toLocaleString()}
               </p>
-              <p className="text-xs text-green-500 mt-2">All time payments</p>
+              <p className="text-xs text-green-500 mt-2">{t('pay.allTimePayments')}</p>
             </div>
             <div className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Transactions</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('pay.transactionCount')}</p>
               <p className="text-3xl font-bold text-foreground">
                 {(stats?.transactionCount || 0).toLocaleString()}
               </p>
-              <p className="text-xs text-blue-500 mt-2">Total processed</p>
+              <p className="text-xs text-blue-500 mt-2">{t('pay.totalProcessed')}</p>
             </div>
             <div className="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Avg Transaction</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('pay.avgTransaction')}</p>
               <p className="text-3xl font-bold text-foreground">
                 ${(stats?.avgTransactionSize || 0).toFixed(2)}
               </p>
-              <p className="text-xs text-purple-500 mt-2">Per transaction</p>
+              <p className="text-xs text-purple-500 mt-2">{t('pay.perTransaction')}</p>
             </div>
             <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Success Rate</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('pay.successRate')}</p>
               <p className="text-3xl font-bold text-foreground">
                 {(stats?.successRate || 0).toFixed(1)}%
               </p>
-              <p className="text-xs text-[#2563EB] mt-2">Completion rate</p>
+              <p className="text-xs text-[#2563EB] mt-2">{t('pay.completionRate')}</p>
             </div>
           </div>
 
@@ -185,22 +187,22 @@ export default function PayPage() {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">💳</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">Enable On-Ramp</h3>
-              <p className="text-sm text-muted-foreground">Let users buy crypto with fiat</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('pay.enableOnRamp')}</h3>
+              <p className="text-sm text-muted-foreground">{t('pay.enableOnRampDesc')}</p>
             </button>
             <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#2563EB]/50 hover:shadow-lg transition-all">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🔄</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">Enable Off-Ramp</h3>
-              <p className="text-sm text-muted-foreground">Let users cash out to fiat</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('pay.enableOffRamp')}</h3>
+              <p className="text-sm text-muted-foreground">{t('pay.enableOffRampDesc')}</p>
             </button>
             <button className="group bg-card border border-border rounded-2xl p-6 text-left hover:border-[#2563EB]/50 hover:shadow-lg transition-all">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🖼️</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">NFT Checkout</h3>
-              <p className="text-sm text-muted-foreground">Credit card NFT purchases</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('pay.nftCheckout')}</h3>
+              <p className="text-sm text-muted-foreground">{t('pay.nftCheckoutDesc')}</p>
             </button>
           </div>
 
@@ -261,8 +263,8 @@ curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
       {activeTab === 'transactions' && (
         <div className="bg-card border border-border rounded-2xl overflow-hidden">
           <div className="p-4 border-b border-border flex items-center justify-between">
-            <h3 className="font-semibold text-foreground">Recent Transactions</h3>
-            <button className="text-sm text-[#2563EB] hover:underline">Export CSV</button>
+            <h3 className="font-semibold text-foreground">{t('pay.recentTransactions')}</h3>
+            <button className="text-sm text-[#2563EB] hover:underline">{t('pay.exportCsv')}</button>
           </div>
           {loading ? (
             <div className="p-12 text-center">
@@ -273,8 +275,8 @@ curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#2563EB]/20 to-[#3B82F6]/10 flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">💳</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">No transactions yet</h3>
-              <p className="text-sm text-muted-foreground">Transactions will appear here when users make payments</p>
+              <h3 className="font-semibold text-foreground mb-2">{t('pay.noTransactions')}</h3>
+              <p className="text-sm text-muted-foreground">{t('pay.noTransactionsHint')}</p>
             </div>
           ) : (
             <div className="divide-y divide-border">
@@ -288,7 +290,7 @@ curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
                         <span className="text-xl">{type.icon}</span>
                       </div>
                       <div>
-                        <p className={`font-medium ${type.color}`}>{type.label}</p>
+                        <p className={`font-medium ${type.color}`}>{t(type.labelKey)}</p>
                         <p className="text-xs text-muted-foreground">{tx.provider}</p>
                       </div>
                     </div>
@@ -319,8 +321,8 @@ curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
       {activeTab === 'providers' && (
         <div className="space-y-4">
           <div className="bg-gradient-to-r from-[#2563EB]/10 via-[#3B82F6]/5 to-transparent border border-[#2563EB]/20 rounded-2xl p-6">
-            <h3 className="font-semibold text-foreground mb-2">Payment Providers</h3>
-            <p className="text-sm text-muted-foreground">Configure payment providers to enable fiat-to-crypto and crypto-to-fiat transactions for your users.</p>
+            <h3 className="font-semibold text-foreground mb-2">{t('pay.paymentProviders')}</h3>
+            <p className="text-sm text-muted-foreground">{t('pay.paymentProvidersHint')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -341,7 +343,7 @@ curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
                       ? 'bg-green-500/10 text-green-500'
                       : 'bg-gray-500/10 text-gray-500'
                   }`}>
-                    {provider.status === 'active' ? 'Active' : 'Configure'}
+                    {provider.status === 'active' ? t('pay.active') : t('pay.configure')}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -356,7 +358,7 @@ curl https://api.onewallet.com/v1/pay/transactions/tx_123 \\
                     ? 'bg-secondary text-foreground hover:bg-secondary/80'
                     : 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white hover:opacity-90'
                 }`}>
-                  {provider.status === 'active' ? 'Manage Settings' : 'Enable Provider'}
+                  {provider.status === 'active' ? t('pay.manageSettings') : t('pay.enableProvider')}
                 </button>
               </div>
             ))}

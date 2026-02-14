@@ -27,7 +27,9 @@ export default function AiPositionsPage() {
         if (!data.success) return;
         const allPositions: Position[] = [];
         for (const s of data.data || []) {
-          const res = await fetch(`/api/ai/strategies/${s.id}/positions`);
+          const posParams = new URLSearchParams();
+          if (projectId) posParams.set('project_id', projectId);
+          const res = await fetch(`/api/ai/strategies/${s.id}/positions?${posParams}`);
           const posData = await res.json();
           if (posData.success) allPositions.push(...(posData.data || []));
         }

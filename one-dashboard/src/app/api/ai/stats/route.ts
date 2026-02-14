@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, getUserProjectIds, verifyProjectAccess } from '@/lib/auth';
 import { supabaseEngine } from '@/lib/supabase';
 
-// GET /api/ai/stats - Returns AI overview stats
+// GET /api/ai/stats - Returns AI overview stats scoped by project
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
@@ -14,17 +14,56 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const url = new URL(req.url);
+    const projectId = url.searchParams.get('project_id');
+
+    // If project_id is provided, verify access
+    if (projectId) {
+      const access = await verifyProjectAccess(session.user.id, projectId);
+      if (!access) {
+        return NextResponse.json(
+          { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Get user's accessible project IDs
+    const userProjectIds = projectId ? [projectId] : await getUserProjectIds(session.user.id);
+
+    // Build scoped queries
+    let strategiesQuery = supabaseEngine.from('ai_strategies').select('*');
+    let ordersQuery = supabaseEngine.from('ai_orders').select('*', { count: 'exact', head: true });
+
+    if (projectId) {
+      strategiesQuery = strategiesQuery.eq('project_id', projectId);
+      ordersQuery = ordersQuery.eq('project_id', projectId);
+    } else if (userProjectIds.length > 0) {
+      // Filter to user's projects or global strategies
+      strategiesQuery = strategiesQuery.or(`project_id.in.(${userProjectIds.join(',')}),project_id.is.null`);
+      ordersQuery = ordersQuery.in('project_id', userProjectIds);
+    } else {
+      // User has no projects, only show global stats
+      strategiesQuery = strategiesQuery.is('project_id', null);
+      // No orders for user without projects
+      return NextResponse.json({
+        success: true,
+        data: {
+          totalAum: 0,
+          totalStrategies: 0,
+          activeStrategies: 0,
+          totalOrders: 0,
+          avgWinRate: 0,
+          avgSharpe: 0,
+          totalProfit: 0,
+        },
+      });
+    }
+
     const [
       { data: strategies, error: strategiesError },
       { count: totalOrders, error: ordersError },
-    ] = await Promise.all([
-      supabaseEngine
-        .from('ai_strategies')
-        .select('*'),
-      supabaseEngine
-        .from('ai_orders')
-        .select('*', { count: 'exact', head: true }),
-    ]);
+    ] = await Promise.all([strategiesQuery, ordersQuery]);
 
     const strategiesMissing = strategiesError?.code === '42P01';
     const ordersMissing = ordersError?.code === '42P01';

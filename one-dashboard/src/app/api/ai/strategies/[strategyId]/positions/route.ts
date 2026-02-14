@@ -19,10 +19,20 @@ export async function GET(
 
     const { strategyId } = await params;
 
-    const { data: positions, error } = await supabaseEngine
+    const url = new URL(req.url);
+    const projectId = url.searchParams.get('project_id');
+
+    let query = supabaseEngine
       .from('ai_open_positions')
       .select('*')
       .eq('strategy_id', strategyId);
+
+    // Filter by project_id if provided
+    if (projectId) {
+      query = query.eq('project_id', projectId);
+    }
+
+    const { data: positions, error } = await query;
 
     if (error) {
       if (error.code === '42P01') {

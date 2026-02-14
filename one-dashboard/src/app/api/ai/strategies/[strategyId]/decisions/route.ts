@@ -20,14 +20,22 @@ export async function GET(
     const { strategyId } = await params;
 
     const url = new URL(req.url);
+    const projectId = url.searchParams.get('project_id');
     const limit = parseInt(url.searchParams.get('limit') || '50');
 
-    const { data: decisions, error } = await supabaseEngine
+    let query = supabaseEngine
       .from('ai_decision_log')
       .select('*')
       .eq('strategy_id', strategyId)
       .order('created_at', { ascending: false })
       .limit(limit);
+
+    // Filter by project_id if provided
+    if (projectId) {
+      query = query.eq('project_id', projectId);
+    }
+
+    const { data: decisions, error } = await query;
 
     if (error) {
       if (error.code === '42P01') {

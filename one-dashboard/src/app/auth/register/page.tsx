@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -21,6 +21,15 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [step, setStep] = useState<'form' | 'otp'>('form');
   const [otp, setOtp] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Countdown timer for resend cooldown
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -59,12 +68,37 @@ export default function RegisterPage() {
       }
 
       setStep('otp');
+      setResendCooldown(60);
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleResendOTP = useCallback(async () => {
+    if (resendCooldown > 0) return;
+    setLoading(true);
+    setError('');
+    setOtp('');
+
+    try {
+      const { error: otpError } = await supabaseAuth.auth.signInWithOtp({
+        email: formData.email,
+        options: { shouldCreateUser: true },
+      });
+
+      if (otpError) {
+        throw new Error(otpError.message || t('register.failedVerificationCode'));
+      }
+
+      setResendCooldown(60);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [formData.email, resendCooldown, t]);
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,14 +266,25 @@ export default function RegisterPage() {
               >
                 {t('register.verifyAndContinue')}
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setStep('form')}
-                className="w-full"
-              >
-                {t('register.goBack')}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleResendOTP}
+                  disabled={resendCooldown > 0 || loading}
+                  className="flex-1"
+                >
+                  {resendCooldown > 0 ? `${resendCooldown}s` : t('register.resendCode')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => { setStep('form'); setOtp(''); setResendCooldown(0); }}
+                  className="flex-1"
+                >
+                  {t('register.goBack')}
+                </Button>
+              </div>
             </form>
           )}
 

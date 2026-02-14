@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface ConnectStats {
   totalConnections: number;
@@ -15,6 +16,7 @@ interface ConnectStats {
 export default function ConnectAnalyticsPage() {
   const params = useParams();
   const projectId = params.projectId as string;
+  const t = useTranslations('connect');
   const [stats, setStats] = useState<ConnectStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d');
@@ -69,9 +71,9 @@ export default function ConnectAnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Connect Analytics</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('analytics.title')}</h1>
           <p className="text-muted-foreground">
-            Wallet connection metrics and user engagement insights
+            {t('analytics.subtitle')}
           </p>
         </div>
         <div className="flex gap-2 p-1 bg-secondary/50 rounded-xl">
@@ -85,7 +87,7 @@ export default function ConnectAnalyticsPage() {
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
               }`}
             >
-              {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : '90 Days'}
+              {range === '7d' ? t('analytics.7days') : range === '30d' ? t('analytics.30days') : t('analytics.90days')}
             </button>
           ))}
         </div>
@@ -108,46 +110,46 @@ export default function ConnectAnalyticsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative overflow-hidden bg-gradient-to-br from-[#2563EB]/10 to-[#3B82F6]/5 border border-[#2563EB]/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#2563EB]/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Total Connections</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('analytics.totalConnections')}</p>
               <p className="text-3xl font-bold text-foreground">{(stats?.totalConnections || 0).toLocaleString()}</p>
               <p className="text-xs text-[#2563EB] mt-2 flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                All time connections
+                {t('analytics.allTimeConnections')}
               </p>
             </div>
             <div className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Unique Users</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('analytics.uniqueUsers')}</p>
               <p className="text-3xl font-bold text-foreground">{(stats?.uniqueUsers || 0).toLocaleString()}</p>
               <p className="text-xs text-blue-500 mt-2 flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                Distinct wallets
+                {t('analytics.distinctWallets')}
               </p>
             </div>
             <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Success Rate</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('analytics.successRate')}</p>
               <p className="text-3xl font-bold text-foreground">{(stats?.successRate || 0).toFixed(1)}%</p>
               <p className="text-xs text-green-500 mt-2 flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Connection success
+                {t('analytics.connectionSuccess')}
               </p>
             </div>
             <div className="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-6">
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full -mr-10 -mt-10" />
-              <p className="text-sm text-muted-foreground mb-2">Avg Session</p>
+              <p className="text-sm text-muted-foreground mb-2">{t('analytics.avgSession')}</p>
               <p className="text-3xl font-bold text-foreground">{Math.round(stats?.avgSessionDuration || 0)}m</p>
               <p className="text-xs text-purple-500 mt-2 flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Duration per user
+                {t('analytics.durationPerUser')}
               </p>
             </div>
           </div>
@@ -155,12 +157,12 @@ export default function ConnectAnalyticsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Connections by Method */}
             <div className="bg-card border border-border rounded-2xl p-6">
-              <h3 className="font-semibold text-foreground mb-6">Connections by Method</h3>
+              <h3 className="font-semibold text-foreground mb-6">{t('analytics.connectionsByMethod')}</h3>
               {Object.keys(stats?.connectionsByMethod || {}).length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-4xl mb-4">📊</div>
-                  <p className="text-muted-foreground">No connection data yet</p>
-                  <p className="text-sm text-muted-foreground mt-1">Data will appear when users connect</p>
+                  <p className="text-muted-foreground">{t('analytics.noConnectionData')}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t('analytics.dataWillAppear')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -196,12 +198,12 @@ export default function ConnectAnalyticsPage() {
 
             {/* Connections Over Time */}
             <div className="bg-card border border-border rounded-2xl p-6">
-              <h3 className="font-semibold text-foreground mb-6">Connections Over Time</h3>
+              <h3 className="font-semibold text-foreground mb-6">{t('analytics.connectionsOverTime')}</h3>
               {(stats?.connectionsByDay || []).length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-4xl mb-4">📈</div>
-                  <p className="text-muted-foreground">No timeline data yet</p>
-                  <p className="text-sm text-muted-foreground mt-1">Chart will appear with activity</p>
+                  <p className="text-muted-foreground">{t('analytics.noTimelineData')}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t('analytics.chartWillAppear')}</p>
                 </div>
               ) : (
                 <>
@@ -217,7 +219,7 @@ export default function ConnectAnalyticsPage() {
                           style={{ height: `${Math.max(height, 4)}%` }}
                         >
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-foreground text-background text-xs rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg transition-opacity z-10">
-                            <div className="font-semibold">{day.count} connections</div>
+                            <div className="font-semibold">{day.count} {t('analytics.connections')}</div>
                             <div className="text-[10px] opacity-75">{day.date}</div>
                           </div>
                         </div>
@@ -239,7 +241,7 @@ export default function ConnectAnalyticsPage() {
               <svg className="w-5 h-5 text-[#2563EB]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Tips to Improve Connection Rate
+              {t('analytics.tips.title')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-start gap-3">
@@ -247,8 +249,8 @@ export default function ConnectAnalyticsPage() {
                   <span className="text-sm">1</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Enable Multiple Methods</p>
-                  <p className="text-xs text-muted-foreground">Offer email, social, and passkey options</p>
+                  <p className="text-sm font-medium text-foreground">{t('analytics.tips.tip1Title')}</p>
+                  <p className="text-xs text-muted-foreground">{t('analytics.tips.tip1Desc')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -256,8 +258,8 @@ export default function ConnectAnalyticsPage() {
                   <span className="text-sm">2</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Simplify Flow</p>
-                  <p className="text-xs text-muted-foreground">Reduce steps to wallet creation</p>
+                  <p className="text-sm font-medium text-foreground">{t('analytics.tips.tip2Title')}</p>
+                  <p className="text-xs text-muted-foreground">{t('analytics.tips.tip2Desc')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -265,8 +267,8 @@ export default function ConnectAnalyticsPage() {
                   <span className="text-sm">3</span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Clear Messaging</p>
-                  <p className="text-xs text-muted-foreground">Explain benefits of connecting</p>
+                  <p className="text-sm font-medium text-foreground">{t('analytics.tips.tip3Title')}</p>
+                  <p className="text-xs text-muted-foreground">{t('analytics.tips.tip3Desc')}</p>
                 </div>
               </div>
             </div>

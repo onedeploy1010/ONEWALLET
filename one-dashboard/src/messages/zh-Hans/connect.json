@@ -1,9 +1,93 @@
 {
   "connect": {
-    "title": "连接",
-    "subtitle": "认证、钱包和支付集成",
-    "analytics": "分析",
-    "inAppWallets": "应用内钱包",
-    "pay": "支付"
+    "inAppWallets": {
+      "title": "应用内钱包",
+      "subtitle": "通过邮箱、手机、社交登录或 Passkey 连接的用户",
+      "totalUsers": "用户总数",
+      "active7d": "活跃（7天）",
+      "newToday": "今日新增",
+      "all": "全部",
+      "noUsers": "暂无用户",
+      "noUsersHint": "用户连接您的应用后将显示在此处",
+      "columns": {
+        "user": "用户",
+        "walletAddress": "钱包地址",
+        "authMethod": "认证方式",
+        "status": "状态",
+        "lastActive": "最后活跃",
+        "joined": "加入时间",
+        "wallet": "钱包",
+        "auth": "认证"
+      },
+      "anonymous": "匿名"
+    },
+    "analytics": {
+      "title": "连接分析",
+      "subtitle": "钱包连接指标和用户参与度洞察",
+      "7days": "7 天",
+      "30days": "30 天",
+      "90days": "90 天",
+      "totalConnections": "连接总数",
+      "allTimeConnections": "累计连接",
+      "uniqueUsers": "独立用户",
+      "distinctWallets": "独立钱包数",
+      "successRate": "成功率",
+      "connectionSuccess": "连接成功率",
+      "avgSession": "平均会话",
+      "durationPerUser": "每用户时长",
+      "connectionsByMethod": "按方式分类连接",
+      "noConnectionData": "暂无连接数据",
+      "dataWillAppear": "用户连接后数据将显示",
+      "connectionsOverTime": "连接趋势",
+      "noTimelineData": "暂无时间线数据",
+      "chartWillAppear": "有活动后图表将显示",
+      "connections": "次连接",
+      "tips": {
+        "title": "提升连接率的建议",
+        "tip1Title": "启用多种方式",
+        "tip1Desc": "提供邮箱、社交登录和 Passkey 选项",
+        "tip2Title": "简化流程",
+        "tip2Desc": "减少创建钱包的步骤",
+        "tip3Title": "清晰说明",
+        "tip3Desc": "解释连接的好处"
+      }
+    },
+    "pay": {
+      "title": "支付",
+      "subtitle": "法币入金、出金和加密货币支付解决方案",
+      "overview": "概览",
+      "transactions": "交易",
+      "providers": "服务商",
+      "totalVolume": "总交易额",
+      "allTimePayments": "累计支付",
+      "transactionCount": "交易次数",
+      "totalProcessed": "累计处理",
+      "avgTransaction": "平均交易",
+      "perTransaction": "单笔交易",
+      "successRate": "成功率",
+      "completionRate": "完成率",
+      "enableOnRamp": "启用入金",
+      "enableOnRampDesc": "让用户用法币购买加密货币",
+      "enableOffRamp": "启用出金",
+      "enableOffRampDesc": "让用户将加密货币兑换为法币",
+      "nftCheckout": "NFT 结账",
+      "nftCheckoutDesc": "信用卡购买 NFT",
+      "recentTransactions": "近期交易",
+      "exportCsv": "导出 CSV",
+      "noTransactions": "暂无交易",
+      "noTransactionsHint": "用户付款后交易将显示在此处",
+      "paymentProviders": "支付服务商",
+      "paymentProvidersHint": "配置支付服务商，为用户启用法币与加密货币的双向兑换。",
+      "active": "已启用",
+      "configure": "配置",
+      "manageSettings": "管理设置",
+      "enableProvider": "启用服务商",
+      "types": {
+        "buy": "购买加密货币",
+        "sell": "出售加密货币",
+        "onramp": "入金",
+        "offramp": "出金"
+      }
+    }
   }
 }

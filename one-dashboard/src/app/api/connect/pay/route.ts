@@ -1,29 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { getSession, verifyProjectAccess } from '@/lib/auth';
 
 const ENGINE_URL = process.env.ENGINE_URL || 'http://localhost:4000';
 
 // GET /api/connect/pay - Get pay stats and overview
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+    const session = await getSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json(
         { success: false, error: { code: 'E4010', message: 'Unauthorized' } },
         { status: 401 }
       );
     }
 
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value || cookieStore.get('access_token')?.value;
+
     const { searchParams } = new URL(request.url);
-    const projectId = searchParams.get('projectId');
+    const projectId = searchParams.get('projectId') || searchParams.get('project_id');
     const period = searchParams.get('period') || '7d';
 
     if (!projectId) {
       return NextResponse.json(
         { success: false, error: { code: 'E4001', message: 'Project ID is required' } },
         { status: 400 }
+      );
+    }
+
+    // Verify user has access to this project
+    const access = await verifyProjectAccess(session.user.id, projectId);
+    if (!access) {
+      return NextResponse.json(
+        { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+        { status: 403 }
       );
     }
 

@@ -13,11 +13,39 @@ export interface User {
 
 export type UserRole = 'user' | 'admin' | 'superadmin';
 
+export type TeamRole = 'owner' | 'admin' | 'member';
+
+export interface Team {
+  id: string;
+  name: string;
+  slug: string;
+  ownerId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  userId: string;
+  role: TeamRole;
+  createdAt: string;
+}
+
+export interface TeamContext {
+  team: Team;
+  role: TeamRole;
+}
+
 export interface AuthSession {
   user: User;
   accessToken: string;
   refreshToken?: string;
   expiresAt: number;
+}
+
+export interface AuthSessionWithTeam extends AuthSession {
+  teamContext?: TeamContext;
 }
 
 // ============ Project Types ============

@@ -1,16 +1,32 @@
 {
   "connect": {
-    "title": "Connect",
-    "subtitle": "Authentication, wallets, and payment integration",
-    "analytics": "Analytics",
-    "inAppWallets": "In-App Wallets",
-    "pay": "Pay",
-    "analyticsPage": {
-      "heading": "Connect Analytics",
-      "description": "Wallet connection metrics and user engagement insights",
-      "sevenDays": "7 Days",
-      "thirtyDays": "30 Days",
-      "ninetyDays": "90 Days",
+    "inAppWallets": {
+      "title": "In-App Wallets",
+      "subtitle": "Users who connected via email, phone, social login, or passkey",
+      "totalUsers": "Total Users",
+      "active7d": "Active (7d)",
+      "newToday": "New Today",
+      "all": "All",
+      "noUsers": "No users yet",
+      "noUsersHint": "Users will appear here when they connect to your app",
+      "columns": {
+        "user": "User",
+        "walletAddress": "Wallet Address",
+        "authMethod": "Auth Method",
+        "status": "Status",
+        "lastActive": "Last Active",
+        "joined": "Joined",
+        "wallet": "Wallet",
+        "auth": "Auth"
+      },
+      "anonymous": "Anonymous"
+    },
+    "analytics": {
+      "title": "Connect Analytics",
+      "subtitle": "Wallet connection metrics and user engagement insights",
+      "7days": "7 Days",
+      "30days": "30 Days",
+      "90days": "90 Days",
       "totalConnections": "Total Connections",
       "allTimeConnections": "All time connections",
       "uniqueUsers": "Unique Users",
@@ -26,43 +42,25 @@
       "noTimelineData": "No timeline data yet",
       "chartWillAppear": "Chart will appear with activity",
       "connections": "connections",
-      "tipsTitle": "Tips to Improve Connection Rate",
-      "tip1Title": "Enable Multiple Methods",
-      "tip1Desc": "Offer email, social, and passkey options",
-      "tip2Title": "Simplify Flow",
-      "tip2Desc": "Reduce steps to wallet creation",
-      "tip3Title": "Clear Messaging",
-      "tip3Desc": "Explain benefits of connecting"
+      "tips": {
+        "title": "Tips to Improve Connection Rate",
+        "tip1Title": "Enable Multiple Methods",
+        "tip1Desc": "Offer email, social, and passkey options",
+        "tip2Title": "Simplify Flow",
+        "tip2Desc": "Reduce steps to wallet creation",
+        "tip3Title": "Clear Messaging",
+        "tip3Desc": "Explain benefits of connecting"
+      }
     },
-    "inAppWalletsPage": {
-      "heading": "In-App Wallets",
-      "description": "Users who connected via email, phone, social login, or passkey",
-      "totalUsers": "Total Users",
-      "active7d": "Active (7d)",
-      "newToday": "New Today",
-      "all": "All",
-      "user": "User",
-      "walletAddress": "Wallet Address",
-      "authMethod": "Auth Method",
-      "status": "Status",
-      "lastActive": "Last Active",
-      "joined": "Joined",
-      "noUsers": "No users yet",
-      "noUsersHint": "Users will appear here when they connect to your app",
-      "anonymous": "Anonymous",
-      "wallet": "Wallet",
-      "auth": "Auth",
-      "walletsApi": "Wallets API"
-    },
-    "payPage": {
-      "heading": "Pay",
-      "description": "Fiat on-ramp, off-ramp, and crypto payment solutions",
-      "overview": "overview",
-      "transactions": "transactions",
-      "providers": "providers",
+    "pay": {
+      "title": "Pay",
+      "subtitle": "Fiat on-ramp, off-ramp, and crypto payment solutions",
+      "overview": "Overview",
+      "transactions": "Transactions",
+      "providers": "Providers",
       "totalVolume": "Total Volume",
       "allTimePayments": "All time payments",
-      "transactionsLabel": "Transactions",
+      "transactionCount": "Transactions",
       "totalProcessed": "Total processed",
       "avgTransaction": "Avg Transaction",
       "perTransaction": "Per transaction",
@@ -74,20 +72,22 @@
       "enableOffRampDesc": "Let users cash out to fiat",
       "nftCheckout": "NFT Checkout",
       "nftCheckoutDesc": "Credit card NFT purchases",
-      "payIntegration": "Pay Integration",
       "recentTransactions": "Recent Transactions",
       "exportCsv": "Export CSV",
       "noTransactions": "No transactions yet",
       "noTransactionsHint": "Transactions will appear here when users make payments",
-      "buyCrypto": "Buy Crypto",
-      "sellCrypto": "Sell Crypto",
-      "onRamp": "On-Ramp",
-      "offRamp": "Off-Ramp",
       "paymentProviders": "Payment Providers",
-      "paymentProvidersDesc": "Configure payment providers to enable fiat-to-crypto and crypto-to-fiat transactions for your users.",
+      "paymentProvidersHint": "Configure payment providers to enable fiat-to-crypto and crypto-to-fiat transactions for your users.",
+      "active": "Active",
+      "configure": "Configure",
       "manageSettings": "Manage Settings",
       "enableProvider": "Enable Provider",
-      "configure": "Configure"
+      "types": {
+        "buy": "Buy Crypto",
+        "sell": "Sell Crypto",
+        "onramp": "On-Ramp",
+        "offramp": "Off-Ramp"
+      }
     }
   }
 }

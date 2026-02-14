@@ -167,6 +167,27 @@
         "payments": "Payments",
         "paymentsDesc": "Payment processing, invoicing, and transaction history"
       }
+    },
+    "playground": {
+      "demoNotFound": "Demo Not Found",
+      "demoNotFoundHint": "The playground demo you are looking for does not exist.",
+      "backToOverview": "Back to Overview",
+      "underConstruction": "Under Construction",
+      "underConstructionHint": "This demo dashboard is currently being built. Check back soon to explore {name} with sample data and mock accounts.",
+      "demos": {
+        "payments": {
+          "name": "Payments Demo",
+          "description": "Fiat on-ramp / off-ramp and crypto payment processing with multiple providers."
+        },
+        "wallets": {
+          "name": "Wallets Demo",
+          "description": "In-app wallet creation, social login, and embedded wallet management."
+        },
+        "forex": {
+          "name": "Forex Trading Demo",
+          "description": "Forex investment pools, automated trading, and real-time P&L tracking."
+        }
+      }
     }
   }
 }

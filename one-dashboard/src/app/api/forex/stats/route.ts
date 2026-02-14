@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, getUserProjectIds, verifyProjectAccess } from '@/lib/auth';
 import { supabaseEngine } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
@@ -13,18 +13,58 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Fetch all investments and trade count in parallel
+    const url = new URL(req.url);
+    const projectId = url.searchParams.get('project_id');
+
+    // If project_id is provided, verify access
+    if (projectId) {
+      const access = await verifyProjectAccess(session.user.id, projectId);
+      if (!access) {
+        return NextResponse.json(
+          { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Get user's accessible project IDs
+    const userProjectIds = projectId ? [projectId] : await getUserProjectIds(session.user.id);
+
+    if (userProjectIds.length === 0) {
+      // User has no projects
+      return NextResponse.json({
+        success: true,
+        data: {
+          totalInvested: 0,
+          totalValue: 0,
+          totalProfit: 0,
+          activeInvestments: 0,
+          totalTrades: 0,
+          avgCycleDays: 0,
+        },
+      });
+    }
+
+    // Build scoped queries
+    let investmentsQuery = supabaseEngine
+      .from('forex_investments')
+      .select('amount, current_value, profit, status, cycle_days');
+    let tradesQuery = supabaseEngine
+      .from('forex_trades')
+      .select('*', { count: 'exact', head: true });
+
+    if (projectId) {
+      investmentsQuery = investmentsQuery.eq('project_id', projectId);
+      tradesQuery = tradesQuery.eq('project_id', projectId);
+    } else {
+      investmentsQuery = investmentsQuery.in('project_id', userProjectIds);
+      tradesQuery = tradesQuery.in('project_id', userProjectIds);
+    }
+
     const [
       { data: investments, error: investmentsError },
       { count: totalTrades, error: tradesError },
-    ] = await Promise.all([
-      supabaseEngine
-        .from('forex_investments')
-        .select('amount, current_value, profit, status, cycle_days'),
-      supabaseEngine
-        .from('forex_trades')
-        .select('*', { count: 'exact', head: true }),
-    ]);
+    ] = await Promise.all([investmentsQuery, tradesQuery]);
 
     if (investmentsError && investmentsError.code !== '42P01') {
       console.error('Forex investments query error:', investmentsError);
