@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
     const category = url.searchParams.get('category');
     const riskLevel = url.searchParams.get('risk_level');
     const status = url.searchParams.get('status');
+    const strategyType = url.searchParams.get('type'); // 'crypto' | 'forex' | null (all)
 
     // If project_id is provided, verify access
     if (projectId) {
@@ -39,6 +40,10 @@ export async function GET(req: NextRequest) {
       .select('*')
       .order('created_at', { ascending: false });
 
+    // Filter by strategy type (crypto/forex)
+    if (strategyType) {
+      query = query.eq('strategy_type', strategyType);
+    }
     if (category) {
       query = query.eq('category', category);
     }
@@ -78,6 +83,7 @@ export async function GET(req: NextRequest) {
       id: s.id,
       name: s.name,
       category: s.category,
+      strategyType: s.strategy_type || 'crypto',
       riskLevel: riskMap(Number(s.risk_level) || 1),
       status: s.is_active === false ? 'paused' : 'active',
       description: s.description,
@@ -86,6 +92,7 @@ export async function GET(req: NextRequest) {
       sharpeRatio: s.sharpe_ratio,
       totalPnl: poolPnl.get(s.id) ?? 0,
       maxDrawdown: s.max_drawdown,
+      supportedPairs: s.supported_pairs || [],
       createdAt: s.created_at,
       updatedAt: s.updated_at,
     }));

@@ -11,12 +11,15 @@ interface StrategyCardProps {
     id: string;
     name: string;
     category: string;
+    strategyType?: 'crypto' | 'forex';
     riskLevel: 'low' | 'medium' | 'high';
     status: string;
+    description?: string;
     tvl: number;
     winRate: number;
     sharpeRatio: number;
     totalPnl: number;
+    supportedPairs?: string[];
   };
   teamSlug: string;
   projectId?: string;
@@ -35,9 +38,20 @@ export function StrategyCard({ strategy, teamSlug, projectId }: StrategyCardProp
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h3 className="font-semibold text-foreground group-hover:text-[#2563EB] transition-colors">
-            {strategy.name}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-foreground group-hover:text-[#2563EB] transition-colors">
+              {strategy.name}
+            </h3>
+            {strategy.strategyType && (
+              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                strategy.strategyType === 'crypto'
+                  ? 'bg-orange-500/10 text-orange-500'
+                  : 'bg-green-500/10 text-green-500'
+              }`}>
+                {strategy.strategyType === 'crypto' ? '₿ Crypto' : '$ Forex'}
+              </span>
+            )}
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">{strategy.category}</p>
         </div>
         <div className="flex items-center gap-1.5">

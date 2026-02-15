@@ -62,6 +62,7 @@
       "syncNow": "立即同步",
       "refresh": "刷新"
     },
+    "all": "全部",
     "status": {
       "active": "活跃",
       "paused": "已暂停",
@@ -139,7 +140,15 @@
       "quickAccess": "快速访问",
       "createToStart": "创建项目以开始",
       "createToStartDesc": "AI 智能体在每个项目中可用。请先创建项目以访问交易策略。",
-      "createProject": "创建项目"
+      "createProject": "创建项目",
+      "allStrategies": "全部策略",
+      "clickToViewPerformance": "点击查看绩效表现",
+      "crypto": "加密货币",
+      "forex": "外汇",
+      "aum": "管理资产",
+      "winRate": "胜率",
+      "sharpe": "夏普",
+      "pnl": "损益"
     },
     "apiDocs": {
       "title": "API 文档",

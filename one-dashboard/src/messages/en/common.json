@@ -62,6 +62,7 @@
       "syncNow": "Sync Now",
       "refresh": "Refresh"
     },
+    "all": "All",
     "status": {
       "active": "Active",
       "paused": "Paused",
@@ -139,7 +140,15 @@
       "quickAccess": "Quick Access",
       "createToStart": "Create a project to get started",
       "createToStartDesc": "AI Agents are available within each project. Create a project first to access trading strategies.",
-      "createProject": "Create Project"
+      "createProject": "Create Project",
+      "allStrategies": "All Strategies",
+      "clickToViewPerformance": "Click to view performance",
+      "crypto": "Crypto",
+      "forex": "Forex",
+      "aum": "AUM",
+      "winRate": "Win Rate",
+      "sharpe": "Sharpe",
+      "pnl": "P&L"
     },
     "apiDocs": {
       "title": "API Documentation",

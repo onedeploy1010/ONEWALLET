@@ -9,12 +9,15 @@ interface Strategy {
   id: string;
   name: string;
   category: string;
+  strategyType: 'crypto' | 'forex';
   riskLevel: 'low' | 'medium' | 'high';
   status: string;
+  description?: string;
   tvl: number;
   winRate: number;
   sharpeRatio: number;
   totalPnl: number;
+  supportedPairs?: string[];
 }
 
 export default function AiStrategiesPage() {
@@ -25,18 +28,20 @@ export default function AiStrategiesPage() {
   const projectId = params.projectId as string;
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [strategyType, setStrategyType] = useState<'' | 'crypto' | 'forex'>('');
   const [category, setCategory] = useState('');
   const [risk, setRisk] = useState('');
   const [status, setStatus] = useState('');
 
   useEffect(() => {
     fetchStrategies();
-  }, [category, risk, status, projectId]);
+  }, [category, risk, status, projectId, strategyType]);
 
   const fetchStrategies = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
+      if (strategyType) params.set('type', strategyType);
       if (category) params.set('category', category);
       if (risk) params.set('risk_level', risk);
       if (status) params.set('status', status);
@@ -52,6 +57,8 @@ export default function AiStrategiesPage() {
   };
 
   const categories = Array.from(new Set(strategies.map((s) => s.category).filter(Boolean)));
+  const cryptoCount = strategies.filter(s => s.strategyType === 'crypto').length;
+  const forexCount = strategies.filter(s => s.strategyType === 'forex').length;
 
   return (
     <div className="space-y-6">
@@ -60,6 +67,41 @@ export default function AiStrategiesPage() {
         <p className="text-muted-foreground">{t('strategies.subtitle')}</p>
       </div>
 
+      {/* Strategy Type Tabs */}
+      <div className="flex gap-2 border-b border-border pb-4">
+        <button
+          onClick={() => setStrategyType('')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+            strategyType === ''
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-secondary/50 text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          {tc('all')} ({strategies.length})
+        </button>
+        <button
+          onClick={() => setStrategyType('crypto')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
+            strategyType === 'crypto'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-secondary/50 text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <span>₿</span> {t('tabs.crypto')} ({cryptoCount})
+        </button>
+        <button
+          onClick={() => setStrategyType('forex')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
+            strategyType === 'forex'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-secondary/50 text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <span>$</span> {t('tabs.forex')} ({forexCount})
+        </button>
+      </div>
+
+      {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <select value={category} onChange={(e) => setCategory(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
           <option value="">{t('strategies.allCategories')}</option>
@@ -67,15 +109,14 @@ export default function AiStrategiesPage() {
         </select>
         <select value={risk} onChange={(e) => setRisk(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
           <option value="">{t('strategies.allRiskLevels')}</option>
-          <option value="low">{tc('risk.low')}</option>
-          <option value="medium">{tc('risk.medium')}</option>
-          <option value="high">{tc('risk.high')}</option>
+          <option value="1">{tc('risk.low')}</option>
+          <option value="2">{tc('risk.medium')}</option>
+          <option value="3">{tc('risk.high')}</option>
         </select>
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground">
           <option value="">{t('strategies.allStatuses')}</option>
           <option value="active">{tc('status.active')}</option>
           <option value="paused">{tc('status.paused')}</option>
-          <option value="stopped">{tc('status.stopped')}</option>
         </select>
       </div>
 

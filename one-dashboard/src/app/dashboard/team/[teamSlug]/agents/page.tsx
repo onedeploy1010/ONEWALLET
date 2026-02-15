@@ -21,12 +21,26 @@ interface ProjectSummary {
   activeCount: number;
 }
 
+interface Strategy {
+  id: string;
+  name: string;
+  category: string;
+  riskLevel: 'low' | 'medium' | 'high';
+  status: string;
+  tvl: number;
+  winRate: number;
+  sharpeRatio: number;
+  totalPnl: number;
+  type: 'crypto' | 'forex';
+}
+
 export default function AIAgentsPage() {
   const t = useTranslations('common');
   const params = useParams();
   const teamSlug = params.teamSlug as string;
   const [stats, setStats] = useState<AgentStats>({ totalStrategies: 0, activeStrategies: 0, totalAUM: 0, totalProfit: 0 });
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,12 +49,14 @@ export default function AIAgentsPage() {
 
   const fetchAgentData = async () => {
     try {
-      const [projectsRes, strategiesRes] = await Promise.all([
+      const [projectsRes, cryptoRes, forexRes] = await Promise.all([
         fetch('/api/projects'),
         fetch('/api/ai/strategies'),
+        fetch('/api/forex/strategies'),
       ]);
       const projectsData = await projectsRes.json();
-      const strategiesData = await strategiesRes.json();
+      const cryptoData = await cryptoRes.json();
+      const forexData = await forexRes.json();
 
       if (projectsData.success) {
         setProjects(
@@ -55,18 +71,21 @@ export default function AIAgentsPage() {
         );
       }
 
-      if (strategiesData.success) {
-        const strats = strategiesData.data || [];
-        const active = strats.filter((s: Record<string, unknown>) => s.status !== 'paused');
-        const totalAUM = strats.reduce((sum: number, s: Record<string, unknown>) => sum + Number(s.tvl ?? 0), 0);
-        const totalProfit = strats.reduce((sum: number, s: Record<string, unknown>) => sum + Number(s.totalPnl ?? 0), 0);
-        setStats({
-          totalStrategies: strats.length,
-          activeStrategies: active.length,
-          totalAUM,
-          totalProfit,
-        });
-      }
+      const cryptoStrats = (cryptoData.success ? cryptoData.data : []).map((s: Record<string, unknown>) => ({ ...s, type: 'crypto' as const }));
+      const forexStrats = (forexData.success ? forexData.data : []).map((s: Record<string, unknown>) => ({ ...s, type: 'forex' as const, tvl: s.aum || s.tvl }));
+      const allStrats = [...cryptoStrats, ...forexStrats];
+
+      setStrategies(allStrats);
+
+      const active = allStrats.filter((s: Record<string, unknown>) => s.status !== 'paused');
+      const totalAUM = allStrats.reduce((sum: number, s: Record<string, unknown>) => sum + Number(s.tvl ?? 0), 0);
+      const totalProfit = allStrats.reduce((sum: number, s: Record<string, unknown>) => sum + Number(s.totalPnl ?? 0), 0);
+      setStats({
+        totalStrategies: allStrats.length,
+        activeStrategies: active.length,
+        totalAUM,
+        totalProfit,
+      });
     } catch (error) {
       console.error('Failed to fetch agent data:', error);
     } finally {
@@ -229,6 +248,87 @@ export default function AIAgentsPage() {
           </div>
         ))}
       </div>
+
+      {/* Strategies List */}
+      {strategies.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground">{t('agents.allStrategies')}</h2>
+            <p className="text-sm text-muted-foreground">{t('agents.clickToViewPerformance')}</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {strategies.map((strategy) => {
+              const projectId = projects[0]?.id;
+              const strategyPath = strategy.type === 'crypto'
+                ? `/dashboard/team/${teamSlug}/${projectId}/ai/strategies/${strategy.id}`
+                : `/dashboard/team/${teamSlug}/${projectId}/forex/strategies/${strategy.id}`;
+              const riskColors = {
+                low: 'bg-green-500/10 text-green-500 border-green-500/20',
+                medium: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+                high: 'bg-red-500/10 text-red-500 border-red-500/20',
+              };
+              const typeColors = strategy.type === 'crypto'
+                ? 'hover:border-[#2563EB]/30'
+                : 'hover:border-[#8B5CF6]/30';
+              const typeBadge = strategy.type === 'crypto'
+                ? 'bg-[#2563EB]/10 text-[#2563EB]'
+                : 'bg-[#8B5CF6]/10 text-[#8B5CF6]';
+
+              return (
+                <Link
+                  key={`${strategy.type}-${strategy.id}`}
+                  href={strategyPath}
+                  className={`group bg-card border border-border rounded-2xl p-5 hover:shadow-lg transition-all ${typeColors}`}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {strategy.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{strategy.category}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${typeBadge}`}>
+                        {strategy.type === 'crypto' ? t('agents.crypto') : t('agents.forex')}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${riskColors[strategy.riskLevel]}`}>
+                        {strategy.riskLevel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground">{t('agents.aum')}</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        ${(Number(strategy.tvl) || 0).toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">{t('agents.winRate')}</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {(Number(strategy.winRate) || 0).toFixed(1)}%
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">{t('agents.sharpe')}</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {(Number(strategy.sharpeRatio) || 0).toFixed(2)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">{t('agents.pnl')}</p>
+                      <p className={`text-sm font-semibold ${Number(strategy.totalPnl) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {Number(strategy.totalPnl) >= 0 ? '+' : ''}${(Number(strategy.totalPnl) || 0).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Getting Started */}
       {!loading && projects.length === 0 && (
