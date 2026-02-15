@@ -1,10 +1,11 @@
 {
   "forex": {
-    "title": "Forex",
-    "subtitle": "Monitor forex investments, trades, and pool performance",
+    "title": "Forex Trading",
+    "subtitle": "Monitor forex investments, strategies, and pool performance",
     "dashboardTitle": "Forex Dashboard",
     "dashboardDesc": "Track forex investments, monitor trade execution, and analyze pool utilization.",
     "viewInvestments": "View Investments",
+    "viewStrategies": "View Strategies",
     "apiIntegration": "API Integration",
     "apiTitle": "Forex API",
     "tabs": {
@@ -75,6 +76,41 @@
       "poolSize": "Pool Size",
       "utilization": "Utilization",
       "allocation": "Allocation"
+    },
+    "strategies": {
+      "title": "Forex Strategies",
+      "subtitle": "Browse and monitor forex trading strategies",
+      "recentTitle": "Recent Strategies",
+      "recentSubtitle": "Latest forex trading strategies",
+      "noStrategies": "No strategies yet",
+      "noStrategiesHint": "Forex strategies will appear here when created",
+      "noStrategiesFound": "No strategies found",
+      "adjustFilters": "Try adjusting your filters",
+      "allCategories": "All Categories",
+      "allRiskLevels": "All Risk Levels",
+      "allStatuses": "All Statuses"
+    },
+    "strategyCard": {
+      "aum": "AUM",
+      "winRate": "Win Rate",
+      "sharpe": "Sharpe",
+      "pnl": "P&L"
+    },
+    "strategyDetail": {
+      "notFound": "Strategy not found",
+      "performance": "Performance",
+      "aum": "AUM",
+      "winRate": "Win Rate",
+      "sharpeRatio": "Sharpe Ratio",
+      "maxDrawdown": "Max Drawdown",
+      "totalDeposits": "Total Deposits",
+      "navPerShare": "NAV/Share",
+      "totalShares": "Total Shares",
+      "utilization": "Utilization",
+      "noDecisions": "No decisions recorded yet",
+      "entry": "Entry",
+      "current": "Current",
+      "pairs": "Pairs"
     }
   }
 }

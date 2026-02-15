@@ -13,6 +13,7 @@ interface SidebarProps {
 
 interface NavItem {
   name: string;
+  key: string;
   href: string;
   icon: React.ReactNode;
   children?: NavItem[];
@@ -159,89 +160,98 @@ export function Sidebar({ user }: SidebarProps) {
   const projectUrl = projectId ? `${baseUrl}/${projectId}` : baseUrl;
 
   const teamNavigation: NavItem[] = [
-    { name: t('nav.overview'), href: baseUrl, icon: <Icons.Dashboard /> },
-    { name: t('nav.projects'), href: `${baseUrl}/projects`, icon: <Icons.Folder /> },
-    { name: t('nav.aiAgents'), href: `${baseUrl}/agents`, icon: <Icons.Robot /> },
-    { name: t('nav.apiDocs'), href: `${baseUrl}/api-docs`, icon: <Icons.BookOpen /> },
-    { name: t('nav.docs'), href: 'https://docs.one23.io', icon: <Icons.ExternalLink />, external: true },
+    { name: t('nav.overview'), key: 'overview', href: baseUrl, icon: <Icons.Dashboard /> },
+    { name: t('nav.projects'), key: 'projects', href: `${baseUrl}/projects`, icon: <Icons.Folder /> },
+    { name: t('nav.aiAgents'), key: 'agents', href: `${baseUrl}/agents`, icon: <Icons.Robot /> },
+    { name: t('nav.apiDocs'), key: 'api-docs', href: `${baseUrl}/api-docs`, icon: <Icons.BookOpen /> },
+    { name: t('nav.docs'), key: 'docs', href: 'https://docs.one23.io', icon: <Icons.ExternalLink />, external: true },
   ];
 
   const projectNavigation: NavItem[] = [
-    { name: t('nav.overview'), href: projectUrl, icon: <Icons.Dashboard /> },
+    { name: t('nav.overview'), key: 'overview', href: projectUrl, icon: <Icons.Dashboard /> },
     {
       name: t('nav.configuration'),
+      key: 'configuration',
       href: `${projectUrl}/configuration`,
       icon: <Icons.Cog />,
       children: [
-        { name: t('nav.apiKeys'), href: `${projectUrl}/configuration`, icon: <Icons.Key /> },
-        { name: t('nav.settings'), href: `${projectUrl}/configuration?tab=settings`, icon: <Icons.Settings /> },
+        { name: t('nav.apiKeys'), key: 'apikeys', href: `${projectUrl}/configuration`, icon: <Icons.Key /> },
+        { name: t('nav.settings'), key: 'settings', href: `${projectUrl}/configuration?tab=settings`, icon: <Icons.Settings /> },
       ],
     },
     {
       name: t('nav.aiTrading'),
+      key: 'ai',
       href: `${projectUrl}/ai`,
       icon: <Icons.Brain />,
       children: [
-        { name: t('nav.overview'), href: `${projectUrl}/ai`, icon: <Icons.Dashboard /> },
-        { name: t('nav.strategies'), href: `${projectUrl}/ai/strategies`, icon: <Icons.Target /> },
-        { name: t('nav.orders'), href: `${projectUrl}/ai/orders`, icon: <Icons.Contract /> },
-        { name: t('nav.positions'), href: `${projectUrl}/ai/positions`, icon: <Icons.TrendingUp /> },
-        { name: t('nav.decisionLog'), href: `${projectUrl}/ai/decisions`, icon: <Icons.ClipboardList /> },
+        { name: t('nav.overview'), key: 'ai-overview', href: `${projectUrl}/ai`, icon: <Icons.Dashboard /> },
+        { name: t('nav.strategies'), key: 'ai-strategies', href: `${projectUrl}/ai/strategies`, icon: <Icons.Target /> },
+        { name: t('nav.orders'), key: 'ai-orders', href: `${projectUrl}/ai/orders`, icon: <Icons.Contract /> },
+        { name: t('nav.positions'), key: 'ai-positions', href: `${projectUrl}/ai/positions`, icon: <Icons.TrendingUp /> },
+        { name: t('nav.decisionLog'), key: 'ai-decisions', href: `${projectUrl}/ai/decisions`, icon: <Icons.ClipboardList /> },
       ],
     },
     {
       name: t('nav.wallets'),
+      key: 'wallets',
       href: `${projectUrl}/wallets`,
       icon: <Icons.Wallet />,
       children: [
-        { name: t('nav.inAppWallets'), href: `${projectUrl}/wallets/in-app`, icon: <Icons.Wallet /> },
-        { name: t('nav.backendWallets'), href: `${projectUrl}/wallets/backend`, icon: <Icons.Key /> },
+        { name: t('nav.inAppWallets'), key: 'in-app', href: `${projectUrl}/wallets/in-app`, icon: <Icons.Wallet /> },
+        { name: t('nav.backendWallets'), key: 'backend', href: `${projectUrl}/wallets/backend`, icon: <Icons.Key /> },
       ],
     },
     {
       name: t('nav.contracts'),
+      key: 'contracts',
       href: `${projectUrl}/contracts`,
       icon: <Icons.Contract />,
       children: [
-        { name: t('nav.deploy'), href: `${projectUrl}/contracts/deploy`, icon: <Icons.Rocket /> },
-        { name: t('nav.published'), href: `${projectUrl}/contracts/published`, icon: <Icons.Check /> },
+        { name: t('nav.deploy'), key: 'deploy', href: `${projectUrl}/contracts/deploy`, icon: <Icons.Rocket /> },
+        { name: t('nav.published'), key: 'published', href: `${projectUrl}/contracts/published`, icon: <Icons.Check /> },
       ],
     },
     {
       name: t('nav.payments'),
+      key: 'payments',
       href: `${projectUrl}/payments`,
       icon: <Icons.CreditCard />,
       children: [
-        { name: t('nav.pay'), href: `${projectUrl}/payments/pay`, icon: <Icons.CreditCard /> },
+        { name: t('nav.pay'), key: 'pay', href: `${projectUrl}/payments/pay`, icon: <Icons.CreditCard /> },
       ],
     },
     {
       name: t('nav.records'),
+      key: 'records',
       href: `${projectUrl}/records`,
       icon: <Icons.ClipboardList />,
       children: [
-        { name: t('nav.allRecords'), href: `${projectUrl}/records`, icon: <Icons.Dashboard /> },
-        { name: t('nav.aiActivity'), href: `${projectUrl}/records/ai`, icon: <Icons.Brain /> },
-        { name: t('nav.forexActivity'), href: `${projectUrl}/records/forex`, icon: <Icons.Currency /> },
+        { name: t('nav.allRecords'), key: 'all-records', href: `${projectUrl}/records`, icon: <Icons.Dashboard /> },
+        { name: t('nav.aiActivity'), key: 'ai-activity', href: `${projectUrl}/records/ai`, icon: <Icons.Brain /> },
+        { name: t('nav.forexActivity'), key: 'forex-activity', href: `${projectUrl}/records/forex`, icon: <Icons.Currency /> },
       ],
     },
     {
       name: t('nav.usage'),
+      key: 'usage',
       href: `${projectUrl}/usage`,
       icon: <Icons.Chart />,
       children: [
-        { name: t('nav.usageBilling'), href: `${projectUrl}/usage`, icon: <Icons.Chart /> },
+        { name: t('nav.usageBilling'), key: 'billing', href: `${projectUrl}/usage`, icon: <Icons.Chart /> },
       ],
     },
     {
       name: t('nav.forex'),
+      key: 'forex',
       href: `${projectUrl}/forex`,
       icon: <Icons.Currency />,
       children: [
-        { name: t('nav.overview'), href: `${projectUrl}/forex`, icon: <Icons.Dashboard /> },
-        { name: t('nav.investments'), href: `${projectUrl}/forex/investments`, icon: <Icons.Wallet /> },
-        { name: t('nav.trades'), href: `${projectUrl}/forex/trades`, icon: <Icons.TrendingUp /> },
-        { name: t('nav.pools'), href: `${projectUrl}/forex/pools`, icon: <Icons.Chart /> },
+        { name: t('nav.overview'), key: 'forex-overview', href: `${projectUrl}/forex`, icon: <Icons.Dashboard /> },
+        { name: t('nav.strategies'), key: 'forex-strategies', href: `${projectUrl}/forex/strategies`, icon: <Icons.Target /> },
+        { name: t('nav.investments'), key: 'forex-investments', href: `${projectUrl}/forex/investments`, icon: <Icons.Wallet /> },
+        { name: t('nav.trades'), key: 'forex-trades', href: `${projectUrl}/forex/trades`, icon: <Icons.TrendingUp /> },
+        { name: t('nav.pools'), key: 'forex-pools', href: `${projectUrl}/forex/pools`, icon: <Icons.Chart /> },
       ],
     },
   ];
@@ -302,7 +312,7 @@ export function Sidebar({ user }: SidebarProps) {
         <ul className="space-y-0.5">
           {navigation.map((item) => {
             const hasChildren = item.children && item.children.length > 0;
-            const isExpanded = expandedSections.includes(item.name.toLowerCase());
+            const isExpanded = expandedSections.includes(item.key);
             const itemActive = isActive(item.href);
 
             return (
@@ -310,7 +320,7 @@ export function Sidebar({ user }: SidebarProps) {
                 {hasChildren ? (
                   <>
                     <button
-                      onClick={() => toggleSection(item.name.toLowerCase())}
+                      onClick={() => toggleSection(item.key)}
                       className={`w-full sidebar-item group ${
                         itemActive
                           ? 'text-primary font-medium'

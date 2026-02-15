@@ -1,0 +1,102 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getSession, verifyProjectAccess } from '@/lib/auth';
+import { supabaseEngine } from '@/lib/supabase';
+
+// GET /api/forex/strategies - List forex strategies with project scoping
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json(
+        { success: false, error: { code: 'E1001', message: 'Unauthorized' } },
+        { status: 401 }
+      );
+    }
+
+    const url = new URL(req.url);
+    const projectId = url.searchParams.get('project_id');
+    const category = url.searchParams.get('category');
+    const riskLevel = url.searchParams.get('risk_level');
+    const status = url.searchParams.get('status');
+
+    // If project_id is provided, verify access
+    if (projectId) {
+      const access = await verifyProjectAccess(session.user.id, projectId);
+      if (!access) {
+        return NextResponse.json(
+          { success: false, error: { code: 'E1003', message: 'Project access denied' } },
+          { status: 403 }
+        );
+      }
+    }
+
+    let query = supabaseEngine
+      .from('forex_strategies')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (category) {
+      query = query.eq('category', category);
+    }
+    if (riskLevel) {
+      query = query.eq('risk_level', riskLevel);
+    }
+    if (status === 'active') {
+      query = query.eq('is_active', true);
+    } else if (status === 'paused') {
+      query = query.eq('is_active', false);
+    }
+
+    const { data: strategies, error } = await query;
+
+    if (error) {
+      if (error.code === '42P01') {
+        return NextResponse.json({ success: true, data: [] });
+      }
+      throw error;
+    }
+
+    // Fetch pool P&L data
+    const strategyIds = (strategies || []).map((s) => s.id);
+    let poolPnl = new Map<string, number>();
+
+    if (strategyIds.length > 0) {
+      const { data: pools } = await supabaseEngine
+        .from('forex_strategy_pools')
+        .select('strategy_id, total_pnl')
+        .in('strategy_id', strategyIds);
+      poolPnl = new Map((pools || []).map((p) => [p.strategy_id, Number(p.total_pnl ?? 0)]));
+    }
+
+    const riskMap = (level: number) => (level <= 2 ? 'low' : level <= 3 ? 'medium' : 'high');
+
+    const mapped = (strategies || []).map((s) => ({
+      id: s.id,
+      name: s.name,
+      category: s.category,
+      riskLevel: riskMap(Number(s.risk_level) || 1),
+      status: s.is_active === false ? 'paused' : 'active',
+      description: s.description,
+      aum: s.aum || s.tvl || 0,
+      winRate: s.win_rate,
+      sharpeRatio: s.sharpe_ratio,
+      totalPnl: poolPnl.get(s.id) ?? 0,
+      maxDrawdown: s.max_drawdown,
+      pairs: s.pairs || [],
+      createdAt: s.created_at,
+      updatedAt: s.updated_at,
+    }));
+
+    return NextResponse.json({
+      success: true,
+      data: mapped,
+    });
+  } catch (error) {
+    console.error('Forex strategies fetch error:', error);
+    return NextResponse.json(
+      { success: false, error: { code: 'E5000', message: 'Failed to fetch forex strategies' } },
+      { status: 500 }
+    );
+  }
+}

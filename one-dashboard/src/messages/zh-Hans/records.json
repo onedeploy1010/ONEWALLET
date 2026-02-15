@@ -5,6 +5,15 @@
     "allActivity": "全部活动",
     "aiOnly": "仅 AI",
     "forexOnly": "仅外汇",
+    "decisions": {
+      "title": "决策日志",
+      "executed": "已执行"
+    },
+    "columns": {
+      "time": "时间",
+      "action": "操作",
+      "confidence": "置信度"
+    },
     "ai": {
       "title": "AI 活动",
       "subtitle": "完整的 AI 交易活动历史",

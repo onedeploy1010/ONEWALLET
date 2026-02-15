@@ -6,5 +6,6 @@ export { PeriodSelector } from './PeriodSelector';
 export { DataTable } from './DataTable';
 export { PerformanceChart } from './PerformanceChart';
 export { StrategyCard } from './StrategyCard';
+export { ForexStrategyCard } from './ForexStrategyCard';
 export { PoolCard } from './PoolCard';
 export { ActivityFeed } from './ActivityFeed';

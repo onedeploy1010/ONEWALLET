@@ -33,7 +33,7 @@ export default function StrategyDetailPage() {
         fetch(`/api/ai/strategies/${strategyId}`),
         fetch(`/api/ai/strategies/${strategyId}/positions`),
         fetch(`/api/ai/strategies/${strategyId}/performance?days=90`),
-        fetch(`/api/ai/strategies/${strategyId}/decisions?limit=20`),
+        fetch(`/api/ai/strategies/${strategyId}/decisions?limit=50`),
       ]);
       const [detail, pos, perf, dec] = await Promise.all([detailRes.json(), posRes.json(), perfRes.json(), decRes.json()]);
       if (detail.success) { setStrategy(detail.data.strategy); setPool(detail.data.pool); }

@@ -27,16 +27,16 @@ export default function StrategyDetailPage() {
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchAll(); }, [strategyId, projectId]);
+  useEffect(() => { fetchAll(); }, [strategyId]);
 
   const fetchAll = async () => {
     try {
-      const projectParam = projectId ? `project_id=${projectId}` : '';
+      // Strategy detail shows ALL positions/decisions for this strategy (across all projects)
       const [detailRes, posRes, perfRes, decRes] = await Promise.all([
         fetch(`/api/ai/strategies/${strategyId}`),
-        fetch(`/api/ai/strategies/${strategyId}/positions?${projectParam}`),
+        fetch(`/api/ai/strategies/${strategyId}/positions`),
         fetch(`/api/ai/strategies/${strategyId}/performance?days=90`),
-        fetch(`/api/ai/strategies/${strategyId}/decisions?limit=20&${projectParam}`),
+        fetch(`/api/ai/strategies/${strategyId}/decisions?limit=50`),
       ]);
       const [detail, pos, perf, dec] = await Promise.all([detailRes.json(), posRes.json(), perfRes.json(), decRes.json()]);
       if (detail.success) { setStrategy(detail.data.strategy); setPool(detail.data.pool); }

@@ -5,6 +5,15 @@
     "allActivity": "All Activity",
     "aiOnly": "AI Only",
     "forexOnly": "Forex Only",
+    "decisions": {
+      "title": "Decision Log",
+      "executed": "Executed"
+    },
+    "columns": {
+      "time": "Time",
+      "action": "Action",
+      "confidence": "Confidence"
+    },
     "ai": {
       "title": "AI Activity",
       "subtitle": "Complete AI trading activity history",

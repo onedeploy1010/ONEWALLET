@@ -1,10 +1,11 @@
 {
   "forex": {
-    "title": "外汇",
-    "subtitle": "监控外汇投资、交易和资金池表现",
+    "title": "外汇量化",
+    "subtitle": "监控外汇投资、策略和资金池表现",
     "dashboardTitle": "外汇仪表盘",
     "dashboardDesc": "追踪外汇投资，监控交易执行，分析资金池利用率。",
     "viewInvestments": "查看投资",
+    "viewStrategies": "查看策略",
     "apiIntegration": "API 集成",
     "apiTitle": "外汇 API",
     "tabs": {
@@ -75,6 +76,41 @@
       "poolSize": "资金池规模",
       "utilization": "利用率",
       "allocation": "分配"
+    },
+    "strategies": {
+      "title": "外汇策略",
+      "subtitle": "浏览和监控外汇交易策略",
+      "recentTitle": "最近策略",
+      "recentSubtitle": "最新外汇交易策略",
+      "noStrategies": "暂无策略",
+      "noStrategiesHint": "创建后外汇策略将在此显示",
+      "noStrategiesFound": "未找到策略",
+      "adjustFilters": "请尝试调整筛选条件",
+      "allCategories": "全部类别",
+      "allRiskLevels": "全部风险等级",
+      "allStatuses": "全部状态"
+    },
+    "strategyCard": {
+      "aum": "管理资产",
+      "winRate": "胜率",
+      "sharpe": "夏普",
+      "pnl": "损益"
+    },
+    "strategyDetail": {
+      "notFound": "未找到策略",
+      "performance": "绩效表现",
+      "aum": "管理资产",
+      "winRate": "胜率",
+      "sharpeRatio": "夏普比率",
+      "maxDrawdown": "最大回撤",
+      "totalDeposits": "总存款",
+      "navPerShare": "净值/份额",
+      "totalShares": "总份额",
+      "utilization": "利用率",
+      "noDecisions": "暂无决策记录",
+      "entry": "入场",
+      "current": "当前",
+      "pairs": "货币对"
     }
   }
 }
